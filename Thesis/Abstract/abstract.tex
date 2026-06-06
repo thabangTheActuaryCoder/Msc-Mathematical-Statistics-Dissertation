@@ -1,0 +1,19 @@
+\phantomsection
+\addcontentsline{toc}{section}{Abstract}
+\markboth{Abstract}{}
+
+\section*{Abstract}
+
+This dissertation develops a three-stage statistical framework for health insurance cost prediction using a publicly available benchmark dataset of one million policyholder records.
+In the first stage, a deep neural network is trained to predict insurance charges, with a five-phase hyperparameter comparison selecting the final architecture and a Gamma generalised linear model serving as an actuarial baseline.
+In the second stage, parametric Monte Carlo simulation generates synthetic policyholder profiles from fitted marginal distributions; the trained network is evaluated at each profile, producing a model-implied predicted-cost distribution validated through joint-distribution diagnostics and residual-augmented sensitivity analysis.
+In the third stage, Shapley values decompose each predicted cost into additive feature contributions at both the global level and conditionally within high-cost regions defined by upper-tail thresholds.
+
+The deep neural network achieves test-set $R^2 = 0.9957$ and outperforms the generalised linear model baseline.
+Shapley attribution identifies smoking status, coverage level and medical history as the dominant cost drivers globally.
+In the upper tail, the importance ranking shifts: coverage level, medical history and family medical history overtake smoking status, illustrating that the factors driving extreme predicted costs differ from those most important on average.
+All conclusions are internal to the fitted model and benchmark data and are not presented as causal claims.
+
+\vspace{4mm}
+
+\noindent\textbf{Keywords:} deep neural network, health insurance cost prediction, Monte Carlo simulation, Shapley values, explainable machine learning, generalised linear model, statistical learning.

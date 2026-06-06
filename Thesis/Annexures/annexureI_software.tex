@@ -1,0 +1,89 @@
+% =============================================================
+% Annexure I: Software and Environment Details
+% =============================================================
+\section{Software and Environment Details}
+\label{annexure:software}
+
+
+% -------------------------------------------------------------
+\subsection{Python Distribution and Version}
+\label{annexure:python}
+
+Python~3.11 via the Anaconda distribution. Jupyter Notebook was used for interactive development.
+
+% -------------------------------------------------------------
+\subsection{Core Package Versions}
+\label{annexure:packages}
+
+\begin{table}[htbp]
+\centering
+\caption{Python package versions used in the dissertation.}
+\label{tab:packages}
+\begin{tabular}{lll}
+\hline
+\textbf{Package} & \textbf{Version} & \textbf{Purpose} \\
+\hline
+PyTorch           & 2.x              & DNN architecture, training and inference \\
+SHAP              & 0.43+            & Shapley value computation (GradientExplainer) \\
+statsmodels       & 0.14+            & GLM (Gamma, log-link) fitting \\
+NumPy             & 1.24+            & Numerical computation \\
+pandas            & 2.x              & Data manipulation and I/O \\
+SciPy             & 1.11+            & Statistical tests, distributions \\
+scikit-learn      & 1.3+             & GP surrogate, train/test splitting, metrics \\
+matplotlib        & 3.8+             & Static figure generation \\
+seaborn           & 0.13+            & Statistical visualisation \\
+scikit-optimize   & 0.10+            & Bayesian Optimisation (\texttt{gp\_minimize}) \\
+Plotly            & 5.x              & Interactive 3D surface plots \\
+\hline
+\end{tabular}
+
+\medskip
+\emph{Note:} Exact patch versions may vary. The versions above represent the minimum versions with which the code was tested. Update these entries with the output of \texttt{pip freeze} or \texttt{conda list} before final submission.
+\end{table}
+
+% -------------------------------------------------------------
+\subsection{Hardware Platform}
+\label{annexure:hardware}
+
+\begin{itemize}
+    \item Processor: Apple Silicon (M-series)
+    \item Primary compute device: MPS (Metal Performance Shaders) via PyTorch
+    \item SHAP compute device: CPU (faster than MPS for GradientExplainer)
+    \item Fallback: CPU (used when MPS is unavailable or for SHAP computations)
+\end{itemize}
+
+\begin{lstlisting}[caption={Device selection logic for PyTorch.}]
+import torch
+
+if torch.backends.mps.is_available():
+    DEVICE = torch.device('mps')
+elif torch.cuda.is_available():
+    DEVICE = torch.device('cuda')
+else:
+    DEVICE = torch.device('cpu')
+\end{lstlisting}
+
+% -------------------------------------------------------------
+\subsection{Reproducibility}
+\label{annexure:reproducibility}
+
+Fixed random seed of 42:
+\begin{itemize}
+    \item PyTorch weight initialisation (\texttt{torch.manual\_seed(42)})
+    \item NumPy random operations (\texttt{np.random.seed(42)})
+    \item NumPy Generator objects (\texttt{np.random.default\_rng(42)})
+    \item scikit-learn train/test split (\texttt{random\_state=42})
+    \item GP surrogate fitting (\texttt{random\_state=42})
+\end{itemize}
+
+% -------------------------------------------------------------
+\subsection{Data Files}
+\label{annexure:data_files}
+
+\begin{itemize}
+    \item \texttt{insurance\_dataset.csv}: 1\,000\,000 rows, 12 columns (age, gender, bmi, children, smoker, region, medical\_history, family\_medical\_history, exercise\_frequency, occupation, coverage\_level, charges). Synthetic benchmark dataset sourced from Kaggle.
+
+    \item \texttt{chapter3\_final\_model.pth}: PyTorch checkpoint containing the trained FunnelDNN model state, architecture specification, hyperparameters, standardisation parameters, feature names and evaluation metrics.
+
+    \item \texttt{model\_ready\_charges\_train\_20260517\_115748.csv}: reference-category encoded training partition (60\% of the dataset, 22 features + charges).
+\end{itemize}

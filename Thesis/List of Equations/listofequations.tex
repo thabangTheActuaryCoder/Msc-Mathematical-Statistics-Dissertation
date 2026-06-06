@@ -1,0 +1,22 @@
+% =============================================================
+% List of Equations -- setup and command definition
+% =============================================================
+% This file defines the List of Equations infrastructure.
+% Usage: place \equationlistentry{Description} immediately after
+%        each \end{equation} in the chapter files.
+%
+% The \listofmyequations command is called separately in main.tex
+% to produce the printed list.
+% =============================================================
+
+\newcommand{\listequationsname}{List of Equations}
+\newlistof{myequations}{loe}{\listequationsname}
+\setlength{\cftmyequationsnumwidth}{4.5em}
+
+% Manual command to add a described entry to the List of Equations
+\newcommand{\equationlistentry}[1]{%
+  \phantomsection
+  \addcontentsline{loe}{myequations}{%
+    \protect\numberline{\theequation}#1%
+  }%
+}

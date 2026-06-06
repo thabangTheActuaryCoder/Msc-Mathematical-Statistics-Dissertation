@@ -1,0 +1,212 @@
+% =============================================================
+% Annexure B: Code for Data Preprocessing and Encoding
+% =============================================================
+\section{Code for Data Preprocessing and Encoding}
+\label{annexure:preprocessing}
+
+% -------------------------------------------------------------
+\subsection{Data Loading and Audit}
+\label{annexure:data_loading}
+
+\begin{lstlisting}[caption={Data loading and audit.}]
+import pandas as pd
+import numpy as np
+
+RAW_PATH = 'insurance_dataset.csv'
+df = pd.read_csv(RAW_PATH)
+
+print(f'Dataset shape: {df.shape[0]:,} rows x {df.shape[1]} columns')
+
+# Missing values per column
+missing = df.isnull().sum()
+missing_pct = (missing / len(df) * 100).round(2)
+missing_df = pd.DataFrame({'Missing Count': missing,
+                           'Missing %': missing_pct})
+print(missing_df)
+
+# Range checks for numeric variables
+numeric_cols = ['age', 'bmi', 'children', 'charges']
+range_check = df[numeric_cols].agg(['min', 'max']).T
+print(range_check)
+
+# Check for duplicate rows
+n_duplicates = df.duplicated().sum()
+print(f'Exact duplicate rows: {n_duplicates:,}')
+
+# Unique values for categorical variables
+cat_cols = ['gender', 'smoker', 'region', 'medical_history',
+            'family_medical_history', 'exercise_frequency',
+            'occupation', 'coverage_level']
+for col in cat_cols:
+    unique_vals = df[col].dropna().unique()
+    print(f'{col}: {len(unique_vals)} levels {list(unique_vals)}')
+\end{lstlisting}
+
+% -------------------------------------------------------------
+\subsection{Reference-Category Encoding Function}
+\label{annexure:encoding}
+
+\begin{lstlisting}[caption={\texttt{encode\_dataframe} function.}]
+def encode_dataframe(df):
+    """Apply reference-category encoding to raw DataFrame.
+
+    Returns a DataFrame with 22 features + charges (23 columns).
+    Reference categories (coded as all-zero):
+        region: northeast
+        medical_history: None
+        family_medical_history: None
+        exercise_frequency: Rarely
+        occupation: Unemployed
+        coverage_level: Basic
+    """
+    out = pd.DataFrame()
+    # Numeric features (passthrough)
+    out['age'] = df['age'].values.astype(np.float32)
+    out['gender'] = (df['gender'] == 'male').astype(np.float32).values
+    out['bmi'] = df['bmi'].values.astype(np.float32)
+    out['children'] = df['children'].values.astype(np.float32)
+    out['smoker'] = (df['smoker'] == 'yes').astype(np.float32).values
+
+    # region (ref = northeast)
+    out['region_southwest'] = (
+        df['region'] == 'southwest').astype(np.float32).values
+    out['region_northwest'] = (
+        df['region'] == 'northwest').astype(np.float32).values
+    out['region_southeast'] = (
+        df['region'] == 'southeast').astype(np.float32).values
+
+    # medical_history (ref = None)
+    out['medical_history_Heart_disease'] = (
+        df['medical_history'] == 'Heart disease'
+    ).astype(np.float32).values
+    out['medical_history_High_blood_pressure'] = (
+        df['medical_history'] == 'High blood pressure'
+    ).astype(np.float32).values
+    out['medical_history_Diabetes'] = (
+        df['medical_history'] == 'Diabetes'
+    ).astype(np.float32).values
+
+    # family_medical_history (ref = None)
+    out['family_medical_history_Heart_disease'] = (
+        df['family_medical_history'] == 'Heart disease'
+    ).astype(np.float32).values
+    out['family_medical_history_High_blood_pressure'] = (
+        df['family_medical_history'] == 'High blood pressure'
+    ).astype(np.float32).values
+    out['family_medical_history_Diabetes'] = (
+        df['family_medical_history'] == 'Diabetes'
+    ).astype(np.float32).values
+
+    # exercise_frequency (ref = Rarely)
+    out['exercise_frequency_Occasionally'] = (
+        df['exercise_frequency'] == 'Occasionally'
+    ).astype(np.float32).values
+    out['exercise_frequency_Frequently'] = (
+        df['exercise_frequency'] == 'Frequently'
+    ).astype(np.float32).values
+    out['exercise_frequency_Never'] = (
+        df['exercise_frequency'] == 'Never'
+    ).astype(np.float32).values
+
+    # occupation (ref = Unemployed)
+    out['occupation_Student'] = (
+        df['occupation'] == 'Student').astype(np.float32).values
+    out['occupation_Blue_collar'] = (
+        df['occupation'] == 'Blue collar'
+    ).astype(np.float32).values
+    out['occupation_White_collar'] = (
+        df['occupation'] == 'White collar'
+    ).astype(np.float32).values
+
+    # coverage_level (ref = Basic)
+    out['coverage_level_Standard'] = (
+        df['coverage_level'] == 'Standard'
+    ).astype(np.float32).values
+    out['coverage_level_Premium'] = (
+        df['coverage_level'] == 'Premium'
+    ).astype(np.float32).values
+
+    # Response variable
+    out['charges'] = df['charges'].values.astype(np.float32)
+    return out
+\end{lstlisting}
+
+% -------------------------------------------------------------
+\subsection{60/20/20 Train/Validation/Test Split}
+\label{annexure:split}
+
+\begin{lstlisting}[caption={60/20/20 data partitioning.}]
+from sklearn.model_selection import train_test_split
+
+SEED = 42
+
+# Fill NaN before encoding
+df_raw['medical_history'] = df_raw['medical_history'].fillna('None')
+df_raw['family_medical_history'] = (
+    df_raw['family_medical_history'].fillna('None'))
+
+df_encoded = encode_dataframe(df_raw)
+
+# First split: 60% train, 40% temp
+df_train, df_temp = train_test_split(
+    df_encoded, test_size=0.40, random_state=SEED)
+
+# Second split: 50% of temp = 20% each
+df_val, df_test = train_test_split(
+    df_temp, test_size=0.50, random_state=SEED)
+
+df_train = df_train.reset_index(drop=True)
+df_val = df_val.reset_index(drop=True)
+df_test = df_test.reset_index(drop=True)
+
+print(f'Train:      {len(df_train):>10,d}  '
+      f'({len(df_train)/len(df_encoded):.2%})')
+print(f'Validation: {len(df_val):>10,d}  '
+      f'({len(df_val)/len(df_encoded):.2%})')
+print(f'Test:       {len(df_test):>10,d}  '
+      f'({len(df_test)/len(df_encoded):.2%})')
+\end{lstlisting}
+
+% -------------------------------------------------------------
+\subsection{Input Standardisation}
+\label{annexure:standardisation}
+
+\begin{lstlisting}[caption={Input and response standardisation.}]
+TARGET = 'charges'
+FEATURES = [c for c in df_train.columns if c != TARGET]
+
+X_train_raw = df_train[FEATURES].values.astype(np.float32)
+y_train_raw = df_train[TARGET].values.astype(np.float32)
+X_val_raw = df_val[FEATURES].values.astype(np.float32)
+y_val_raw = df_val[TARGET].values.astype(np.float32)
+X_test_raw = df_test[FEATURES].values.astype(np.float32)
+y_test_raw = df_test[TARGET].values.astype(np.float32)
+
+# Input standardisation (training-set parameters only)
+X_mean = X_train_raw.mean(axis=0)
+X_std  = X_train_raw.std(axis=0)
+X_std[X_std == 0] = 1.0  # protect binary dummies
+
+X_train = (X_train_raw - X_mean) / X_std
+X_val   = (X_val_raw   - X_mean) / X_std
+X_test  = (X_test_raw  - X_mean) / X_std
+
+# Response standardisation (training-set parameters only)
+y_mean = y_train_raw.mean()
+y_std  = y_train_raw.std()
+y_train = (y_train_raw - y_mean) / y_std
+y_val   = (y_val_raw   - y_mean) / y_std
+y_test  = (y_test_raw  - y_mean) / y_std
+
+print(f'y_mean (training): {y_mean:.2f}')
+print(f'y_std  (training): {y_std:.2f}')
+\end{lstlisting}
+
+\subsection{Response De-normalisation}
+\label{annexure:denormalise}
+
+\begin{lstlisting}[caption={De-normalisation function.}]
+def denormalise(y_norm):
+    """Convert normalised predictions back to original Rand scale."""
+    return y_norm * y_std + y_mean
+\end{lstlisting}
