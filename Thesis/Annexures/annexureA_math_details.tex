@@ -1,0 +1,135 @@
+% =============================================================
+% Annexure A: Extended Mathematical Details
+% =============================================================
+\section{Extended Mathematical Details}
+\label{annexure:math_details}
+
+% -------------------------------------------------------------
+\subsection{Proof of the Universal Approximation Theorem}
+\label{annexure:uat_proof}
+
+\begin{theorem}[Cybenko, 1989; Hornik, Stinchcombe and White, 1989]
+\label{thm:uat_annexure}
+Let $\sigma : \mathbb{R} \to \mathbb{R}$ be a non-constant, bounded, continuous function (the activation function). Let $I_p = [0,1]^p$ denote the $p$-dimensional unit hypercube. For any continuous function $f : I_p \to \mathbb{R}$ and any $\varepsilon > 0$, there exist an integer $N$, real constants $\alpha_i, b_i \in \mathbb{R}$, and vectors $\mathbf{w}_i \in \mathbb{R}^p$ for $i = 1, \ldots, N$, such that the function
+\[
+  F(\mathbf{x}) = \sum_{i=1}^{N} \alpha_i \, \sigma\!\bigl(\mathbf{w}_i^\top \mathbf{x} + b_i\bigr)
+\]
+satisfies
+\[
+  \sup_{\mathbf{x} \in I_p} \bigl| F(\mathbf{x}) - f(\mathbf{x}) \bigr| < \varepsilon.
+\]
+\end{theorem}
+
+\begin{proof}
+The proof proceeds by contradiction and uses the Hahn--Banach theorem from functional analysis. Define the family
+\[
+  \mathcal{S} = \bigl\{ \sigma(\mathbf{w}^\top \mathbf{x} + b) : \mathbf{w} \in \mathbb{R}^p,\; b \in \mathbb{R} \bigr\}
+\]
+and let $\mathcal{M}$ denote the closure of $\operatorname{span}(\mathcal{S})$ in $C(I_p)$ with respect to the supremum norm. We wish to show $\mathcal{M} = C(I_p)$.
+
+Suppose, for contradiction, that $\mathcal{M} \neq C(I_p)$. By the Hahn--Banach theorem, there exists a non-zero bounded linear functional $L \in C(I_p)^*$ such that $L(g) = 0$ for all $g \in \mathcal{M}$. By the Riesz representation theorem, there exists a non-zero finite signed regular Borel measure $\mu$ on $I_p$ such that
+\[
+  L(g) = \int_{I_p} g(\mathbf{x}) \, \mathrm{d}\mu(\mathbf{x})
+\]
+for all $g \in C(I_p)$. In particular, for all $\mathbf{w} \in \mathbb{R}^p$ and $b \in \mathbb{R}$,
+\[
+  \int_{I_p} \sigma(\mathbf{w}^\top \mathbf{x} + b) \, \mathrm{d}\mu(\mathbf{x}) = 0.
+\]
+
+The key step, due to Cybenko (1989), shows that for discriminatory activation functions (which include all bounded, non-constant, continuous $\sigma$), the condition above forces $\mu = 0$, contradicting the assumption that $L$ is non-zero. The discriminatory property is established by noting that for any half-space $H = \{\mathbf{x} : \mathbf{w}^\top \mathbf{x} + b > 0\}$, the pointwise limit
+\[
+  \sigma(\lambda \mathbf{w}^\top \mathbf{x} + \lambda b) \to
+  \begin{cases}
+    1 & \text{if } \mathbf{w}^\top \mathbf{x} + b > 0, \\
+    0 & \text{if } \mathbf{w}^\top \mathbf{x} + b < 0,
+  \end{cases}
+  \quad \text{as } \lambda \to +\infty,
+\]
+combined with dominated convergence, yields $\mu(H) = 0$ for all open half-spaces $H$. Since open half-spaces generate the Borel $\sigma$-algebra on $I_p$, it follows that $\mu = 0$, a contradiction.
+\end{proof}
+
+% -------------------------------------------------------------
+\subsection{Derivation of the Adam and NAdam Update Rules}
+\label{annexure:adam_nadam}
+
+\paragraph{Adam update rule.}
+Let $g_t = \nabla_{\boldsymbol{\theta}} \mathcal{L}(\boldsymbol{\theta}_{t-1})$ denote the gradient of the loss at iteration $t$. The first and second moment estimates are
+\begin{align}
+  m_t &= \beta_1 \, m_{t-1} + (1 - \beta_1) \, g_t, \label{eq:adam_m} \\
+  v_t &= \beta_2 \, v_{t-1} + (1 - \beta_2) \, g_t^2, \label{eq:adam_v}
+\end{align}
+where $\beta_1, \beta_2 \in [0, 1)$ are the decay rates and the squaring in~\eqref{eq:adam_v} is element-wise. Since $m_0 = v_0 = \mathbf{0}$, these estimates are biased towards zero, especially in early iterations. The bias-corrected estimates are
+\begin{align}
+  \hat{m}_t &= \frac{m_t}{1 - \beta_1^t}, \label{eq:adam_mhat} \\
+  \hat{v}_t &= \frac{v_t}{1 - \beta_2^t}. \label{eq:adam_vhat}
+\end{align}
+The parameter update is
+\begin{equation}
+  \boldsymbol{\theta}_t = \boldsymbol{\theta}_{t-1} - \eta \, \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon},
+  \label{eq:adam_update}
+\end{equation}
+where $\eta > 0$ is the learning rate and $\epsilon > 0$ (typically $10^{-8}$) prevents division by zero.
+
+\paragraph{NAdam update rule.}
+NAdam incorporates Nesterov momentum by replacing the bias-corrected first moment $\hat{m}_t$ with a look-ahead estimate. The modification replaces~\eqref{eq:adam_update} with
+\begin{equation}
+  \boldsymbol{\theta}_t = \boldsymbol{\theta}_{t-1} - \eta \, \frac{\beta_1 \hat{m}_t + \frac{(1-\beta_1)}{1-\beta_1^t} g_t}{\sqrt{\hat{v}_t} + \epsilon}.
+  \label{eq:nadam_update}
+\end{equation}
+% -------------------------------------------------------------
+\subsection{Shapley Value Axiom Verification}
+\label{annexure:shapley_axioms}
+
+\paragraph{Axiom 1: Efficiency.}
+\[
+  \sum_{j=1}^{p} \phi_j(v) = v(N) - v(\emptyset).
+\]
+
+\paragraph{Axiom 2: Symmetry.}
+If two players $j$ and $k$ contribute equally to every coalition, i.e.\ $v(S \cup \{j\}) = v(S \cup \{k\})$ for all $S \subseteq N \setminus \{j,k\}$, then $\phi_j(v) = \phi_k(v)$.
+
+\paragraph{Axiom 3: Dummy player.}
+If player $j$ adds nothing to any coalition, i.e.\ $v(S \cup \{j\}) = v(S)$ for all $S \subseteq N \setminus \{j\}$, then $\phi_j(v) = 0$.
+
+\paragraph{Axiom 4: Additivity (linearity).}
+For two games $v$ and $w$, the Shapley value of the combined game $v + w$ is $\phi_j(v + w) = \phi_j(v) + \phi_j(w)$ for all $j$.
+
+\begin{theorem}[Shapley, 1953]
+\label{thm:shapley_uniqueness}
+There exists a unique function $\phi : \mathcal{G}^N \to \mathbb{R}^p$ satisfying Axioms 1--4, and it is given by
+\[
+  \phi_j(v) = \sum_{S \subseteq N \setminus \{j\}} \frac{|S|!\;(p - |S| - 1)!}{p!} \bigl[ v(S \cup \{j\}) - v(S) \bigr].
+\]
+\end{theorem}
+
+\begin{proof}
+\emph{Existence} is verified by direct calculation: substituting the formula into each axiom confirms that all four hold.
+
+\emph{Uniqueness} proceeds by induction on the number of players. For $p = 1$, efficiency forces $\phi_1(v) = v(\{1\}) - v(\emptyset)$, which is unique. For the inductive step, any game $v$ can be decomposed as a linear combination of unanimity games $u_T$ (where $u_T(S) = 1$ if $T \subseteq S$ and $u_T(S) = 0$ otherwise). By additivity, it suffices to determine $\phi_j(u_T)$. By the dummy axiom, $\phi_j(u_T) = 0$ for $j \notin T$. By symmetry, $\phi_j(u_T) = \phi_k(u_T)$ for all $j, k \in T$. By efficiency, $\sum_{j \in T} \phi_j(u_T) = 1$. Hence $\phi_j(u_T) = 1/|T|$ for $j \in T$, which uniquely determines $\phi$ for all unanimity games, and by linearity, for all games.
+\end{proof}
+
+% -------------------------------------------------------------
+\subsection{Gamma GLM Log-Link Score Equations}
+\label{annexure:glm_score}
+
+The expected response is $\mu_i = \exp(\mathbf{x}_i^\top \boldsymbol{\beta})$. The Gamma density with shape parameter $\alpha$ and mean $\mu$ is
+\[
+  f(y; \alpha, \mu) = \frac{1}{\Gamma(\alpha)} \left( \frac{\alpha}{\mu} \right)^\alpha y^{\alpha - 1} \exp\!\left( -\frac{\alpha y}{\mu} \right), \quad y > 0.
+\]
+
+The log-likelihood for observation $i$ (up to a constant not depending on $\boldsymbol{\beta}$) is
+\[
+  \ell_i(\boldsymbol{\beta}) = -\alpha \log \mu_i - \frac{\alpha y_i}{\mu_i} = -\alpha \, \mathbf{x}_i^\top \boldsymbol{\beta} - \alpha \, y_i \exp(-\mathbf{x}_i^\top \boldsymbol{\beta}).
+\]
+
+The score equation with respect to the $k$-th coefficient is obtained by differentiating $\ell = \sum_{i=1}^{n} \ell_i$:
+\begin{equation}
+  \frac{\partial \ell}{\partial \beta_k} = \alpha \sum_{i=1}^{n} \left( \frac{y_i}{\mu_i} - 1 \right) x_{ik} = 0, \quad k = 0, 1, \ldots, p.
+  \label{eq:glm_score}
+\end{equation}
+
+Since $\alpha > 0$ cancels, the maximum-likelihood estimates $\hat{\boldsymbol{\beta}}$ do not depend on the shape parameter. The Fisher information matrix entry is
+\[
+  \mathcal{I}_{kl} = \alpha \sum_{i=1}^{n} \mu_i^{-1} \, x_{ik} \, x_{il},
+\]
+and the asymptotic covariance of $\hat{\boldsymbol{\beta}}$ is $\mathcal{I}^{-1}$.

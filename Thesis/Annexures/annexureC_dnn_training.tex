@@ -1,0 +1,236 @@
+% =============================================================
+% Annexure C: Code for DNN Training
+% =============================================================
+\section{Code for DNN Training}
+\label{annexure:dnn_training}
+
+% -------------------------------------------------------------
+\subsection{FunnelDNN Class Definition}
+\label{annexure:funneldnn}
+
+\begin{lstlisting}[caption={\texttt{FunnelDNN} class definition (bias-free, parameterised activation).}]
+import copy
+import torch
+import torch.nn as nn
+
+class FunnelDNN(nn.Module):
+    """Feed-forward DNN with funnel architecture (bias-free)."""
+
+    def __init__(self, input_dim=22,
+                 hidden_layers=[256, 128, 64, 32, 16],
+                 activation='CELU'):
+        super(FunnelDNN, self).__init__()
+
+        act_map = {
+            'CELU': nn.CELU(),
+            'GELU': nn.GELU(),
+            'Tanh': nn.Tanh()
+        }
+        act_fn = act_map[activation]
+
+        layers = []
+        prev_dim = input_dim
+        for h_dim in hidden_layers:
+            layers.append(nn.Linear(prev_dim, h_dim, bias=False))
+            layers.append(copy.deepcopy(act_fn))
+            prev_dim = h_dim
+        # Output layer: linear, no activation, no bias
+        layers.append(nn.Linear(prev_dim, 1, bias=False))
+
+        self.network = nn.Sequential(*layers)
+
+    def forward(self, x):
+        return self.network(x)
+\end{lstlisting}
+
+% -------------------------------------------------------------
+\subsection{Evaluation Helper Functions}
+\label{annexure:eval_helpers}
+
+\begin{lstlisting}[caption={$R^2$ score, dot-product $r^2$, RMSE, MAE and de-normalisation helpers.}]
+def r2_score(y_true, y_pred):
+    """Standard R-squared: 1 - SS_res / SS_tot."""
+    ss_res = torch.sum((y_true - y_pred) ** 2)
+    ss_tot = torch.sum((y_true - y_true.mean()) ** 2)
+    if ss_tot == 0:
+        return 0.0
+    return (1 - ss_res / ss_tot).item()
+
+def r2_dot(y_true, y_pred):
+    """Dot-product R^2 (squared correlation).
+
+    Used during training on normalised data for speed."""
+    num = torch.dot(y_true.squeeze(),
+                    y_pred.squeeze()) ** 2
+    den = (torch.dot(y_true.squeeze(), y_true.squeeze()) *
+           torch.dot(y_pred.squeeze(), y_pred.squeeze()))
+    if den == 0:
+        return 0.0
+    return (num / den).item()
+
+def denormalise(y_norm):
+    """Convert normalised predictions to original Rand scale."""
+    return y_norm * y_std + y_mean
+
+def rmse(y_true, y_pred):
+    """Root Mean Squared Error."""
+    return torch.sqrt(
+        torch.mean((y_true - y_pred) ** 2)).item()
+
+def mae(y_true, y_pred):
+    """Mean Absolute Error."""
+    return torch.mean(
+        torch.abs(y_true - y_pred)).item()
+\end{lstlisting}
+
+% -------------------------------------------------------------
+\subsection{Training Function}
+\label{annexure:train_model}
+
+\begin{lstlisting}[caption={\texttt{train\_model} function.}]
+import time
+import numpy as np
+import torch.optim as optim
+from torch.utils.data import TensorDataset, DataLoader
+
+def train_model(model, X_tr, y_tr, X_va, y_va,
+                optimiser_cls, lr, batch_size,
+                max_epochs=200, patience=10, val_every=5,
+                betas=None, device=DEVICE, verbose=True):
+    model = model.to(device)
+    criterion = nn.MSELoss()
+
+    # Build optimiser with optional momentum parameters
+    if betas is not None:
+        optimizer = optimiser_cls(
+            model.parameters(), lr=lr, betas=betas)
+    else:
+        optimizer = optimiser_cls(
+            model.parameters(), lr=lr)
+
+    train_ds = TensorDataset(X_tr, y_tr)
+    train_loader = DataLoader(
+        train_ds, batch_size=batch_size,
+        shuffle=True, drop_last=False)
+
+    X_va_d = X_va.to(device)
+    y_va_d = y_va.to(device)
+    X_tr_d = X_tr.to(device)
+    y_tr_d = y_tr.to(device)
+
+    train_losses = []
+    val_epochs, val_losses = [], []
+    train_r2s, val_r2s = [], []
+
+    best_val_r2 = -np.inf
+    best_epoch = 0
+    best_state = None
+    checks_no_improve = 0
+
+    start = time.time()
+
+    for epoch in range(1, max_epochs + 1):
+        # --- Training phase (every epoch) ---
+        model.train()
+        batch_losses = []
+        for xb, yb in train_loader:
+            xb, yb = xb.to(device), yb.to(device)
+            optimizer.zero_grad()
+            pred = model(xb)
+            loss = criterion(pred, yb)
+            loss.backward()
+            optimizer.step()
+            batch_losses.append(loss.item() * xb.size(0))
+
+        train_loss = sum(batch_losses) / len(X_tr)
+        train_losses.append(train_loss)
+
+        # --- Validation phase (every val_every epochs) ---
+        if epoch % val_every == 0 or epoch == 1:
+            model.eval()
+            with torch.no_grad():
+                preds_tr = model(X_tr_d)
+                tr_r2 = r2_dot(y_tr_d, preds_tr)
+                preds_va = model(X_va_d)
+                val_loss = criterion(preds_va, y_va_d).item()
+                va_r2 = r2_dot(y_va_d, preds_va)
+
+            val_epochs.append(epoch)
+            val_losses.append(val_loss)
+            train_r2s.append(tr_r2)
+            val_r2s.append(va_r2)
+
+            if va_r2 > best_val_r2:
+                best_val_r2 = va_r2
+                best_epoch = epoch
+                best_state = copy.deepcopy(
+                    model.state_dict())
+                checks_no_improve = 0
+            else:
+                checks_no_improve += 1
+
+            if checks_no_improve >= patience:
+                break
+
+    elapsed = time.time() - start
+
+    return {
+        'best_model_state': best_state,
+        'best_epoch': best_epoch,
+        'best_val_r2': best_val_r2,
+        'train_losses': train_losses,
+        'val_epochs': val_epochs,
+        'val_losses': val_losses,
+        'train_r2s': train_r2s,
+        'val_r2s': val_r2s,
+        'elapsed': elapsed
+    }
+\end{lstlisting}
+
+% -------------------------------------------------------------
+\subsection{Final Model Training and Checkpoint Saving}
+\label{annexure:final_model}
+
+\begin{lstlisting}[caption={Final model training and checkpoint saving.}]
+torch.manual_seed(SEED)
+final_model = FunnelDNN(input_dim=22,
+                        activation=best_activation)
+
+final_result = train_model(
+    final_model, X_train_t, y_train_t,
+    X_val_t, y_val_t,
+    optimiser_cls=best_optimiser_cls,
+    lr=best_lr, batch_size=best_bs,
+    max_epochs=MAX_EPOCHS, patience=PATIENCE,
+    val_every=VAL_EVERY, betas=best_betas)
+
+final_model.load_state_dict(
+    final_result['best_model_state'])
+final_model.eval()
+
+# Save checkpoint
+checkpoint = {
+    'model_state_dict': final_model.state_dict(),
+    'architecture': {
+        'input_dim': 22,
+        'hidden_layers': [256, 128, 64, 32, 16],
+        'activation': best_activation,
+        'bias': False
+    },
+    'hyperparameters': {
+        'learning_rate': best_lr,
+        'batch_size': best_bs,
+        'optimiser': best_optimiser_name,
+        'betas': best_betas,
+        'best_epoch': final_result['best_epoch']
+    },
+    'standardisation': {
+        'X_mean': X_mean, 'X_std': X_std,
+        'y_mean': float(y_mean), 'y_std': float(y_std)
+    },
+    'features': FEATURES,
+    'metrics': metrics
+}
+
+torch.save(checkpoint, 'chapter3_final_model.pth')
+\end{lstlisting}

@@ -1,0 +1,533 @@
+\PassOptionsToPackage{final}{graphicx}
+\documentclass[12pt,final]{article}
+
+% =============================================================
+% Font Encoding
+% =============================================================
+\usepackage[T1]{fontenc}
+
+% =============================================================
+% Page Layout
+% =============================================================
+\usepackage{geometry}
+\geometry{
+    a4paper,
+    left=25mm,
+    right=25mm,
+    top=25mm,
+    bottom=25mm,
+}
+
+% =============================================================
+% Mathematics
+% =============================================================
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathrsfs}
+
+% =============================================================
+% General Formatting
+% =============================================================
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{stackengine}
+\usepackage{fontawesome}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tocloft}
+\usepackage{etoolbox}
+\usepackage{rotating}
+
+% =============================================================
+% Code Listings
+% =============================================================
+\usepackage{listings}
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red!60!black},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=8pt,
+    frame=single,
+    framesep=4pt,
+    breaklines=true,
+    breakatwhitespace=false,
+    showstringspaces=false,
+    tabsize=4,
+    captionpos=b,
+    aboveskip=10pt,
+    belowskip=10pt
+}
+
+% =============================================================
+% Colour Palette
+% =============================================================
+\definecolor{framegray}{HTML}{E0E0E0}
+\definecolor{dnnpanel}{HTML}{F5F5EF}
+\definecolor{mcpanel}{HTML}{E0F2E9}
+\definecolor{shappanel}{HTML}{FFF3E0}
+\definecolor{bannergray}{HTML}{B0B0B0}
+
+\definecolor{nBlue}{HTML}{5B9BD5}
+\definecolor{nGray}{HTML}{9E9E9E}
+\definecolor{nOrange}{HTML}{FF9800}
+\definecolor{nGreen}{HTML}{66BB6A}
+
+\definecolor{sBlue}{HTML}{2196F3}
+\definecolor{sGreen}{HTML}{4CAF50}
+\definecolor{sOrange}{HTML}{FF9800}
+\definecolor{sTeal}{HTML}{009688}
+
+\definecolor{demoTeal}{HTML}{26A69A}
+\definecolor{healthRed}{HTML}{E53935}
+\definecolor{lifeOlive}{HTML}{6D4C41}
+
+% =============================================================
+% Figures, Tables and Graphics
+% =============================================================
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{pdfpages}
+\usepackage{forest}
+
+% Force graphicx out of draft mode
+\makeatletter
+\Gin@draftfalse
+\makeatother
+
+% =============================================================
+% TikZ
+% =============================================================
+\usepackage{tikz}
+\usetikzlibrary{
+    positioning,
+    arrows.meta,
+    calc,
+    fit,
+    backgrounds,
+    shapes.geometric,
+    decorations.pathreplacing
+}
+
+\usepackage[framemethod=TikZ]{mdframed}
+
+\newmdenv[
+  backgroundcolor=dnnpanel,
+  linecolor=nBlue,
+  linewidth=1pt,
+  roundcorner=6pt,
+  innertopmargin=10pt,
+  innerbottommargin=10pt,
+  innerleftmargin=12pt,
+  innerrightmargin=12pt,
+  skipabove=10pt,
+  skipbelow=10pt
+]{frameworkbox}
+
+% =============================================================
+% Citations
+% =============================================================
+\usepackage{natbib}
+\setcitestyle{authoryear,open={(},close={)}}
+
+% =============================================================
+% Hyperlinks
+% =============================================================
+\usepackage[
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+    hyperfootnotes=true,
+    pagebackref=true
+]{hyperref}
+
+% Format backref to show "Cited on page(s) ..." in the bibliography
+\renewcommand*{\backref}[1]{}
+\renewcommand*{\backrefalt}[4]{%
+  \ifcase #1 %
+    (Not cited.)%
+  \or
+    (Cited on p.~#2.)%
+  \else
+    (Cited on pp.~#2.)%
+  \fi
+}
+
+% ==========================
+% Glossaries and Acronyms
+% ==========================
+\usepackage[
+    acronym,
+    sort=standard,
+    nonumberlist
+]{glossaries}
+
+\makeglossaries
+
+% =============================================================
+% Custom Acronym Table Style
+% =============================================================
+\newglossarystyle{acronymtable}{%
+    \setglossarystyle{long}%
+    \renewenvironment{theglossary}%
+    {%
+        \setlength{\LTpre}{0.4em}%
+        \setlength{\LTpost}{0em}%
+        \setlength{\parskip}{0pt}%
+        \setlength{\parsep}{0pt}%
+        \setlength{\extrarowheight}{0pt}%
+        \renewcommand{\arraystretch}{0.95}%
+        \begin{longtable}{@{}p{0.25\textwidth}p{0.65\textwidth}@{}}%
+    }%
+    {\end{longtable}}%
+    \renewcommand*{\glossaryheader}{%
+        \toprule
+        \textbf{Acronym} & \textbf{Meaning} \\
+        \midrule
+        \endhead
+        \bottomrule
+        \endfoot
+    }%
+    \renewcommand*{\glsgroupheading}[1]{}%
+    \renewcommand*{\glossentry}[2]{%
+        \textbf{\glsentryitem{##1}\glstarget{##1}{\glossentryname{##1}}}
+        &
+        \glossentrydesc{##1}
+        \tabularnewline[0.1em]
+    }%
+}
+
+% =============================================================
+% Footnote markers: blue text, boxed in red
+% =============================================================
+\makeatletter
+\renewcommand{\@makefnmark}{%
+  \hbox{%
+    \textsuperscript{%
+      \normalfont
+      \setlength{\fboxsep}{1pt}%
+      \fcolorbox{red}{white}{\color{blue}\scriptsize\@thefnmark}%
+    }%
+  }%
+}
+\renewcommand{\@makefntext}[1]{%
+  \parindent 1em\noindent
+  \hb@xt@1.8em{\hss\@makefnmark}#1%
+}
+\makeatother
+
+% =============================================================
+% Theorem Environments
+% =============================================================
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{assumption}{Assumption}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% =============================================================
+% Paragraph and Equation Formatting
+% =============================================================
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\numberwithin{equation}{subsection}
+\onehalfspacing
+
+\DeclareMathOperator*{\esssup}{ess\,sup}
+
+% =============================================================
+% List of Equations
+% =============================================================
+\input{Thesis/List of Equations/listofequations}
+
+% =============================================================
+% Header and Footer
+% =============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\renewcommand{\sectionmark}[1]{\markboth{\thesection\quad #1}{}}
+\renewcommand{\subsectionmark}[1]{\markright{\thesubsection\quad #1}}
+
+\fancyhead[L]{\nouppercase{\ifx\rightmark\empty\leftmark\else\rightmark\fi}}
+\fancyhead[R]{\thepage}
+
+% =============================================================
+% Title Formatting
+% =============================================================
+\titleformat{\section}
+  {\normalfont\Large\bfseries}
+  {\thesection}
+  {1em}
+  {}
+
+\titleformat{\subsection}
+  {\normalfont\large\bfseries}
+  {\thesubsection}
+  {1em}
+  {}
+
+% =============================================================
+% Acronym Definitions
+% =============================================================
+\input{Thesis/Acronym Definitions/acronyms}
+
+% =============================================================
+% Forest Node Macros
+% =============================================================
+\newcommand{\MLsupLabel}{%
+  \textbf{Supervised Learning}\\[0.3em]
+  {\scriptsize Labelled data $\{(\mathbf{x}_i,y_i)\}$;\\
+   learn $\mathbf{x}\mapsto y$}%
+}
+
+\newcommand{\MLregLabel}{%
+  \textbf{Regression}\\[0.3em]
+  {\scriptsize Continuous response.\\
+   Linear regression, GLMs,\\
+   regression trees, random forests,\\
+   gradient boosting, DNN}%
+}
+
+\newcommand{\MLthisLabel}{%
+  \textit{This dissertation}\\[0.3em]
+  {\scriptsize DNN regression for health\\
+   insurance cost prediction,\\
+   Monte Carlo input simulation,\\
+   Shapley-value interpretation}%
+}
+
+\newcommand{\MLclsLabel}{%
+  \textbf{Classification}\\[0.3em]
+  {\scriptsize Categorical response.\\
+   Logistic regression, SVMs,\\
+   classification trees,\\
+   neural network classifiers}%
+}
+
+\newcommand{\MLunsLabel}{%
+  \textbf{Unsupervised Learning}\\[0.3em]
+  {\scriptsize Unlabelled data $\{\mathbf{x}_i\}$;\\
+   discover input structure.\\
+   Clustering, PCA,\\
+   density estimation,\\
+   anomaly detection}%
+}
+
+\newcommand{\MLsemiLabel}{%
+  \textbf{Semi-supervised Learning}\\[0.3em]
+  {\scriptsize Labelled and unlabelled data;\\
+   exploit unlabelled structure\\
+   when few responses observed}%
+}
+
+% =============================================================
+% Document
+% =============================================================
+\begin{document}
+
+% =============================================================
+% Cover Page
+% =============================================================
+\includepdf[pages=2]{Thesis/Cover Page/src/cover_only_v4.pdf}
+
+% =============================================================
+% Plagiarism Declaration
+% =============================================================
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{Plagiarism Declaration}
+\includepdf[
+    pages=-,
+    pagecommand={\thispagestyle{plain}}
+]{Thesis/Declarations/Declaration by Masters Student 2.pdf}
+
+% =============================================================
+% Departmental Anti-Plagiarism Declaration
+% =============================================================
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{Anti-Plagiarism Declaration}
+\includepdf[
+    pages=-,
+    pagecommand={\thispagestyle{plain}}
+]{Thesis/Declarations/Stats_AntiPlagiarism_Declaration.pdf}
+
+% =============================================================
+% Declaration on the Use of Generative AI
+% =============================================================
+\clearpage
+\input{Thesis/Declarations/genai_declaration}
+
+% =============================================================
+% Acknowledgements
+% =============================================================
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{Acknowledgements}
+\markboth{Acknowledgements}{}
+\input{Thesis/Acknowledgments/acknowledgments}
+
+% =============================================================
+% Abstract
+% =============================================================
+\clearpage
+\input{Thesis/Abstract/abstract}
+
+% =============================================================
+% List of Figures
+% =============================================================
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{List of Figures}
+\markboth{List of Figures}{}
+\listoffigures
+
+% =============================================================
+% List of Tables
+% =============================================================
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{List of Tables}
+\markboth{List of Tables}{}
+\listoftables
+
+% =============================================================
+% List of Equations
+% =============================================================
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{List of Equations}
+\markboth{List of Equations}{}
+\listofmyequations
+
+% ============================================================
+% List of Acronyms / Abbreviations
+% ============================================================
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{List of Acronyms / Abbreviations}
+\markboth{List of Acronyms / Abbreviations}{}
+
+\glsaddall
+
+\printglossary[
+    type=\acronymtype,
+    title={List of Acronyms / Abbreviations},
+    style=acronymtable
+]
+
+% =============================================================
+% Table of Contents
+% =============================================================
+\clearpage
+\phantomsection
+\markboth{Table of Contents}{}
+\tableofcontents
+
+% =========================================================================================
+% Main Thesis Body
+% =========================================================================================
+
+% =============================================================
+% Chapter 1: Introduction
+% =============================================================
+\clearpage
+\input{Thesis/Chapter 1/src/chapter1_intro.tex}
+
+% =============================================================
+% Chapter 2: Statistical Learning and Interpretable Insurance Modelling
+% =============================================================
+\clearpage
+\input{Thesis/Chapter 2/src/chapter2_litreview.tex}
+
+% =============================================================
+% Chapter 3: Mathematical and Statistical Preliminaries
+% =============================================================
+\clearpage
+\input{Thesis/Chapter 3/src/chapter3_methodology}
+
+% =============================================================
+% Chapter 4: Results
+% =============================================================
+\clearpage
+\input{Thesis/Chapter 4/src/chapter4_results}
+
+% =============================================================
+% Chapter 5: Conclusion
+% =============================================================
+\clearpage
+\input{Thesis/Chapter 5/src/chapter5_conclusion}
+
+% =============================================================
+% Chapter 6: Conclusion and Recommendations
+% =============================================================
+% \clearpage
+% \input{Thesis/Chapter 6/src/chapter6_Recommendations}
+
+% =============================================================
+% Bibliography
+% =============================================================
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{abbrvnat}
+\bibliography{References}
+
+% =============================================================
+% Annexures
+% =============================================================
+\clearpage
+\appendix
+\renewcommand{\thesection}{Annexure \Alph{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+
+\phantomsection
+\addcontentsline{toc}{section}{Annexures}
+\markboth{Annexures}{}
+
+\input{Thesis/Annexures/annexureA_math_details}
+
+\clearpage
+\input{Thesis/Annexures/annexureB_preprocessing}
+
+\clearpage
+\input{Thesis/Annexures/annexureC_dnn_training}
+
+\clearpage
+\input{Thesis/Annexures/annexureD_mc_simulation}
+
+\clearpage
+\input{Thesis/Annexures/annexureE_glm_benchmark}
+
+\clearpage
+\input{Thesis/Annexures/annexureF_shapley}
+
+\clearpage
+\input{Thesis/Annexures/annexureG_diagnostics}
+
+\clearpage
+\input{Thesis/Annexures/annexureH_hyperparameters}
+
+\clearpage
+\input{Thesis/Annexures/annexureI_software}
+
+\end{document}

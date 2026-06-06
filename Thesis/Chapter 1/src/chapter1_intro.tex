@@ -1,0 +1,279 @@
+\section{Introduction}
+\label{sec:introduction}
+
+% ---------------------------------------------------------
+% 1.1 BACKGROUND AND PROBLEM STATEMENT
+% ---------------------------------------------------------
+
+\subsection{Background and Problem Statement}
+\label{sec:background_problem_statement}
+
+Health insurance cost prediction lies at the intersection of statistical
+learning, actuarial modelling and explainable machine learning.  The
+empirical task involves estimating a continuous monetary outcome from
+policyholder characteristics.  A single fitted value or prediction-error
+metric, however, does not fully characterise the behaviour of the fitted
+model.  Understanding how predicted costs vary across a simulated
+population and identifying which input variables contribute most to high
+predicted costs are questions that require methods beyond point
+prediction.
+
+Classical actuarial pricing relies on generalised linear models, which
+offer transparent coefficient interpretation but are limited to
+pre-specified linear predictor structures.  Deep neural networks
+provide a flexible alternative, capable of approximating complex
+nonlinear relationships between policyholder attributes and cost without
+requiring explicit interaction terms
+\citep{goodfellow2016deep, hornik1989multilayer}.  Their flexibility,
+however, comes at the expense of direct interpretability: the parameters
+of a trained network do not admit the same coefficient-level reading as
+a linear model.
+
+This tension between predictive flexibility and interpretability
+motivates the present study.  A framework is needed that combines
+flexible prediction with structured distributional analysis and
+principled feature attribution, so that the fitted model can be
+examined not only for its accuracy but also for its behaviour under
+simulated input variation and for the variables to which it assigns
+large contributions in the upper tail of predicted costs.
+
+% ---------------------------------------------------------
+% 1.2 POSITIONING WITHIN MATHEMATICAL STATISTICS
+% ---------------------------------------------------------
+
+\subsection{Positioning within Mathematical Statistics}
+\label{sec:positioning}
+
+This dissertation is positioned within statistical learning,
+simulation-based inference, model-implied predictive distributions, and
+explainable statistical modelling.  The statistical contribution is not
+only the fitting of a predictive model, but the construction of a
+model-implied distribution under an explicit input law and the
+conditional analysis of feature attributions in the upper tail of that
+distribution.
+
+The predictive component draws on supervised regression and
+neural-network approximation theory.  The simulation component uses
+parametric Monte Carlo methods to propagate input variation through the
+fitted prediction function.  The explanation component applies
+Shapley-value decomposition, grounded in cooperative game theory, to
+attribute fitted predictions to individual input variables.  Each of
+these components has a well-established theoretical basis in
+mathematical statistics; the contribution lies in their integration
+within a single empirical workflow applied to health insurance cost
+prediction.
+
+% ---------------------------------------------------------
+% 1.3 RESEARCH QUESTIONS
+% ---------------------------------------------------------
+
+\subsection{Research Questions}
+\label{sec:research_questions}
+
+The dissertation addresses the following research questions:
+
+\begin{enumerate}
+    \item How does a deep neural network regression model compare with a
+          classical generalised linear model in predicting health insurance
+          costs on a benchmark dataset?
+
+    \item What is the shape and distributional behaviour of the
+          model-implied predicted-cost distribution obtained by propagating
+          parametric Monte Carlo input profiles through the trained network?
+
+    \item Is the product-marginal Monte Carlo input distribution a
+          defensible approximation of the training-data joint distribution
+          for the purpose of generating simulated profiles?
+
+    \item How sensitive is the predicted-cost distribution to
+          residual perturbation from the fitted model?
+
+    \item Which input variables receive the largest Shapley-value
+          attributions globally, and how does the feature-importance
+          ranking change conditionally within high-cost regions of the
+          predicted-cost distribution?
+
+    \item What explains any differences between the global and
+          conditional feature-importance rankings in the upper tail?
+\end{enumerate}
+
+% ---------------------------------------------------------
+% 1.4 RESEARCH OBJECTIVES
+% ---------------------------------------------------------
+
+\subsection{Research Objectives}
+\label{sec:research_objectives}
+
+The research questions stated above are operationalised through the
+following objectives:
+
+\begin{enumerate}
+    \item To fit a deep neural network regression model to a health
+          insurance benchmark dataset and to evaluate its predictive
+          performance against a classical generalised linear model
+          benchmark.
+
+    \item To design and implement a parametric Monte Carlo simulation
+          that generates synthetic policyholder profiles from fitted
+          marginal distributions, propagates them through the trained
+          network, and produces a model-implied distribution of
+          predicted costs.
+
+    \item To validate the Monte Carlo input distribution against the
+          observed training data using joint-distribution diagnostics,
+          bootstrap resampling, and a Shapley attribution invariance
+          check.
+
+    \item To conduct a residual-augmented Monte Carlo sensitivity
+          analysis that examines the effect of residual perturbation on
+          the predicted-cost distribution.
+
+    \item To compute Shapley-value attributions for simulated
+          policyholder profiles and to summarise feature importance at
+          the global level and conditionally within high-cost regions
+          defined by upper-tail thresholds.
+
+    \item To examine how the conditional feature-importance ranking in
+          high-cost regions differs from the global ranking, and to
+          interpret these differences within the context of the fitted
+          model and benchmark data.
+\end{enumerate}
+
+% ---------------------------------------------------------
+% 1.5 RESEARCH GAP
+% ---------------------------------------------------------
+
+\subsection{Research Gap}
+\label{sec:research_gap_intro}
+
+Existing health-cost prediction studies often emphasise predictive
+performance, while interpretability studies often report global feature
+importance on observed data only.  The combination of a fitted neural
+network, Monte Carlo simulation under an explicit input distribution,
+and conditional Shapley summaries in high-cost regions has not been
+presented as an integrated workflow in the health insurance literature.
+This gap is developed through the reviewed studies in
+Section~\ref{sec:literature_review} and stated formally in
+Section~\ref{sec:research_gap}.
+
+% ---------------------------------------------------------
+% 1.6 METHODOLOGICAL OVERVIEW
+% ---------------------------------------------------------
+
+\subsection{Methodological Overview}
+\label{sec:methodological_overview}
+
+The empirical analysis follows a three-stage workflow:
+
+\begin{enumerate}
+    \item \textbf{Prediction.}  A feed-forward deep neural network is
+          trained on a publicly available health insurance benchmark
+          dataset using a sequential hyperparameter comparison.  A
+          Gamma generalised linear model with a logarithmic link
+          function is fitted as a classical actuarial benchmark.
+
+    \item \textbf{Simulation.}  Parametric distributions are fitted to
+          the training attributes, and Monte Carlo sampling generates a
+          large synthetic policyholder population.  The trained network
+          is evaluated at each simulated profile, yielding a
+          model-implied predicted-cost distribution.  Convergence
+          diagnostics, joint-distribution validation, and
+          residual-augmented sensitivity analysis assess the quality and
+          robustness of the simulation.
+
+    \item \textbf{Explanation.}  Shapley values are computed for the
+          simulated profiles using gradient-based approximations.
+          Global feature importance and conditional Shapley summaries
+          at the 90th, 95th and 99th percentile thresholds identify the
+          variables that drive high predicted costs within the fitted
+          model.
+\end{enumerate}
+
+The dataset used is the Kaggle \textit{Insurance Data for Machine
+Learning} benchmark.  It is treated as a methodological benchmark
+rather than a representative underwriting portfolio from a specific
+insurer.  All conclusions are internal to the modelling workflow and
+the benchmark data.
+
+% ---------------------------------------------------------
+% 1.7 SCOPE AND DELIMITATIONS
+% ---------------------------------------------------------
+
+\subsection{Scope and Delimitations}
+\label{sec:scope_delimitations}
+
+The following delimitations define the boundaries of the study:
+
+\begin{itemize}
+    \item \textbf{Benchmark data.}  The analysis uses a publicly
+          available synthetic insurance dataset.  The results describe
+          relationships learned by the fitted model within the benchmark
+          data and should not be interpreted as causal determinants of
+          healthcare costs or as direct evidence of real-world pricing
+          practice.
+
+    \item \textbf{Limited model comparison.}  A classical generalised
+          linear model benchmark is included to contextualise the
+          predictive performance of the deep neural network.  However,
+          the dissertation does not attempt a comprehensive
+          model-selection study across all possible architectures,
+          tree-based models, ensembles, or Bayesian alternatives.
+
+    \item \textbf{Single fitted network.}  The Monte Carlo and Shapley
+          analyses are applied to a single trained network.  The
+          predicted-cost distribution and feature attributions are
+          conditional on this particular fitted model and its estimated
+          parameters.
+
+    \item \textbf{Independent marginals.}  The Monte Carlo input
+          distribution is constructed as a product of independent fitted
+          marginals.  This is a deliberate modelling choice that
+          broadens the simulated input space but does not reproduce
+          the dependence structure of the observed data.
+
+    \item \textbf{Approximate Shapley values.}  The reported
+          attributions are gradient-based SHAP approximations, not
+          exact game-theoretic Shapley values.  They are conditional on
+          the fitted network, the background sample, and the explainer
+          settings.
+
+    \item \textbf{No causal inference.}  The Shapley decomposition
+          identifies variables to which the fitted model assigns large
+          contributions.  It does not establish causal relationships
+          between input variables and healthcare expenditure.
+\end{itemize}
+
+% ---------------------------------------------------------
+% 1.8 DISSERTATION OUTLINE
+% ---------------------------------------------------------
+
+\subsection{Dissertation Outline}
+\label{sec:dissertation_outline}
+
+The remainder of this dissertation is organised as follows:
+
+\begin{description}
+    \item[Chapter~\ref{sec:literature_review}: Literature Review.]
+    Reviews the theoretical and empirical foundations of the DNN--Monte
+    Carlo--Shapley framework, covering statistical learning, deep neural
+    networks for regression, health insurance pricing, Monte Carlo
+    simulation, Shapley-value attribution, and the research gap.
+
+    \item[Chapter~\ref{chap:methods_and_data}: Methods and Data.]
+    Describes the benchmark dataset, preprocessing pipeline, network
+    architecture and training protocol, predictive and structural
+    diagnostics, Monte Carlo simulation design, input-distribution
+    validation, residual-augmented sensitivity analysis, and
+    Shapley-value implementation.
+
+    \item[Chapter~\ref{sec:results}: Results.]
+    Presents the hyperparameter comparison results, the generalised
+    linear model benchmark comparison, the Monte Carlo predicted-cost
+    distribution, the residual-augmented sensitivity analysis,
+    Shapley-value attribution at the global and conditional levels,
+    and the integration of the Monte Carlo and Shapley findings.
+
+    \item[Chapter~\ref{sec:conclusion}: Conclusion.]
+    Summarises the findings, states the contributions and limitations
+    of the study, and identifies directions for future research.
+\end{description}

@@ -1,0 +1,44 @@
+% =============================================================
+% Annexure G: Additional Diagnostic Figures
+% =============================================================
+\section{Additional Diagnostic Figures}
+\label{annexure:diagnostics}
+
+% -------------------------------------------------------------
+\subsection{Data Leakage Check Results}
+\label{annexure:leakage}
+
+\begin{enumerate}
+    \item Split-before-preprocessing: PASS.
+    \item Training-only standardisation: PASS.
+    \item No target-derived predictor: PASS.
+    \item Duplicate-row audit: PASS.
+    \item Cross-partition leakage: PASS.
+    \item Benchmark-dataset characterisation: PASS.
+\end{enumerate}
+
+% -------------------------------------------------------------
+% -------------------------------------------------------------
+\subsection{Partition Distribution Comparisons}
+\label{annexure:partition_distributions}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Thesis/Chapter 4/Figures/fig_split_charges_kde.png}
+    \caption{Charges KDE across partitions.}
+    \label{fig:annexure_split_charges}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Thesis/Chapter 4/Figures/fig_split_numeric_kde.png}
+    \caption{Numeric feature KDE across partitions.}
+    \label{fig:annexure_split_numeric}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Thesis/Chapter 4/Figures/fig_split_dummy_proportions.png}
+    \caption{Dummy variable proportions across partitions.}
+    \label{fig:annexure_split_dummies}
+\end{figure}

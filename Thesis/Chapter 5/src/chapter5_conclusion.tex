@@ -1,0 +1,282 @@
+% =============================================================
+% CHAPTER 5 : CONCLUSION
+% =============================================================
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+% ---------------------------------------------------------
+% 5.1 SUMMARY OF FINDINGS
+% ---------------------------------------------------------
+
+\subsection{Summary of Findings}
+\label{sec:summary_of_findings}
+
+This dissertation developed and applied a three-stage statistical
+framework for health insurance cost prediction, combining deep neural
+network regression, parametric Monte Carlo simulation and Shapley-value
+attribution within a single empirical workflow.  The analysis was
+conducted on a publicly available Kaggle benchmark dataset containing one
+million policyholder records with eleven predictor variables and a
+continuous monetary response.
+
+The predictive stage demonstrated that a feed-forward deep neural network
+with a funnel architecture, CELU activation and Nadam optimisation
+achieves strong out-of-sample performance on the benchmark data, with
+test-set $R^2 = 0.9957$, MAE $= \text{R}251$ and RMSE $= \text{R}290$.
+A five-phase sequential hyperparameter comparison identified this
+configuration from among 16 candidate settings.  A baseline comparison
+with a Gamma generalised linear model (log-link) confirmed that the
+\gls{dnn} substantially outperforms the actuarial-standard model class on
+this dataset, reducing the test RMSE by $68.2\%$ and the test MAE by
+$59.8\%$ relative to the \gls{glm}.  The near-identical training and test
+performance metrics for both models ruled out overfitting, and the
+data-leakage prevention protocols described in
+Section~\ref{sec:data_leakage_prevention} ensured that all reported
+metrics reflect genuine out-of-sample predictive ability.
+
+The simulation stage generated $B = 10\,000$ synthetic policyholder
+profiles from fitted parametric marginal distributions and propagated them
+through the trained network to produce a model-implied predicted-cost
+distribution centred at R16\,707 with moderate dispersion
+(SD $=$ R4\,409) and a mildly right-skewed shape.  Convergence diagnostics
+confirmed adequate Monte Carlo precision, and joint-distribution validation
+(including an energy distance permutation test, $p = 0.730$) established
+that the independent-marginal sampling does not introduce material
+distributional distortion.  The residual-augmented sensitivity analysis
+confirmed that these findings are robust to fitted residual perturbation.
+
+The explanation stage computed gradient-based Shapley values for all
+simulated profiles and summarised feature importance at both the global
+and conditional levels.  At the global level, smoking status is the
+dominant contributor to predicted cost ($I_g = 0.577$), followed by
+coverage level ($0.401$), medical history ($0.368$) and family medical
+history ($0.352$).  The conditional analysis at three upper-tail
+thresholds ($\tau_{90}$, $\tau_{95}$, $\tau_{99}$) revealed a progressive
+shift in the feature-importance ranking.  At $\tau_{99}$, family medical
+history ($I_{g,0.99} = 0.622$), medical history ($0.608$) and coverage
+level ($0.599$) overtake smoking status ($0.566$) as the most important
+variables.  This reversal occurs because smoking status is near-universal
+($99\%$) in the extreme tail and therefore loses its discriminating power;
+the residual variation among the costliest profiles is instead explained by
+coverage tier, medical history and family medical history.  A Shapley
+attribution invariance check confirmed that these rankings are consistent
+across training-data and Monte Carlo input regimes.
+
+% ---------------------------------------------------------
+% 5.2 CONTRIBUTIONS
+% ---------------------------------------------------------
+
+\subsection{Contributions}
+\label{sec:contributions}
+
+The dissertation makes the following contributions:
+
+\begin{enumerate}
+    \item \textbf{Integrated workflow.}  The study presents prediction,
+          simulation and explanation as a single, reproducible pipeline
+          rather than as isolated modelling exercises.  The integration
+          allows the Monte Carlo distribution to define the regions of
+          interest for the Shapley analysis, and the Shapley analysis to
+          decompose the model behaviour within those regions.
+
+    \item \textbf{Conditional Shapley analysis in the upper tail.}  The
+          conditional feature-importance summaries at high-cost thresholds
+          demonstrate that the variables driving extreme predicted costs
+          differ from those that are most important on average.  This
+          finding is relevant to actuarial practice, where understanding
+          the drivers of high-cost claims is of particular interest.
+
+    \item \textbf{Model-implied distribution under an explicit input law.}
+          The Monte Carlo component constructs a model-implied
+          predicted-cost distribution from a formally stated input
+          distribution, rather than reporting predictions only at observed
+          data points.  This connects the neural network prediction
+          function to the simulation-based inference tradition within
+          mathematical statistics.
+
+    \item \textbf{Comprehensive validation.}  The dissertation includes
+          joint-distribution diagnostics, convergence monitoring,
+          residual-augmented sensitivity analysis and Shapley attribution
+          invariance checks that go beyond standard predictive-performance
+          reporting.
+
+    \item \textbf{GLM benchmark contextualisation.}  The Gamma/log-link
+          \gls{glm} comparison contextualises the \gls{dnn}'s performance
+          within the actuarial modelling landscape and establishes that the
+          predictive superiority reflects genuine model-class advantages
+          rather than artefacts of the benchmark data.
+\end{enumerate}
+
+% ---------------------------------------------------------
+% 5.3 STRENGTHS OF THE STUDY
+% ---------------------------------------------------------
+
+\subsection{Strengths of the Study}
+\label{sec:strengths}
+
+The study has the following methodological strengths:
+
+\begin{enumerate}
+    \item \textbf{Large benchmark dataset.}  The analysis is based on one
+          million policyholder records, which provides a substantial sample
+          for training, validation and testing.  The training partition
+          alone contains $524\,288$ observations, reducing sampling
+          variability in model fitting and Shapley-value estimation.
+
+    \item \textbf{Systematic hyperparameter selection.}  The five-phase
+          sequential comparison provides a transparent, reproducible method
+          for selecting the network configuration.  Each phase is
+          documented with validation-loss curves and selection criteria,
+          allowing the choices to be scrutinised and replicated.
+
+    \item \textbf{Rigorous validation pipeline.}  The data-leakage
+          prevention protocols (Section~\ref{sec:data_leakage_prevention}),
+          the joint-distribution input validation, the convergence
+          diagnostics and the residual-augmented sensitivity analysis
+          collectively establish that the Monte Carlo and Shapley results
+          are not artefacts of data contamination, distributional
+          mismatch or residual instability.
+
+    \item \textbf{Multi-level attribution analysis.}  The Shapley-value
+          analysis is conducted at both the global and conditional levels,
+          with three upper-tail thresholds providing a graded view of how
+          feature importance evolves into the extreme tail.  The attribution
+          invariance check further validates the stability of the results
+          across input regimes.
+
+    \item \textbf{Transparent interpretive boundaries.}  All conclusions
+          are explicitly qualified as internal to the fitted model and
+          benchmark data.  No causal claims are made, and the modelling
+          assumptions are stated formally in a consolidated table
+          (Table~\ref{tab:modelling_assumptions_ch3}).
+\end{enumerate}
+
+% ---------------------------------------------------------
+% 5.4 LIMITATIONS
+% ---------------------------------------------------------
+
+\subsection{Limitations}
+\label{sec:limitations_conclusion}
+
+The following limitations qualify the scope of the findings:
+
+\begin{enumerate}
+    \item \textbf{Benchmark data.}  All results are conditional on the
+          Kaggle \textit{Insurance Data for Machine Learning} benchmark
+          dataset, which has a strong simulated structure.  The unusually
+          high predictive performance ($R^2 = 0.9957$) reflects this
+          structure and should not be extrapolated to real-world insurance
+          portfolios, where data are noisier and relationships between
+          covariates and costs are more complex.
+
+    \item \textbf{Limited model comparison.}  The study compares the
+          \gls{dnn} against a single classical baseline (Gamma \gls{glm}
+          with log-link).  Tree-based models such as random forests and
+          gradient-boosted trees, ensemble methods and Bayesian
+          alternatives were not evaluated.  A broader model-selection study
+          would strengthen the case for the \gls{dnn} as the preferred
+          prediction surface.
+
+    \item \textbf{Single fitted network.}  The Monte Carlo and Shapley
+          analyses are conditional on a single trained network with a
+          fixed random seed.  Variability across random initialisations
+          was not quantified.
+
+    \item \textbf{Independent marginals.}  The Monte Carlo input
+          distribution is constructed as a product of independent
+          marginals.  While the joint-distribution validation confirmed
+          that the training-data dependence structure is weak, the
+          independence assumption broadens the simulated input space beyond
+          what would be observed in practice.
+
+    \item \textbf{Approximate Shapley values.}  The reported attributions
+          are gradient-based SHAP approximations, not exact game-theoretic
+          Shapley values.  They are conditional on the fitted network, the
+          background sample of $m_0 = 200$ observations and the explainer
+          settings.
+
+    \item \textbf{Small $\tau_{99}$ sample.}  The conditional Shapley
+          summaries at the 99th percentile threshold rely on approximately
+          100 simulated profiles.  The ranking reversal observed at
+          $\tau_{99}$ is consistent with the monotonic trends at
+          $\tau_{90}$ and $\tau_{95}$, but its precision could be improved
+          with larger simulation sizes or bootstrap confidence intervals.
+
+    \item \textbf{No causal inference.}  The Shapley decomposition
+          identifies variables to which the fitted model assigns large
+          contributions.  It does not establish causal relationships
+          between input variables and healthcare expenditure.
+\end{enumerate}
+
+% ---------------------------------------------------------
+% 5.5 RECOMMENDATIONS FOR FUTURE RESEARCH
+% ---------------------------------------------------------
+
+\subsection{Recommendations for Future Research}
+\label{sec:future_research}
+
+Several directions could extend the framework developed in this
+dissertation:
+
+\begin{enumerate}
+    \item \textbf{Broader model comparison.}  Future work could extend
+          the baseline comparison to include tree-based ensembles (random
+          forests, XGBoost, LightGBM) and Bayesian neural networks.  Such
+          comparisons would clarify whether the \gls{dnn}'s predictive
+          advantage over the \gls{glm} extends to other flexible model
+          classes, and whether the Shapley attribution patterns are
+          model-dependent or model-invariant.
+
+    \item \textbf{Copula-based Monte Carlo inputs.}  Replacing the
+          product-marginal input distribution with a copula-based joint
+          distribution would allow the simulation to reproduce the
+          dependence structure of the observed data more faithfully.  This
+          would be particularly relevant for datasets where the input
+          variables exhibit meaningful correlations.
+
+    \item \textbf{Robustness of extreme-tail attributions.}  The
+          $\tau_{99}$ ranking reversal could be strengthened by increasing
+          the simulation size to $B = 50\,000$ or $100\,000$, by
+          constructing bootstrap confidence intervals for the conditional
+          mean absolute Shapley values, or by introducing intermediate
+          thresholds (e.g.\ $\tau_{97.5}$, $\tau_{98}$) to trace the
+          transition in the importance ranking more finely.
+
+    \item \textbf{Multi-seed stability analysis.}  Training the
+          \gls{dnn} under multiple random initialisations and reporting
+          the distribution of Shapley-value summaries across seeds would
+          quantify the sensitivity of the attribution results to the
+          stochastic training process.
+
+    \item \textbf{Real-world actuarial data.}  Applying the framework to
+          proprietary or regulatory insurance datasets with genuine
+          underwriting heterogeneity would test whether the conditional
+          Shapley findings generalise beyond the synthetic benchmark
+          setting.
+
+    \item \textbf{Bayesian and conformal prediction intervals.}  Coupling
+          the Monte Carlo simulation with Bayesian posterior predictive
+          distributions or conformal prediction intervals would add formal
+          uncertainty quantification to the predicted-cost distribution.
+\end{enumerate}
+
+% ---------------------------------------------------------
+% 5.6 CONCLUDING REMARK
+% ---------------------------------------------------------
+
+\subsection{Concluding Remark}
+\label{sec:concluding_remark}
+
+This dissertation has demonstrated that combining deep neural network
+prediction, Monte Carlo simulation and Shapley-value attribution within a
+single workflow produces richer insight into a fitted model's behaviour
+than any one component in isolation.  The predicted-cost distribution
+characterises the range and shape of the model's output landscape under a
+specified input law, and the conditional Shapley analysis reveals that the
+factors driving extreme predicted costs are not the same as those that
+dominate on average.  These findings contribute to the intersection of
+statistical learning, simulation-based inference and explainable modelling,
+and provide a methodological template that can be adapted to other
+regression problems where distributional analysis and feature attribution
+in specific regions of the output space are of interest.
