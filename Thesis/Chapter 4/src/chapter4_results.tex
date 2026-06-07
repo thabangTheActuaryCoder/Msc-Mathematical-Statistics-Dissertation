@@ -286,6 +286,27 @@ The test \gls{rmse} decreases from R913 to R290 (a $68.2\%$ reduction),
 and the test \gls{mae} decreases from R624 to R251 (a $59.8\%$
 reduction).
 
+The two tree-based benchmarks narrow the gap considerably.  The random
+forest achieves a test $R^2$ of $0.9899$, reducing the \gls{glm}'s test
+\gls{rmse} from R913 to R443 ($51.5\%$) and its \gls{mae} from R624 to
+R358 ($42.6\%$).  However, its training $R^2$ of $0.9946$ versus its
+test $R^2$ of $0.9899$ indicates a degree of overfitting despite the
+\texttt{max\_depth}~$= 30$ constraint, suggesting that the ensemble
+memorises some training-set noise.  XGBoost performs substantially
+better, achieving a test $R^2$ of $0.9955$ with a test \gls{rmse} of
+R297 and a test \gls{mae} of R255.  Its training-to-test gap is
+negligible ($R^2_{\mathrm{train}} = 0.9959$ versus
+$R^2_{\mathrm{test}} = 0.9955$), indicating effective regularisation
+from the learning rate ($\eta = 0.05$) and subsampling parameters.
+The \gls{dnn} marginally outperforms XGBoost on all three test metrics
+($R^2$: $0.9957$ versus $0.9955$; \gls{rmse}: R290 versus R297;
+\gls{mae}: R251 versus R255), while showing perfect
+training-to-test agreement.  The \gls{dnn}'s advantage over the
+tree-based models, although modest in absolute terms, is consistent
+with its ability to learn smooth, continuous mappings through
+backpropagation, whereas tree-based models approximate these mappings
+through piecewise-constant splits.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_glm_vs_dnn_comparison.png}
@@ -343,9 +364,8 @@ similarly observe that neural-network architectures improve upon
 traditional regression baselines for insurance cost estimation.  As noted
 in Section~\ref{sec:integrating_dnn_mc_shapley}, however, this
 superiority is not universal across all tabular insurance datasets
-\citep{richman2021ai}, and the present comparison is limited to a single
-classical baseline on a benchmark dataset with a strong synthetic
-structure.
+\citep{richman2021ai}, and the present comparison is conducted on a
+benchmark dataset with a strong synthetic structure.
 
 
 % =============================================================
