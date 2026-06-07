@@ -485,14 +485,12 @@
 \renewcommand{\thesection}{Annexure \Alph{section}}
 \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
 
-% Widen TOC number columns to accommodate "Annexure X" / "Annexure X.N"
-\addtocontents{toc}{\protect\setlength{\protect\cftsecnumwidth}{7em}}
-\addtocontents{toc}{\protect\setlength{\protect\cftsubsecindent}{8.5em}}
-\addtocontents{toc}{\protect\setlength{\protect\cftsubsecnumwidth}{9em}}
-
 \phantomsection
 \addcontentsline{toc}{section}{Annexures}
 \markboth{Annexures}{}
+
+% Suppress individual annexure entries from the Table of Contents
+\addtocontents{toc}{\protect\setcounter{tocdepth}{-1}}
 
 \input{Thesis/Annexures/annexureA_math_details}
 
