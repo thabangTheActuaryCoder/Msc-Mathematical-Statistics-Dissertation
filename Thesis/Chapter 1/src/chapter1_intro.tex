@@ -282,7 +282,7 @@ that none of the three components could provide in isolation.
 The analytical workflow of this dissertation is organised around three
 sequentially connected stages: prediction, simulation and explanation.
 Each stage produces outputs that serve as inputs to the next, creating an
-integrated pipeline in which the fitted model, the simulated input
+integrated framework in which the fitted model, the simulated input
 population and the feature attributions are jointly analysed.
 
 In the first stage, a deep neural network regression model is trained on
@@ -333,7 +333,7 @@ statistics and actuarial science.
 
 From a methodological perspective, the integration of deep neural network
 prediction, parametric Monte Carlo simulation and Shapley-value
-attribution within a single reproducible pipeline demonstrates a workflow
+attribution within a single reproducible framework demonstrates a workflow
 that is applicable to any regression problem where distributional
 analysis and feature attribution in specific output regions are of
 interest.  While each component is individually well established, their
@@ -395,7 +395,7 @@ research questions that span the three stages of the analytical
 framework.  These questions are formulated to be answerable within the
 scope of the benchmark data and the fitted model, without requiring
 causal interpretation.  Each question addresses a specific aspect of the
-prediction--simulation--explanation pipeline.
+prediction-simulation-explanation framework.
 
 The dissertation addresses the following research questions:
 
@@ -566,7 +566,7 @@ distributions (e.g.\ truncated normal for age, log-normal for BMI),
 while categorical variables are sampled from their observed relative
 frequencies.  A Monte Carlo sample of $B = 10\,000$ synthetic
 policyholder profiles is drawn from the product of these independent
-marginals.  Each profile is encoded using the same preprocessing pipeline
+marginals.  Each profile is encoded using the same preprocessing framework
 applied to the training data and passed through the trained network,
 yielding a sample of predicted costs.
 
@@ -620,7 +620,7 @@ A central concern in any modelling study is whether the reported results
 are genuine reflections of the model's behaviour or artefacts of data
 contamination, distributional mismatch or estimation instability.  This
 dissertation addresses this concern through a multi-layered validation
-strategy that spans all three stages of the analytical pipeline.
+strategy that spans all three stages of the analytical framework.
 
 At the prediction stage, the validation strategy consists of three
 elements.  First, a strict data-leakage prevention protocol ensures that
@@ -763,7 +763,7 @@ pricing.
 
 All modelling code, trained model artefacts and simulation outputs are
 documented to support reproducibility.  The use of a fixed random seed
-throughout the pipeline ensures that all results can be replicated by
+throughout the framework ensures that all results can be replicated by
 independent researchers with access to the same dataset and software
 environment.
 
@@ -879,7 +879,7 @@ identification of the research gap that motivates the present study.
 
 \textbf{Chapter~\ref{chap:methods_and_data}: Methods and Data.}
 This chapter describes the benchmark dataset, the data preprocessing and
-encoding pipeline, the exploratory data analysis, the network
+encoding framework, the exploratory data analysis, the network
 architecture and training protocol, the five-phase hyperparameter
 comparison, the predictive and structural diagnostics, the GLM benchmark
 specification, the Monte Carlo simulation design and input-distribution
