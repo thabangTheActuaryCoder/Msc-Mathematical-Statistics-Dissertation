@@ -228,7 +228,7 @@ Section~\ref{sec:model_validation_diagnostics}.
 The model's predictive performance supports its use in the
 subsequent simulation and attribution analyses.
 
-\subsubsection{Baseline comparison: GLM, Random Forest, XGBoost and DNN}
+\subsubsection{Baseline comparison: \glsentryshort{glm}, \glsentryshort{rf}, \glsentryshort{xgboost} and \glsentryshort{dnn}}
 \label{sec:glm_vs_dnn_comparison_ch4}
 
 The \gls{glm} benchmark specified in
@@ -260,12 +260,12 @@ the original monetary scale.}
     & Validation & 622 & 913 & 0.9574 \\
     & Test       & 624 & 913 & 0.9571 \\
 \addlinespace
-Random Forest
+\gls{rf}
     & Training   & 261 & 324 & 0.9946 \\
     & Validation & 359 & 443 & 0.9900 \\
     & Test       & 358 & 443 & 0.9899 \\
 \addlinespace
-XGBoost
+\gls{xgboost}
     & Training   & 241 & 281 & 0.9959 \\
     & Validation & 255 & 297 & 0.9955 \\
     & Test       & 255 & 297 & 0.9955 \\
@@ -286,19 +286,19 @@ The test \gls{rmse} decreases from R913 to R290 (a $68.2\%$ reduction),
 and the test \gls{mae} decreases from R624 to R251 (a $59.8\%$
 reduction).
 
-The two tree-based benchmarks narrow the gap considerably.  The random
-forest achieves a test $R^2$ of $0.9899$, reducing the \gls{glm}'s test
+The two tree-based benchmarks narrow the gap considerably.  The \gls{rf}
+achieves a test $R^2$ of $0.9899$, reducing the \gls{glm}'s test
 \gls{rmse} from R913 to R443 ($51.5\%$) and its \gls{mae} from R624 to
 R358 ($42.6\%$).  However, its training $R^2$ of $0.9946$ versus its
 test $R^2$ of $0.9899$ indicates a degree of overfitting despite the
 \texttt{max\_depth}~$= 30$ constraint, suggesting that the ensemble
-memorises some training-set noise.  XGBoost performs substantially
+memorises some training-set noise.  \gls{xgboost} performs substantially
 better, achieving a test $R^2$ of $0.9955$ with a test \gls{rmse} of
 R297 and a test \gls{mae} of R255.  Its training-to-test gap is
 negligible ($R^2_{\mathrm{train}} = 0.9959$ versus
 $R^2_{\mathrm{test}} = 0.9955$), indicating effective regularisation
 from the learning rate ($\eta = 0.05$) and subsampling parameters.
-The \gls{dnn} marginally outperforms XGBoost on all three test metrics
+The \gls{dnn} marginally outperforms \gls{xgboost} on all three test metrics
 ($R^2$: $0.9957$ versus $0.9955$; \gls{rmse}: R290 versus R297;
 \gls{mae}: R251 versus R255), while showing perfect
 training-to-test agreement.  The \gls{dnn}'s advantage over the
@@ -311,7 +311,7 @@ through piecewise-constant splits.
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_full_model_comparison.png}
 \caption{Test-set performance comparison across all four model classes:
-\gls{glm} (Gamma, log-link), Random Forest, XGBoost and \gls{dnn}.
+\gls{glm} (Gamma, log-link), \gls{rf}, \gls{xgboost} and \gls{dnn}.
 (a)~Test $R^2$; (b)~test RMSE; (c)~test MAE.}
 \label{fig:glm_vs_dnn_comparison_ch4}
 \end{figure}
@@ -324,7 +324,7 @@ does not match the additive data-generating process underlying this
 dataset.  The charges variable is constructed as an approximately linear
 function of the input features plus noise; the \gls{glm}'s exponential
 inverse-link therefore introduces systematic model misspecification.
-The random forest and XGBoost close the gap substantially, with XGBoost
+The \gls{rf} and \gls{xgboost} close the gap substantially, with \gls{xgboost}
 nearly matching the \gls{dnn}.  The \gls{dnn} learns the additive
 structure directly through its flexible hidden-layer representations and
 achieves the highest test $R^2$ and lowest test RMSE and MAE.

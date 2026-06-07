@@ -1025,9 +1025,9 @@ was motivated in Section~\ref{sec:statistical_learning_supervised_regression}.
 
 Two tree-based ensemble methods are included alongside the \gls{glm} to provide a more comprehensive model-class comparison. Both models use the same 22 encoded features and 60/20/20 partition as the \gls{dnn} and \gls{glm}.
 
-A random forest regressor \citep{breiman2001random} is fitted with 500 trees, maximum depth unrestricted, minimum samples per leaf of 5, and \texttt{random\_state=42}. Random forests aggregate predictions across decorrelated decision trees, reducing variance through bootstrap aggregation (bagging) while maintaining low bias.
+A \gls{rf} regressor \citep{breiman2001random} is fitted with 500 trees, maximum depth unrestricted, minimum samples per leaf of 5, and \texttt{random\_state=42}. \gls{rf} aggregates predictions across decorrelated decision trees, reducing variance through bootstrap aggregation (bagging) while maintaining low bias.
 
-A gradient-boosted tree regressor is fitted using the XGBoost implementation \citep{chen2016xgboost} with 1\,000 boosting rounds, a learning rate of 0.05, maximum depth of 8, and early stopping on the validation set with a patience of 50 rounds. XGBoost constructs an additive ensemble of shallow trees via gradient boosting, using approximate histogram-based splitting for computational efficiency.
+A gradient-boosted tree regressor is fitted using the \gls{xgboost} implementation \citep{chen2016xgboost} with 1\,000 boosting rounds, a learning rate of 0.05, maximum depth of 8, and early stopping on the validation set with a patience of 50 rounds. \gls{xgboost} constructs an additive ensemble of shallow trees via gradient boosting, using approximate histogram-based splitting for computational efficiency.
 
 Hyperparameters for both tree-based models are set to commonly recommended defaults rather than tuned via cross-validation, paralleling the no-tuning treatment of the \gls{glm}. This ensures that the comparison isolates model-class differences rather than tuning effort. All four models are evaluated using $R^2$, \gls{rmse} and \gls{mae} on the original monetary scale across all three partitions.
 

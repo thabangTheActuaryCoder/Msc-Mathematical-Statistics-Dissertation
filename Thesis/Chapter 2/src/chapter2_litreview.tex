@@ -1030,8 +1030,8 @@ surface compatible with the simulation and interpretation workflow.
 
 \noindent
 The use of a \gls{dnn} should not be read as a dismissal of competing
-tabular-data methods. Tree-based models and ensemble methods such as random
-forests and gradient-boosted trees can also capture nonlinearities and
+tabular-data methods. Tree-based models and ensemble methods such as
+\gls{rf} and gradient-boosted trees can also capture nonlinearities and
 interactions, and empirical work on structured datasets shows that they are
 often strong competitors \citep{grinsztajn2022why,orji2024explainable}. The
 \gls{dnn} is used because it provides a fitted nonlinear prediction
@@ -2065,7 +2065,7 @@ widely used for insurance cost prediction on structured tabular data.
 health insurance cost data and report predictive performance comparable to, and
 in some configurations exceeding, that of neural networks.  More broadly,
 \citet{grinsztajn2022why} provide systematic evidence that tree-based models,
-particularly gradient-boosted implementations such as XGBoost
+particularly gradient-boosted implementations such as \gls{xgboost}
 \citep{chen2016xgboost}, frequently match or outperform deep neural networks on
 medium-sized tabular datasets of the kind encountered in actuarial practice.
 Because insurance cost prediction is fundamentally an actuarial problem defined
@@ -2075,8 +2075,8 @@ images or text, tree-based methods represent a credible alternative to the
 dissertation nonetheless selects the \gls{dnn} as the primary model for the
 Monte Carlo and Shapley workflow because its smooth, differentiable prediction
 surface is directly compatible with gradient-based Shapley computation and
-continuous forward-pass evaluation over large simulated input samples.  A random
-forest and an XGBoost regressor are fitted as benchmarks to contextualise the
+continuous forward-pass evaluation over large simulated input samples.  A \gls{rf}
+and an \gls{xgboost} regressor are fitted as benchmarks to contextualise the
 \gls{dnn}'s predictive performance within this spectrum of model classes.
 
 \noindent
