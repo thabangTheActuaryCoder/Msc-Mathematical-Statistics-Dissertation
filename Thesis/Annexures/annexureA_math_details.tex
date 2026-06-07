@@ -21,13 +21,13 @@ satisfies
 \end{theorem}
 
 \begin{proof}
-The proof proceeds by contradiction and uses the Hahn--Banach theorem from functional analysis. Define the family
+The proof proceeds by contradiction and uses the Hahn-Banach theorem from functional analysis. Define the family
 \[
   \mathcal{S} = \bigl\{ \sigma(\mathbf{w}^\top \mathbf{x} + b) : \mathbf{w} \in \mathbb{R}^p,\; b \in \mathbb{R} \bigr\}
 \]
 and let $\mathcal{M}$ denote the closure of $\operatorname{span}(\mathcal{S})$ in $C(I_p)$ with respect to the supremum norm. We wish to show $\mathcal{M} = C(I_p)$.
 
-Suppose, for contradiction, that $\mathcal{M} \neq C(I_p)$. By the Hahn--Banach theorem, there exists a non-zero bounded linear functional $L \in C(I_p)^*$ such that $L(g) = 0$ for all $g \in \mathcal{M}$. By the Riesz representation theorem, there exists a non-zero finite signed regular Borel measure $\mu$ on $I_p$ such that
+Suppose, for contradiction, that $\mathcal{M} \neq C(I_p)$. By the Hahn-Banach theorem, there exists a non-zero bounded linear functional $L \in C(I_p)^*$ such that $L(g) = 0$ for all $g \in \mathcal{M}$. By the Riesz representation theorem, there exists a non-zero finite signed regular Borel measure $\mu$ on $I_p$ such that
 \[
   L(g) = \int_{I_p} g(\mathbf{x}) \, \mathrm{d}\mu(\mathbf{x})
 \]
@@ -96,16 +96,16 @@ For two games $v$ and $w$, the Shapley value of the combined game $v + w$ is $\p
 
 \begin{theorem}[Shapley, 1953]
 \label{thm:shapley_uniqueness}
-There exists a unique function $\phi : \mathcal{G}^N \to \mathbb{R}^p$ satisfying Axioms 1--4, and it is given by
+There exists a unique function $\phi : \mathcal{G}^N \to \mathbb{R}^p$ satisfying Axioms 1 to 4, and it is given by
 \[
   \phi_j(v) = \sum_{S \subseteq N \setminus \{j\}} \frac{|S|!\;(p - |S| - 1)!}{p!} \bigl[ v(S \cup \{j\}) - v(S) \bigr].
 \]
 \end{theorem}
 
 \begin{proof}
-\emph{Existence} is verified by direct calculation: substituting the formula into each axiom confirms that all four hold.
+Existence is verified by direct calculation: substituting the formula into each axiom confirms that all four hold.
 
-\emph{Uniqueness} proceeds by induction on the number of players. For $p = 1$, efficiency forces $\phi_1(v) = v(\{1\}) - v(\emptyset)$, which is unique. For the inductive step, any game $v$ can be decomposed as a linear combination of unanimity games $u_T$ (where $u_T(S) = 1$ if $T \subseteq S$ and $u_T(S) = 0$ otherwise). By additivity, it suffices to determine $\phi_j(u_T)$. By the dummy axiom, $\phi_j(u_T) = 0$ for $j \notin T$. By symmetry, $\phi_j(u_T) = \phi_k(u_T)$ for all $j, k \in T$. By efficiency, $\sum_{j \in T} \phi_j(u_T) = 1$. Hence $\phi_j(u_T) = 1/|T|$ for $j \in T$, which uniquely determines $\phi$ for all unanimity games, and by linearity, for all games.
+Uniqueness proceeds by induction on the number of players. For $p = 1$, efficiency forces $\phi_1(v) = v(\{1\}) - v(\emptyset)$, which is unique. For the inductive step, any game $v$ can be decomposed as a linear combination of unanimity games $u_T$ (where $u_T(S) = 1$ if $T \subseteq S$ and $u_T(S) = 0$ otherwise). By additivity, it suffices to determine $\phi_j(u_T)$. By the dummy axiom, $\phi_j(u_T) = 0$ for $j \notin T$. By symmetry, $\phi_j(u_T) = \phi_k(u_T)$ for all $j, k \in T$. By efficiency, $\sum_{j \in T} \phi_j(u_T) = 1$. Hence $\phi_j(u_T) = 1/|T|$ for $j \in T$, which uniquely determines $\phi$ for all unanimity games, and by linearity, for all games.
 \end{proof}
 
 % -------------------------------------------------------------

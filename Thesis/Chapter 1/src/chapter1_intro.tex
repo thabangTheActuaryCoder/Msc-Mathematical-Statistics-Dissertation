@@ -395,40 +395,40 @@ research questions that span the three stages of the analytical
 framework.  These questions are formulated to be answerable within the
 scope of the benchmark data and the fitted model, without requiring
 causal interpretation.  Each question addresses a specific aspect of the
-prediction-simulation-explanation framework.
+prediction, simulation and explanation framework.
 
 The dissertation addresses the following research questions:
 
 \begin{enumerate}
-    \item How does a deep neural network regression model compare with a
+    \item \label{rq:1} How does a deep neural network regression model compare with a
           classical generalised linear model in predicting health insurance
           costs on a benchmark dataset?
 
-    \item What is the shape and distributional behaviour of the
+    \item \label{rq:2} What is the shape and distributional behaviour of the
           model-implied predicted-cost distribution obtained by propagating
           parametric Monte Carlo input profiles through the trained network?
 
-    \item Is the product-marginal Monte Carlo input distribution a
+    \item \label{rq:3} Is the product-marginal Monte Carlo input distribution a
           defensible approximation of the training-data joint distribution
           for the purpose of generating simulated profiles?
 
-    \item How sensitive is the predicted-cost distribution to
+    \item \label{rq:4} How sensitive is the predicted-cost distribution to
           residual perturbation from the fitted model?
 
-    \item Which input variables receive the largest Shapley-value
+    \item \label{rq:5} Which input variables receive the largest Shapley-value
           attributions globally, and how does the feature-importance
           ranking change conditionally within high-cost regions of the
           predicted-cost distribution?
 
-    \item What explains any differences between the global and
+    \item \label{rq:6} What explains any differences between the global and
           conditional feature-importance rankings in the upper tail?
 \end{enumerate}
 
-Research Question~1 addresses the predictive stage.  Research
-Questions~2--4 address the simulation stage, covering the distributional
+Research Question~\ref{rq:1} addresses the predictive stage.  Research
+Questions~\ref{rq:2} to \ref{rq:4} address the simulation stage, covering the distributional
 characterisation, the input-distribution validity and the
-residual-perturbation robustness respectively.  Research Questions~5
-and~6 address the explanation stage, covering both the global and
+residual-perturbation robustness respectively.  Research Questions~\ref{rq:5}
+and~\ref{rq:6} address the explanation stage, covering both the global and
 conditional Shapley analyses and the interpretation of any observed
 ranking changes.
 
@@ -447,32 +447,32 @@ questions:
     \item To fit a deep neural network regression model to a health
           insurance benchmark dataset and to evaluate its predictive
           performance against a classical generalised linear model
-          benchmark.  (Research Question~1)
+          benchmark.
 
     \item To design and implement a parametric Monte Carlo simulation
           that generates synthetic policyholder profiles from fitted
           marginal distributions, propagates them through the trained
           network, and produces a model-implied distribution of
-          predicted costs.  (Research Question~2)
+          predicted costs.
 
     \item To validate the Monte Carlo input distribution against the
           observed training data using joint-distribution diagnostics,
           bootstrap resampling, and a Shapley attribution invariance
-          check.  (Research Question~3)
+          check.
 
     \item To conduct a residual-augmented Monte Carlo sensitivity
           analysis that examines the effect of residual perturbation on
-          the predicted-cost distribution.  (Research Question~4)
+          the predicted-cost distribution.
 
     \item To compute Shapley-value attributions for simulated
           policyholder profiles and to summarise feature importance at
           the global level and conditionally within high-cost regions
-          defined by upper-tail thresholds.  (Research Question~5)
+          defined by upper-tail thresholds.
 
     \item To examine how the conditional feature-importance ranking in
           high-cost regions differs from the global ranking, and to
           interpret these differences within the context of the fitted
-          model and benchmark data.  (Research Question~6)
+          model and benchmark data.
 \end{enumerate}
 
 % ---------------------------------------------------------
@@ -566,7 +566,7 @@ distributions (e.g.\ truncated normal for age, log-normal for BMI),
 while categorical variables are sampled from their observed relative
 frequencies.  A Monte Carlo sample of $B = 10\,000$ synthetic
 policyholder profiles is drawn from the product of these independent
-marginals.  Each profile is encoded using the same preprocessing framework
+marginals.  Each profile is encoded using the same preprocessing procedure
 applied to the training data and passed through the trained network,
 yielding a sample of predicted costs.
 
@@ -599,8 +599,8 @@ Monte Carlo input regimes to confirm consistency.
 \subsubsection{The benchmark dataset}
 \label{sec:dataset_overview}
 
-The dataset used is the Kaggle \textit{Insurance Data for Machine
-Learning} benchmark, containing one million policyholder records with
+The dataset used is the Kaggle Insurance Data for Machine
+Learning benchmark, containing one million policyholder records with
 eleven predictor variables and a continuous monetary response.  The
 dataset is partitioned into training ($60\%$, $n = 524\,288$),
 validation ($20\%$, $n = 262\,144$) and test ($20\%$, $n = 262\,144$)
@@ -740,8 +740,8 @@ The following delimitations define the boundaries of the study:
 \subsection{Ethical Considerations}
 \label{sec:ethical_considerations}
 
-The analysis is conducted on the Kaggle \textit{Insurance Data for
-Machine Learning} benchmark dataset, which is publicly available and
+The analysis is conducted on the Kaggle Insurance Data for
+Machine Learning benchmark dataset, which is publicly available and
 contains no personally identifiable information.  The dataset is
 synthetic in nature and does not represent actual policyholder records
 from any insurance company.  No data collection involving human
@@ -866,9 +866,9 @@ deferred to the relevant chapters.
 
 The remainder of this dissertation is organised as follows.
 
-\textbf{Chapter~\ref{sec:literature_review}: Literature Review.}
+\subsubsection*{Chapter~\ref{sec:literature_review}: Literature Review}
 This chapter reviews the theoretical and empirical foundations of the
-DNN--Monte Carlo--Shapley framework.  The review covers statistical
+DNN, Monte Carlo and Shapley framework.  The review covers statistical
 learning theory and supervised regression, deep neural network
 architectures and their approximation properties, generalised linear
 models as actuarial baselines, health insurance cost prediction with
@@ -877,9 +877,9 @@ attribution theory and the SHAP framework, and conditional
 feature-importance analysis.  The chapter concludes with a formal
 identification of the research gap that motivates the present study.
 
-\textbf{Chapter~\ref{chap:methods_and_data}: Methods and Data.}
+\subsubsection*{Chapter~\ref{chap:methods_and_data}: Methods and Data}
 This chapter describes the benchmark dataset, the data preprocessing and
-encoding framework, the exploratory data analysis, the network
+encoding procedure, the exploratory data analysis, the network
 architecture and training protocol, the five-phase hyperparameter
 comparison, the predictive and structural diagnostics, the GLM benchmark
 specification, the Monte Carlo simulation design and input-distribution
@@ -888,7 +888,7 @@ Shapley-value implementation.  All methodological choices are documented
 with their statistical justification, and a consolidated table of
 modelling assumptions is provided.
 
-\textbf{Chapter~\ref{sec:results}: Results.}
+\subsubsection*{Chapter~\ref{sec:results}: Results}
 This chapter presents the empirical results of the three-stage workflow.
 The chapter reports the hyperparameter comparison outcomes, the DNN
 versus GLM benchmark comparison, the Monte Carlo predicted-cost
@@ -898,7 +898,7 @@ global and conditional Shapley-value attributions, the
 feature-importance ranking reversal in the upper tail, and the Shapley
 attribution invariance check.
 
-\textbf{Chapter~\ref{sec:conclusion}: Conclusion.}
+\subsubsection*{Chapter~\ref{sec:conclusion}: Conclusion}
 The final chapter summarises the key findings in relation to each
 research question, states the contributions and strengths of the study,
 discusses limitations, examines implications for actuarial practice and

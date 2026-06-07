@@ -6,7 +6,7 @@
 \label{chap:methods_and_data}
 
 \noindent
-This chapter translates the conceptual DNN--Monte Carlo--Shapley framework
+This chapter translates the conceptual DNN, Monte Carlo and Shapley framework
 of Chapter \ref{sec:literature_review} into a concrete empirical workflow.  The analysis uses a publicly available health insurance benchmark dataset containing one
 million policyholder records, eleven raw predictors, and a continuous
 response variable, \texttt{charges}.  The chapter proceeds sequentially:
@@ -31,7 +31,7 @@ interpretive boundaries.
 \label{sec:data_source_variable_structure}
 
 The raw dataset, taken from Kaggle under the title
-\textit{Insurance Data for Machine Learning}
+Insurance Data for Machine Learning
 \citep{kaggleInsuranceDataML}, contains $n = 1\,000\,000$ observations and
 $12$ original columns.  Eleven of these are predictors; the remaining
 column, \texttt{charges}, is the continuous monetary outcome.
@@ -61,9 +61,9 @@ levels are well represented; none require merging.
 \textbf{Variable} & \textbf{Role and type} & \textbf{Description} & \textbf{Model-ready representation} \\
 \midrule
 \texttt{charges} & Response, continuous & Insurance charge; positive monetary outcome & Standardised during training; de-normalised for evaluation \\
-\texttt{age} & Predictor, numerical & Age (years), $18$--$65$ & One numerical input, standardised \\
-\texttt{bmi} & Predictor, numerical & Body mass index, $18.00$--$50.00$ & One numerical input, standardised \\
-\texttt{children} & Predictor, count & Number of dependants, $0$--$5$ & One numerical input, standardised \\
+\texttt{age} & Predictor, numerical & Age (years), $18$ to $65$ & One numerical input, standardised \\
+\texttt{bmi} & Predictor, numerical & Body mass index, $18.00$ to $50.00$ & One numerical input, standardised \\
+\texttt{children} & Predictor, count & Number of dependants, $0$ to $5$ & One numerical input, standardised \\
 \texttt{gender} & Predictor, binary & Policyholder gender & One binary indicator (reference: female) \\
 \texttt{smoker} & Predictor, binary & Smoking status (yes/no) & One binary indicator (reference: no) \\
 \texttt{region} & Predictor, categorical & Geographical region (4 levels) & Three dummy indicators (reference: northeast) \\
@@ -228,7 +228,7 @@ performance ($R^2 = 0.9957$) is attributable to the strong simulated
 structure of the Kaggle benchmark dataset rather than to any leakage
 pathway.  These protocols ensure that every reported performance metric
 reflects genuine out-of-sample predictive ability.  The preprocessing
-pipeline is audited in Annexure~G.
+procedure is audited in Annexure~G.
 
 % ------------------------------
 % 3.3 EXPLORATORY DIAGNOSTICS
@@ -1216,7 +1216,7 @@ charges (approximately R5\,000 to R30\,000), with no visible funnel shape
 or systematic trend. The residual magnitudes range from approximately
 $-600$ to $+600$, which is small relative to the response scale.
 Panel~(b) displays the residual histogram, which is approximately
-symmetric and bell-shaped, centred at zero. Panel~(c) shows the Q--Q plot
+symmetric and bell-shaped, centred at zero. Panel~(c) shows the Q-Q plot
 of standardised residuals. The central portion follows the theoretical
 reference line closely, while both tails exhibit slight compression,
 indicating that the residual distribution has slightly lighter tails than a
@@ -1607,7 +1607,7 @@ and subsequently encoded using the reference-category scheme.
 \subsubsection{Goodness-of-fit and support checks}
 
 For continuous variables, empirical histograms and density overlays are
-inspected, and Kolmogorov--Smirnov (K-S) and Anderson--Darling (A-D)
+inspected, and Kolmogorov-Smirnov (K-S) and Anderson-Darling (A-D)
 statistics are recorded.  These two tests were selected because they are
 among the most powerful omnibus goodness-of-fit tests for the continuous
 distributions under consideration: the K-S statistic measures the maximum
@@ -2129,7 +2129,7 @@ differentiable \gls{dnn}. A model-agnostic KernelSHAP calculation may be
 applied to a small validation subset as a computational check if required.
 
 It is important to note that the gradient-based SHAP explainer computes
-\textit{approximate} Shapley values, not exact game-theoretic Shapley
+approximate Shapley values, not exact game-theoretic Shapley
 values.  Exact computation requires evaluating the prediction function at
 all $2^p$ feature subsets, which is computationally infeasible for $p = 22$
 encoded features ($2^{22} = 4\,194\,304$ coalition evaluations per
@@ -2361,4 +2361,4 @@ High-cost profiles are defined by empirical upper-tail quantiles of the simulate
 
 With the data, architecture, simulation design, attribution method and
 modelling assumptions now fully specified, the empirical results of the
-three-stage pipeline are presented in Chapter~\ref{sec:results}.
+three-stage framework are presented in Chapter~\ref{sec:results}.
