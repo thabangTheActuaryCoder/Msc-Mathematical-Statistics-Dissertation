@@ -22,7 +22,7 @@ relevant literature in a sequence that mirrors the framework itself: from
 prediction to simulation and then to explanation.
 
 \noindent
-The review begins with the integrated DNN--Monte Carlo--Shapley framework
+The review begins with the integrated DNN, Monte Carlo and Shapley framework
 (Section~\ref{sec:integrating_dnn_mc_shapley}), establishing why prediction
 accuracy alone provides only a partial account of model behaviour and why
 distributional analysis and feature-level attribution are needed as
@@ -605,7 +605,7 @@ predicted costs,
 \end{equation}
 \equationlistentry{Fitted predictions for Monte Carlo samples}
 The collection \(\{\widehat{Y}^{(\ell)}\}_{\ell=1}^{M}\) is the
-\emph{model-implied predicted-cost distribution} under \(\widehat{F}_{X}\)
+model-implied predicted-cost distribution under \(\widehat{F}_{X}\)
 \citep{glasserman2004monte, rubinstein2016simulation, owen2013monte}.
 
 \noindent
@@ -3002,13 +3002,13 @@ the fitted model attributes to high-cost simulated profiles.
 \noindent
 The framework outlined in Section~\ref{sec:methodological_overview} addresses
 this gap by connecting the three components within a single empirical workflow
-(Figure~\ref{fig:integrated_framework}).  The concrete data pipeline,
+(Figure~\ref{fig:integrated_framework}).  The concrete methodological workflow,
 distributional choices and implementation details are specified in
 Chapter~\ref{chap:methods_and_data}.
 
 The conceptual framework, theoretical foundations and research gap developed
 in this chapter provide the basis for the empirical methodology that follows.
 Chapter~\ref{chap:methods_and_data} translates these components into a
-concrete data pipeline, specifying the benchmark dataset, preprocessing
+concrete methodological workflow, specifying the benchmark dataset, preprocessing
 protocol, network architecture, Monte Carlo simulation design and
 Shapley-value implementation.

@@ -68,11 +68,11 @@ attribution within specific regions of that landscape.
 
 Chapter~\ref{chap:methods_and_data} translated the conceptual framework
 into a concrete empirical workflow.  The analysis was based on the Kaggle
-\textit{Insurance Data for Machine Learning} benchmark dataset
+Insurance Data for Machine Learning benchmark dataset
 \citep{kaggleInsuranceDataML}, containing one million policyholder records
 with eleven raw predictors and a continuous monetary response.  The
-chapter specified the data preprocessing pipeline, including the
-training--validation--test partition ($524\,288 / 237\,856 / 237\,856$)
+chapter specified the data preprocessing procedure, including the
+training, validation and test partition ($524\,288 / 237\,856 / 237\,856$)
 and the data-leakage prevention protocols that ensured all preprocessing
 parameters were computed exclusively on the training partition.  The
 funnel architecture ($22 \to 256 \to 128 \to 64 \to 32 \to 16 \to 1$)
@@ -155,10 +155,10 @@ The six research questions posed in Section~\ref{sec:research_questions}
 span the predictive, simulation and explanation stages of the framework.
 Each question is now addressed in light of the empirical results.
 
-\textbf{Research Question~1.}
-\textit{How does a deep neural network regression model compare with a
+\subsubsection*{Research Question~\ref{rq:1}}
+How does a deep neural network regression model compare with a
 classical generalised linear model in predicting health insurance costs on
-a benchmark dataset?}
+a benchmark dataset?
 
 The DNN achieves a test-set $R^2$ of $0.9957$, a test MAE of R251 and a
 test RMSE of R290.  The Gamma GLM (log-link) achieves a test-set $R^2$ of
@@ -178,10 +178,10 @@ kaushik2022machine}, although the unusually high $R^2$ reflects the
 clean, structured nature of the benchmark data and should not be
 extrapolated to real-world insurance portfolios.
 
-\textbf{Research Question~2.}
-\textit{What is the shape and distributional behaviour of the
+\subsubsection*{Research Question~\ref{rq:2}}
+What is the shape and distributional behaviour of the
 model-implied predicted-cost distribution obtained by propagating
-parametric Monte Carlo input profiles through the trained network?}
+parametric Monte Carlo input profiles through the trained network?
 
 The distribution is approximately symmetric (skewness $= 0.128$) and
 slightly platykurtic (kurtosis $= -0.304$), with a mean of R16\,707 and
@@ -197,10 +197,10 @@ confirmed that the Monte Carlo standard error at $B = 10\,000$ is R44.3,
 representing $0.27\%$ of the mean predicted cost, and that the running
 summaries have stabilised.
 
-\textbf{Research Question~3.}
-\textit{Is the product-marginal Monte Carlo input distribution a
+\subsubsection*{Research Question~\ref{rq:3}}
+Is the product-marginal Monte Carlo input distribution a
 defensible approximation of the training-data joint distribution for the
-purpose of generating simulated profiles?}
+purpose of generating simulated profiles?
 
 Five complementary diagnostics support an affirmative answer.  The
 correlation matrix difference showed small absolute pairwise differences.
@@ -219,9 +219,9 @@ noted, however, that the independence assumption broadens the simulated
 input space and can generate implausible covariate combinations.  This
 limitation is discussed further in Section~\ref{sec:limitations_conclusion}.
 
-\textbf{Research Question~4.}
-\textit{How sensitive is the predicted-cost distribution to residual
-perturbation from the fitted model?}
+\subsubsection*{Research Question~\ref{rq:4}}
+How sensitive is the predicted-cost distribution to residual
+perturbation from the fitted model?
 
 The predicted-cost distribution is robust to residual perturbation.  The
 centred training residuals are symmetric, bell-shaped and homoscedastic.
@@ -233,10 +233,10 @@ without asymmetry or heavy-tailed distortion.  The DNN's residuals on
 this benchmark dataset are sufficiently small and well-behaved that their
 addition does not alter the distributional conclusions.
 
-\textbf{Research Question~5.}
-\textit{Which input variables receive the largest Shapley-value
+\subsubsection*{Research Question~\ref{rq:5}}
+Which input variables receive the largest Shapley-value
 attributions globally, and how does the feature-importance ranking change
-conditionally within high-cost regions of the predicted-cost distribution?}
+conditionally within high-cost regions of the predicted-cost distribution?
 
 At the global level, four variables form a clear top tier: smoking status
 ($I_g = 0.577$), coverage level ($0.401$), medical history ($0.368$) and
@@ -253,9 +253,9 @@ stable across all thresholds, indicating that the reversal is driven
 entirely by changes in the relative importance of the top-tier
 categorical risk factors.
 
-\textbf{Research Question~6.}
-\textit{What explains any differences between the global and conditional
-feature-importance rankings in the upper tail?}
+\subsubsection*{Research Question~\ref{rq:6}}
+What explains any differences between the global and conditional
+feature-importance rankings in the upper tail?
 
 The ranking reversal at $\tau_{99}$ is explained by the compositional
 structure of the extreme upper-tail profiles.  At $\tau_{99}$, the
@@ -291,7 +291,7 @@ modelling.
 
 The primary contribution is the integration of deep neural network
 regression, parametric Monte Carlo simulation and Shapley-value
-attribution within a single, reproducible pipeline.  In the existing
+attribution within a single, reproducible framework.  In the existing
 literature, these three components are typically applied in isolation:
 prediction studies report out-of-sample performance metrics without
 distributional analysis; Monte Carlo studies simulate quantities of
@@ -304,7 +304,7 @@ provide in isolation.  The Monte Carlo distribution defines the regions of
 interest for the Shapley analysis, and the conditional Shapley analysis
 decomposes the model behaviour within those regions.  Each component
 produces outputs that serve as inputs to the next, creating a connected
-pipeline in which the fitted model, the simulated input population and the
+framework in which the fitted model, the simulated input population and the
 feature attributions are jointly analysed.
 
 The conditional feature-importance summaries at high-cost thresholds
@@ -337,7 +337,7 @@ model's output landscape under a specified input law, allowing the
 analyst to study the range, dispersion and tail behaviour of the
 predictions as statistical quantities in their own right.
 
-The multi-layered validation pipeline, comprising joint-distribution
+The multi-layered validation protocol, comprising joint-distribution
 diagnostics, convergence monitoring, residual-augmented sensitivity
 analysis and Shapley attribution invariance checks, provides a template
 for validating Monte Carlo and Shapley analyses in other applied settings.
@@ -410,8 +410,8 @@ scope of these findings.  Several of these limitations are inherent in the
 methodological choices made in this dissertation; others reflect the
 constraints of the benchmark data.
 
-All results are conditional on the Kaggle \textit{Insurance Data for
-Machine Learning} benchmark dataset, which has a strong simulated
+All results are conditional on the Kaggle Insurance Data for
+Machine Learning benchmark dataset, which has a strong simulated
 structure.  The unusually high predictive performance ($R^2 = 0.9957$)
 reflects this structure and should not be extrapolated to real-world
 insurance portfolios, where data are noisier, relationships between
@@ -439,7 +439,7 @@ model classes perform comparably or better.
 
 The Monte Carlo and Shapley analyses are conditional on a single trained
 network with a fixed random seed.  While the early stopping criterion and
-the near-identical training--test performance provide evidence of stable
+the near-identical training and test performance provide evidence of stable
 convergence, the sensitivity of the Shapley attributions to the stochastic
 training process is an open question.  Different random seeds may produce
 slightly different weight configurations, which could produce slightly
@@ -523,7 +523,7 @@ The findings carry implications for both actuarial practice and the
 broader field of statistical methodology, subject to the limitations
 identified above.
 
-\textbf{Implications for actuarial practice.}
+\subsubsection*{Implications for actuarial practice}
 The substantial performance advantage of the DNN over the Gamma GLM on
 this benchmark dataset illustrates the potential of flexible
 machine-learning models to improve upon the classical pricing framework,
@@ -561,7 +561,7 @@ dataset produces predictive performance that would be unattainable on most
 real-world insurance portfolios.  The methodology is transferable, but the
 specific performance figures are not.
 
-\textbf{Implications for statistical methodology.}
+\subsubsection*{Implications for statistical methodology}
 From a statistical-methodological perspective, the dissertation
 demonstrates that the tools of simulation-based inference can be applied
 productively to the outputs of fitted machine-learning models.  The
@@ -580,7 +580,7 @@ but also in credit scoring, healthcare resource allocation, environmental
 risk assessment and other domains where the upper tail of the predicted
 distribution is of particular importance.
 
-The validation pipeline provides a template for validating Monte Carlo and
+The validation protocol provides a template for validating Monte Carlo and
 Shapley analyses in other applied settings.  Joint-distribution
 diagnostics check whether the input distribution introduces distributional
 distortion; convergence monitoring checks whether the simulation size is
@@ -618,7 +618,7 @@ of this dissertation.  These can be divided into two broad categories:
 extensions of the modelling and simulation components, and extensions of
 the attribution and interpretation components.
 
-\textbf{Modelling and simulation extensions.}
+\subsubsection*{Modelling and simulation extensions}
 
 \begin{itemize}
     \item Future work could extend the baseline comparison to include
@@ -678,7 +678,7 @@ the attribution and interpretation components.
           Monte Carlo simulation stage.
 \end{itemize}
 
-\textbf{Attribution and interpretation extensions.}
+\subsubsection*{Attribution and interpretation extensions}
 
 \begin{itemize}
     \item The $\tau_{99}$ ranking reversal could be strengthened by
@@ -762,7 +762,7 @@ summaries, while useful, can obscure the attribution structure within
 subpopulations of particular interest.
 
 The framework developed here is not specific to health insurance or to the
-particular benchmark dataset analysed.  The three-stage pipeline of
+particular benchmark dataset analysed.  The three-stage framework of
 prediction, simulation and conditional explanation is applicable to any
 regression problem where the analyst seeks to understand the distributional
 behaviour of a model's predictions and to decompose those predictions into
