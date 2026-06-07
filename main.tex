@@ -500,6 +500,11 @@
 \renewcommand{\thesection}{Annexure \Alph{section}}
 \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
 
+% Widen TOC number columns to accommodate "Annexure X" / "Annexure X.N"
+\addtocontents{toc}{\protect\setlength{\protect\cftsecnumwidth}{7em}}
+\addtocontents{toc}{\protect\setlength{\protect\cftsubsecindent}{8.5em}}
+\addtocontents{toc}{\protect\setlength{\protect\cftsubsecnumwidth}{9em}}
+
 \phantomsection
 \addcontentsline{toc}{section}{Annexures}
 \markboth{Annexures}{}
