@@ -367,6 +367,16 @@ superiority is not universal across all tabular insurance datasets
 \citep{richman2021ai}, and the present comparison is conducted on a
 benchmark dataset with a strong synthetic structure.
 
+A related line of actuarial research applies explicit shape constraints
+to neural networks during training.  \citet{richman2024icenet} develop
+the ICEnet, which adds smoothness and monotonicity penalties to the loss
+function so that Individual Conditional Expectation outputs remain
+actuarially reasonable.  Because that study targets claims frequency
+under a Poisson deviance criterion rather than continuous monetary costs,
+a direct numerical comparison with the present results is not possible;
+the methodological differences are discussed in
+Section~\ref{sec:comparison_constrained_nn}.
+
 
 % =============================================================
 \subsection{Monte Carlo Predicted-Cost Distribution}
