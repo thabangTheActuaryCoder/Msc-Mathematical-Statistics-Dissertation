@@ -309,24 +309,25 @@ through piecewise-constant splits.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_glm_vs_dnn_comparison.png}
-\caption{Test-set performance comparison between the \gls{glm} (Gamma,
-log-link) and the \gls{dnn}, extracted from the four-model comparison in
-Table~\ref{tab:glm_vs_dnn_comparison_ch4}.  (a)~Test $R^2$; (b)~test
-RMSE; (c)~test MAE.}
+\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_full_model_comparison.png}
+\caption{Test-set performance comparison across all four model classes:
+\gls{glm} (Gamma, log-link), Random Forest, XGBoost and \gls{dnn}.
+(a)~Test $R^2$; (b)~test RMSE; (c)~test MAE.}
 \label{fig:glm_vs_dnn_comparison_ch4}
 \end{figure}
 
 \noindent
 Figure~\ref{fig:glm_vs_dnn_comparison_ch4} visualises the test-set
-comparison.  The \gls{glm}'s inferior fit is attributable to the
-log-link's multiplicative mean structure, which does not match the
-additive data-generating process underlying this dataset.  The charges
-variable is constructed as an approximately linear function of the input
-features plus noise; the \gls{glm}'s exponential inverse-link therefore
-introduces systematic model misspecification.  The \gls{dnn}, by
-contrast, learns the additive structure directly through its flexible
-hidden-layer representations.
+comparison across all four model classes.  The \gls{glm}'s inferior fit
+is attributable to the log-link's multiplicative mean structure, which
+does not match the additive data-generating process underlying this
+dataset.  The charges variable is constructed as an approximately linear
+function of the input features plus noise; the \gls{glm}'s exponential
+inverse-link therefore introduces systematic model misspecification.
+The random forest and XGBoost close the gap substantially, with XGBoost
+nearly matching the \gls{dnn}.  The \gls{dnn} learns the additive
+structure directly through its flexible hidden-layer representations and
+achieves the highest test $R^2$ and lowest test RMSE and MAE.
 
 \begin{figure}[H]
 \centering
