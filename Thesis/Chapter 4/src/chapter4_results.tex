@@ -229,7 +229,7 @@ The model's predictive performance supports its use in the
 subsequent simulation and attribution analyses.
 
 \subsubsection{Baseline comparison: \glsentryshort{glm}, \glsentryshort{rf}, \glsentryshort{xgboost} and \glsentryshort{dnn}}
-\label{sec:glm_vs_dnn_comparison_ch4}
+\label{sec:four_model_comparison_ch4}
 
 The \gls{glm} benchmark specified in
 Section~\ref{sec:glm_benchmark_methods} and the two tree-based
@@ -239,7 +239,7 @@ same training partition ($n = 524\,288$) using the same encoded feature
 set and the same train/validation/test split, ensuring that the
 comparison reflects genuine model-class differences rather than
 data-handling artefacts.
-Table~\ref{tab:glm_vs_dnn_comparison_ch4} reports the
+Table~\ref{tab:four_model_comparison_ch4} reports the
 performance of all four models across training, validation and test
 partitions.
 
@@ -247,7 +247,7 @@ partitions.
 \centering
 \caption{Predictive performance comparison across four model classes on
 the original monetary scale.}
-\label{tab:glm_vs_dnn_comparison_ch4}
+\label{tab:four_model_comparison_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{llrrr}
@@ -313,11 +313,11 @@ through piecewise-constant splits.
 \caption{Test-set performance comparison across all four model classes:
 \gls{glm} (Gamma, log-link), \gls{rf}, \gls{xgboost} and \gls{dnn}.
 (a)~Test $R^2$; (b)~test RMSE; (c)~test MAE.}
-\label{fig:glm_vs_dnn_comparison_ch4}
+\label{fig:four_model_comparison_ch4}
 \end{figure}
 
 \noindent
-Figure~\ref{fig:glm_vs_dnn_comparison_ch4} visualises the test-set
+Figure~\ref{fig:four_model_comparison_ch4} visualises the test-set
 comparison across all four model classes.  The \gls{glm}'s inferior fit
 is attributable to the log-link's multiplicative mean structure, which
 does not match the additive data-generating process underlying this
