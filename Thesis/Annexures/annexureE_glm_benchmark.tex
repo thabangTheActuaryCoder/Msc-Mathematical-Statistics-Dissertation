@@ -4,7 +4,7 @@
 \section{GLM Benchmark Methodology}
 \label{annexure:glm_benchmark}
 
-The Gamma GLM with log-link serves as the actuarial benchmark against which the DNN is compared. The model was fitted using \texttt{statsmodels} with an intercept term and the same 22 reference-category encoded features used by the DNN.
+The Gamma GLM with log-link serves as the actuarial benchmark against which the DNN is compared.  A random forest and an XGBoost gradient-boosted tree regressor are fitted as additional benchmarks to span the model-class spectrum from linear to piecewise-constant to smooth nonlinear (see Section~\ref{sec:tree_benchmarks_methods}).  The GLM was fitted using \texttt{statsmodels} with an intercept term and the same 22 reference-category encoded features used by the DNN and tree-based models.
 
 % -------------------------------------------------------------
 \subsection{Fitting Procedure}
@@ -15,7 +15,7 @@ The Gamma GLM with log-link serves as the actuarial benchmark against which the 
 \label{alg:glm_benchmark}
 \begin{algorithmic}[1]
 \Require Raw feature matrices $\mathbf{X}_{\mathrm{train}}, \mathbf{X}_{\mathrm{val}}, \mathbf{X}_{\mathrm{test}}$ (unstandardised), response vectors $\mathbf{y}_{\mathrm{train}}, \mathbf{y}_{\mathrm{val}}, \mathbf{y}_{\mathrm{test}}$
-\Ensure Comparison metrics ($R^2$, RMSE, MAE) for GLM and DNN on all partitions
+\Ensure Comparison metrics ($R^2$, RMSE, MAE) for GLM, RF, XGBoost and DNN on all partitions
 \State Prepend intercept column to each feature matrix
 \State Fit Gamma GLM with log-link on $(\mathbf{X}_{\mathrm{train}}, \mathbf{y}_{\mathrm{train}})$ via IRLS
 \State Extract coefficient table: $\hat{\boldsymbol{\beta}}$, standard errors, $z$-values, $p$-values
@@ -40,6 +40,6 @@ The fitted GLM produces a coefficient vector $\hat{\boldsymbol{\beta}} \in \math
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{Thesis/Chapter 4/Figures/fig_full_model_comparison.png}
-    \caption{Full model comparison.}
+    \caption{Test-set performance comparison across all four model classes: GLM (Gamma, log-link), Random Forest, XGBoost and DNN.}
     \label{fig:annexure_full_model_comparison}
 \end{figure}
