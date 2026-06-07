@@ -23,11 +23,12 @@ prediction.
 
 It is therefore important to establish the modelling landscape within
 which this dissertation operates: the classical actuarial framework
-based on generalised linear models, the more recent introduction of deep
-neural networks into insurance pricing, and the growing demand for
-post-hoc model explanation.  Each of these three themes is introduced
-below, before the specific research problem and analytical framework are
-stated.
+based on generalised linear models, the tree-based ensemble methods that
+occupy an intermediate position between linear and fully flexible models,
+the introduction of deep neural networks into insurance pricing, and the
+growing demand for post-hoc model explanation.  Each of these themes is
+introduced below, before the specific research problem and analytical
+framework are stated.
 
 \subsubsection{Classical actuarial pricing models}
 \label{sec:classical_actuarial}
@@ -76,6 +77,30 @@ limitation of the linear predictor structure remains.  As
 approximate a target function is determined by the richness of the
 hypothesis space, and the hypothesis space of a GLM is inherently
 constrained by its additive structure.
+
+Between the constrained linear predictor of the GLM and the fully
+flexible hidden-layer representations of a deep neural network lie
+tree-based ensemble methods, which approximate nonlinear relationships
+through collections of decision trees.  Random forests
+\citep{breiman2001random} aggregate predictions across independently
+grown trees, each trained on a bootstrap sample with a random feature
+subset at each split, reducing variance while capturing interactions
+that the GLM cannot represent.  Gradient-boosted trees, exemplified by
+the XGBoost implementation \citep{chen2016xgboost}, construct an
+additive ensemble of shallow trees sequentially, with each new tree
+fitted to the residuals of the preceding ensemble.  Both methods offer
+greater flexibility than the GLM but remain fundamentally
+piecewise-constant approximators: unlike neural networks, they do not
+learn smooth, continuous mappings through differentiable transformations.
+Including a random forest and an XGBoost benchmark alongside the GLM and
+DNN provides a graded comparison across model classes of increasing
+flexibility.  The core comparison remains the actuarial-standard GLM
+against the DNN, since this dissertation is situated within an actuarial
+modelling context where the GLM is the established industry baseline and
+the DNN represents the class of model whose behaviour the Monte Carlo
+and Shapley analyses are designed to examine.  The tree-based benchmarks
+complement this pairing by establishing where piecewise-constant
+nonlinear methods fall on the performance spectrum.
 
 \subsubsection{Deep neural networks for insurance regression}
 \label{sec:dnn_intro}
@@ -290,9 +315,13 @@ the benchmark dataset using a systematic hyperparameter comparison.  The
 trained network defines a prediction function
 $\hat{f}: \mathbb{R}^p \to \mathbb{R}$ that maps encoded policyholder
 attributes to predicted costs.  A Gamma generalised linear model with a
-logarithmic link is fitted alongside the network to provide a classical
-actuarial benchmark.  The output of this stage is a validated prediction
-function with documented out-of-sample performance.
+logarithmic link, a random forest regressor and an XGBoost
+gradient-boosted tree regressor are fitted alongside the network to
+provide benchmarks spanning three alternative model classes.  The
+primary comparison is between the actuarial-standard GLM and the DNN,
+with the tree-based models serving as intermediate reference points.
+The output of this stage is a validated prediction function with
+documented out-of-sample performance across all four models.
 
 In the second stage, parametric distributions are fitted to each input
 variable in the training partition, and a Monte Carlo sample of
@@ -401,7 +430,8 @@ The dissertation addresses the following research questions:
 
 \begin{enumerate}
     \item \label{rq:1} How does a deep neural network regression model compare with a
-          classical generalised linear model in predicting health insurance
+          classical generalised linear model, a random forest and an
+          XGBoost gradient-boosted tree in predicting health insurance
           costs on a benchmark dataset?
 
     \item \label{rq:2} What is the shape and distributional behaviour of the
@@ -446,8 +476,8 @@ questions:
 \begin{enumerate}
     \item To fit a deep neural network regression model to a health
           insurance benchmark dataset and to evaluate its predictive
-          performance against a classical generalised linear model
-          benchmark.
+          performance against a classical generalised linear model, a
+          random forest and an XGBoost gradient-boosted tree benchmark.
 
     \item To design and implement a parametric Monte Carlo simulation
           that generates synthetic policyholder profiles from fitted
@@ -550,12 +580,18 @@ parameters in turn.  Each phase fixes the winner from the preceding
 phase and varies the next hyperparameter, so that the search space is
 explored sequentially rather than through a full grid.
 
-A Gamma generalised linear model with a logarithmic link function is
-fitted as a classical actuarial benchmark to contextualise the network's
-predictive performance.  Both models are evaluated on a held-out test set
-that is never used during training or hyperparameter selection, and
-data-leakage prevention protocols ensure the integrity of all reported
-metrics.
+Three benchmark models are fitted to contextualise the network's
+predictive performance: a Gamma generalised linear model with a
+logarithmic link function, a random forest regressor with 500 trees, and
+an XGBoost gradient-boosted tree regressor with 1\,000 boosting rounds
+and early stopping.  The GLM serves as the actuarial-standard baseline,
+while the two tree-based models occupy an intermediate position between
+the linear GLM and the fully flexible DNN.  Hyperparameters for the GLM
+and tree-based models are set to standard defaults rather than tuned, so
+that the comparison isolates model-class differences.  All four models
+are evaluated on a held-out test set that is never used during training
+or hyperparameter selection, and data-leakage prevention protocols
+ensure the integrity of all reported metrics.
 
 \subsubsection{Simulation stage}
 \label{sec:simulation_stage_overview}
@@ -683,16 +719,17 @@ The following delimitations define the boundaries of the study:
           extrapolated to real-world insurance portfolios, where data are
           noisier and covariate-response relationships are more complex.
 
-    \item \textbf{Limited model comparison.}  A classical generalised
-          linear model benchmark is included to contextualise the
-          predictive performance of the deep neural network.  However,
-          the dissertation does not attempt a comprehensive
-          model-selection study across all possible architectures.
-          Tree-based models (random forests, gradient-boosted trees),
-          ensemble methods and Bayesian alternatives are not evaluated.
-          The comparison is designed to establish relative performance
-          within the GLM-versus-DNN pairing rather than to identify the
-          globally optimal model class.
+    \item \textbf{Focused model comparison.}  Three benchmark models -- a
+          Gamma GLM, a random forest and an XGBoost gradient-boosted
+          tree -- are included to contextualise the predictive performance
+          of the deep neural network across model classes of increasing
+          flexibility.  However, the dissertation does not attempt an
+          exhaustive model-selection study.  Bayesian methods, support
+          vector machines, other neural-network architectures and
+          stacked-ensemble approaches are not evaluated.  The comparison
+          is designed to position the DNN within a spectrum from linear
+          to piecewise-constant to smooth nonlinear models, rather than
+          to identify the globally optimal model class.
 
     \item \textbf{Single fitted network.}  The Monte Carlo and Shapley
           analyses are applied to a single trained network with a fixed
@@ -799,6 +836,23 @@ deferred to the relevant chapters.
           dissertation, a Gamma GLM with a logarithmic link function
           serves as the actuarial benchmark.
 
+    \item[Random forest.]  An ensemble learning method that constructs a
+          collection of decision trees, each trained on a bootstrap
+          sample of the data with a random subset of features considered
+          at each split.  The final prediction is the average of the
+          individual tree predictions.  In this dissertation, a random
+          forest regressor serves as one of three benchmark models
+          against which the DNN is compared.
+
+    \item[Gradient-boosted trees (XGBoost).]  An ensemble method that
+          builds an additive sequence of shallow decision trees, with
+          each new tree fitted to the residuals of the preceding
+          ensemble.  XGBoost \citep{chen2016xgboost} is a widely used
+          implementation that incorporates regularisation, approximate
+          histogram-based splitting and early stopping.  In this
+          dissertation, an XGBoost regressor serves as one of three
+          benchmark models.
+
     \item[Monte Carlo simulation.]  A computational method that uses
           repeated random sampling from a specified probability
           distribution to estimate the properties of a quantity of
@@ -881,22 +935,22 @@ identification of the research gap that motivates the present study.
 This chapter describes the benchmark dataset, the data preprocessing and
 encoding procedure, the exploratory data analysis, the network
 architecture and training protocol, the five-phase hyperparameter
-comparison, the predictive and structural diagnostics, the GLM benchmark
-specification, the Monte Carlo simulation design and input-distribution
-validation, the residual-augmented sensitivity analysis, and the
-Shapley-value implementation.  All methodological choices are documented
-with their statistical justification, and a consolidated table of
-modelling assumptions is provided.
+comparison, the predictive and structural diagnostics, the GLM and
+tree-based benchmark specifications, the Monte Carlo simulation design
+and input-distribution validation, the residual-augmented sensitivity
+analysis, and the Shapley-value implementation.  All methodological
+choices are documented with their statistical justification, and a
+consolidated table of modelling assumptions is provided.
 
 \subsubsection*{Chapter~\ref{sec:results}: Results}
 This chapter presents the empirical results of the three-stage workflow.
-The chapter reports the hyperparameter comparison outcomes, the DNN
-versus GLM benchmark comparison, the Monte Carlo predicted-cost
-distribution and its convergence diagnostics, the joint-distribution
-validation results, the residual-augmented sensitivity analysis, the
-global and conditional Shapley-value attributions, the
-feature-importance ranking reversal in the upper tail, and the Shapley
-attribution invariance check.
+The chapter reports the hyperparameter comparison outcomes, the
+four-model benchmark comparison (GLM, random forest, XGBoost and DNN),
+the Monte Carlo predicted-cost distribution and its convergence
+diagnostics, the joint-distribution validation results, the
+residual-augmented sensitivity analysis, the global and conditional
+Shapley-value attributions, the feature-importance ranking reversal in
+the upper tail, and the Shapley attribution invariance check.
 
 \subsubsection*{Chapter~\ref{sec:conclusion}: Conclusion}
 The final chapter summarises the key findings in relation to each
