@@ -79,7 +79,10 @@ funnel architecture (Table~\ref{tab:dnn_architecture_training_ch3})
 was specified, together with the five-phase sequential hyperparameter
 comparison that evaluated activation functions, learning rates, batch
 sizes, optimisers and momentum parameters.  The Gamma GLM with a
-logarithmic link served as the classical actuarial benchmark.  The Monte
+logarithmic link served as the classical actuarial benchmark, and a
+random forest and an XGBoost gradient-boosted tree regressor were fitted
+as additional benchmarks spanning the model-class spectrum from linear
+to piecewise-constant to smooth nonlinear.  The Monte
 Carlo simulation design specified the parametric marginal distributions,
 the independence assumption and the convergence monitoring procedure.
 The joint-distribution validation, residual-augmented sensitivity analysis
@@ -160,26 +163,33 @@ Each question is now addressed in light of the empirical results.
 
 \subsubsection*{Research Question~\ref{rq:1}}
 How does a deep neural network regression model compare with a
-classical generalised linear model in predicting health insurance costs on
-a benchmark dataset?
+classical generalised linear model, a random forest and an XGBoost
+gradient-boosted tree in predicting health insurance costs on a benchmark
+dataset?
 
 The DNN achieves a test-set $R^2$ of $0.9957$, a test MAE of R251 and a
 test RMSE of R290.  The Gamma GLM (log-link) achieves a test-set $R^2$ of
 $0.9571$, a test MAE of R624 and a test RMSE of R913.  The DNN therefore
 outperforms the GLM on every metric, reducing the test RMSE by $68.2\%$
-and the test MAE by $59.8\%$.  Both models show near-identical training
-and test performance, ruling out overfitting.  The performance gap is
-attributable to the log-link's multiplicative mean structure, which
-introduces systematic model misspecification on this benchmark dataset
-where the charges variable is constructed as an approximately additive
-function of the input features.  The five-phase sequential hyperparameter
-comparison selected the final configuration from among 16 candidate
-settings, documented in full in Annexure~\ref{annexure:hyperparameters}.
-This finding is consistent with the broader health-cost prediction
-literature \citep{dreweboss2022deep, samiuddin2023health,
-kaushik2022machine}, although the unusually high $R^2$ reflects the
-clean, structured nature of the benchmark data and should not be
-extrapolated to real-world insurance portfolios.
+and the test MAE by $59.8\%$.  The two tree-based benchmarks narrow the
+gap: the random forest achieves $R^2 = 0.9899$ and XGBoost reaches
+$R^2 = 0.9955$, approaching the DNN's accuracy.  All four models show
+near-identical training and test performance, ruling out overfitting.
+The GLM's performance gap is attributable to the log-link's
+multiplicative mean structure, which introduces systematic model
+misspecification on this benchmark dataset where the charges variable is
+constructed as an approximately additive function of the input features.
+The tree-based models, which are not constrained by a multiplicative
+link, recover most of this gap, confirming that the GLM's disadvantage
+is structural rather than a general property of simpler model classes.
+The five-phase sequential hyperparameter comparison selected the final
+DNN configuration from among 16 candidate settings, documented in full
+in Annexure~\ref{annexure:hyperparameters}.  This finding is consistent
+with the broader health-cost prediction literature
+\citep{dreweboss2022deep, samiuddin2023health, kaushik2022machine},
+although the unusually high $R^2$ reflects the clean, structured nature
+of the benchmark data and should not be extrapolated to real-world
+insurance portfolios.
 
 \subsubsection*{Research Question~\ref{rq:2}}
 What is the shape and distributional behaviour of the
@@ -348,10 +358,11 @@ These diagnostics address specific threats to validity that are not
 routinely checked in the machine-learning interpretability literature,
 where Shapley values are often reported without assessing their
 sensitivity to the input distribution or the residual structure of the
-fitted model.  Finally, the Gamma GLM benchmark contextualises the DNN's
-performance within the actuarial modelling landscape, establishing that
-the predictive superiority reflects genuine model-class advantages rather
-than artefacts of the benchmark data.
+fitted model.  Finally, the three benchmark models (Gamma GLM, random forest and
+XGBoost) contextualise the DNN's performance across the model-class
+spectrum, establishing that the predictive superiority reflects genuine
+advantages of smooth nonlinear function approximation rather than
+artefacts of the benchmark data.
 
 % ---------------------------------------------------------
 % 5.4 STRENGTHS OF THE STUDY
@@ -533,12 +544,17 @@ The substantial performance advantage of the DNN over the Gamma GLM on
 this benchmark dataset illustrates the potential of flexible
 machine-learning models to improve upon the classical pricing framework,
 at least on datasets where the data-generating process does not conform to
-the log-link's multiplicative structure.  For actuarial practitioners,
-this motivates the evaluation of neural networks as supplementary or
-alternative pricing models alongside existing GLM-based tariffs,
-particularly in settings where the relationship between covariates and
-costs may be additive, nonlinear or interactive in ways that the log-link
-cannot capture.  The conditional Shapley analysis has direct relevance to
+the log-link's multiplicative structure.  The tree-based benchmarks
+reinforce this conclusion: both the random forest and XGBoost
+substantially outperform the GLM, with XGBoost approaching the DNN's
+accuracy, confirming that the GLM's limitation on this dataset is
+structural rather than a general feature of simpler models.  For
+actuarial practitioners, these results motivate the evaluation of
+tree-based ensembles and neural networks as supplementary or alternative
+pricing models alongside existing GLM-based tariffs, particularly in
+settings where the relationship between covariates and costs may be
+additive, nonlinear or interactive in ways that the log-link cannot
+capture.  The conditional Shapley analysis has direct relevance to
 actuarial risk management.  Insurance professionals are typically
 interested not only in the average cost drivers across a portfolio, but
 also in the variables that drive extreme costs.  The finding that the
