@@ -2059,6 +2059,27 @@ methodological comparison is presented in
 Section~\ref{sec:comparison_constrained_nn}.
 
 \noindent
+Alongside neural-network approaches, tree-based ensemble methods have become
+widely used for insurance cost prediction on structured tabular data.
+\citet{orji2024explainable} apply random forests and gradient-boosted trees to
+health insurance cost data and report predictive performance comparable to, and
+in some configurations exceeding, that of neural networks.  More broadly,
+\citet{grinsztajn2022why} provide systematic evidence that tree-based models,
+particularly gradient-boosted implementations such as XGBoost
+\citep{chen2016xgboost}, frequently match or outperform deep neural networks on
+medium-sized tabular datasets of the kind encountered in actuarial practice.
+Because insurance cost prediction is fundamentally an actuarial problem defined
+on structured policyholder attributes rather than on unstructured data such as
+images or text, tree-based methods represent a credible alternative to the
+\gls{dnn} and may in some settings be the preferred model class.  The present
+dissertation nonetheless selects the \gls{dnn} as the primary model for the
+Monte Carlo and Shapley workflow because its smooth, differentiable prediction
+surface is directly compatible with gradient-based Shapley computation and
+continuous forward-pass evaluation over large simulated input samples.  A random
+forest and an XGBoost regressor are fitted as benchmarks to contextualise the
+\gls{dnn}'s predictive performance within this spectrum of model classes.
+
+\noindent
 The available Kaggle insurance data do not provide separate claim-frequency and
 claim-severity processes. A separate actuarial claims model is therefore not
 fitted. Instead, the observed monetary response is treated as an aggregate
