@@ -332,31 +332,40 @@ achieves the highest test $R^2$ and lowest test RMSE and MAE.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.65\textwidth]{Thesis/Chapter 4/Figures/fig_train_test_r2_overfitting.png}
-\caption{Overfitting diagnostic: training versus test $R^2$ for the
-\gls{glm} and \gls{dnn}.}
+\caption{Overfitting diagnostic: training versus test $R^2$ for all
+four model classes.}
 \label{fig:train_test_r2_overfitting_ch4}
 \end{figure}
 
 \noindent
 Figure~\ref{fig:train_test_r2_overfitting_ch4} compares the training
-and test $R^2$ for both models.  The \gls{glm} shows negligible
+and test $R^2$ for all four models.  The \gls{glm} shows negligible
 generalisation loss ($R^2_{\mathrm{train}} = 0.9574$ versus
 $R^2_{\mathrm{test}} = 0.9571$), as expected for a parametric model
-with far fewer parameters than observations.  The \gls{dnn} likewise
-shows no evidence of overfitting ($R^2_{\mathrm{train}} = 0.9957$
-versus $R^2_{\mathrm{test}} = 0.9957$), confirming that the early
-stopping criterion (Section~\ref{sec:dnn_specification_training})
-effectively regularises the 49\,168 trainable parameters.
+with far fewer parameters than observations.  The \gls{rf} exhibits the
+largest train-test gap ($R^2_{\mathrm{train}} = 0.9946$ versus
+$R^2_{\mathrm{test}} = 0.9899$), indicating a degree of overfitting
+despite the depth constraint.  \gls{xgboost} shows a negligible gap
+($R^2_{\mathrm{train}} = 0.9959$ versus
+$R^2_{\mathrm{test}} = 0.9955$), confirming that the learning rate and
+subsampling regularisation are effective.  The \gls{dnn} likewise shows
+no evidence of overfitting ($R^2_{\mathrm{train}} = 0.9957$ versus
+$R^2_{\mathrm{test}} = 0.9957$), confirming that the early stopping
+criterion (Section~\ref{sec:dnn_specification_training}) effectively
+regularises the 49\,168 trainable parameters.
 
-The \gls{glm} comparison serves two purposes.  First, it establishes
+The benchmark comparison serves two purposes.  First, it establishes
 that the \gls{dnn}'s high $R^2$ reflects genuine predictive superiority
-over the actuarial-standard model class, not merely an artefact of the
+over the actuarial-standard \gls{glm} and competitive performance
+relative to the tree-based alternatives, not merely an artefact of the
 dataset's synthetic regularity.  Second, because the Gamma/log-link
-\gls{glm} is the model an actuary would deploy as a first approach, the
-comparison provides the practical benchmark context that situates the
-\gls{dnn} within the actuarial modelling landscape.  The \gls{dnn} is therefore retained for the subsequent analyses
-on the grounds of its superior accuracy and its differentiability
-for gradient-based attribution.
+\gls{glm} is the model an actuary would deploy as a first approach and
+\gls{xgboost} represents the current state of the art for tabular data,
+the comparison provides practical benchmark context that situates the
+\gls{dnn} within the actuarial modelling landscape.  The \gls{dnn} is
+therefore retained for the subsequent analyses on the grounds of its
+superior accuracy and its differentiability for gradient-based
+attribution.
 
 The finding that a deep neural network outperforms a classical \gls{glm}
 on this benchmark is consistent with the broader health-cost prediction
