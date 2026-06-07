@@ -2044,6 +2044,21 @@ not be treated as generic black-box alternatives; they can be incorporated
 within actuarial pricing logic to improve both accuracy and risk segmentation.
 
 \noindent
+A complementary approach to neural-network pricing is to impose explicit shape
+constraints during training.  \citet{richman2024icenet} develop the ICEnet,
+which adds smoothness and monotonicity penalty terms to the loss function so
+that the network's Individual Conditional Expectation outputs vary in a manner
+consistent with actuarial domain knowledge.  Applied to claims frequency
+prediction on the French motor third-party liability dataset, the ICEnet
+achieves a test-set Poisson deviance within $0.0001$ of the unconstrained
+network, demonstrating that actuarial reasonableness can be enforced with
+negligible accuracy cost.  Because the ICEnet targets count data under a
+Poisson deviance criterion, its results are not directly comparable with the
+continuous monetary cost predictions in the present dissertation; a
+methodological comparison is presented in
+Section~\ref{sec:comparison_constrained_nn}.
+
+\noindent
 The available Kaggle insurance data do not provide separate claim-frequency and
 claim-severity processes. A separate actuarial claims model is therefore not
 fitted. Instead, the observed monetary response is treated as an aggregate
