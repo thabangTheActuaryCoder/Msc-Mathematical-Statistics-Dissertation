@@ -233,7 +233,11 @@ subsequent simulation and attribution analyses.
 
 The \gls{glm} benchmark specified in
 Section~\ref{sec:glm_benchmark_methods} was evaluated alongside the
-\gls{dnn}.  Table~\ref{tab:glm_vs_dnn_comparison_ch4} reports the
+\gls{dnn}.  Both models were fitted on the same training partition
+($n = 524\,288$) using the same encoded feature set and the same
+train/validation/test split, ensuring that the comparison reflects
+genuine model-class differences rather than data-handling artefacts.
+Table~\ref{tab:glm_vs_dnn_comparison_ch4} reports the
 performance of both models across training, validation and test
 partitions.
 
@@ -603,6 +607,36 @@ selected simulation size of $B = 10\,000$, the running summaries have
 stabilised and the simulation precision is adequate for the subsequent
 distributional and attribution analyses.
 
+The theoretical \gls{mcse} for the sample mean of $B$ independent draws
+from a distribution with standard deviation $\sigma$ is
+$\sigma / \sqrt{B}$, which decreases at rate
+$\mathcal{O}(B^{-1/2})$.  The empirical convergence rate in
+Table~\ref{tab:mc_convergence_ch4} closely follows this theoretical
+law: the ratio
+$\mathrm{MCSE}(B{=}1\,000) \,/\, \mathrm{MCSE}(B{=}10\,000)
+= 141.0 / 44.3 = 3.18$ matches the theoretical ratio
+$\sqrt{10\,000 / 1\,000} = \sqrt{10} \approx 3.16$, and
+$\mathrm{MCSE}(B{=}1\,000) \,/\, \mathrm{MCSE}(B{=}20\,000)
+= 141.0 / 31.4 = 4.49$ matches $\sqrt{20} \approx 4.47$.  The
+simulation therefore exhibits the canonical Monte Carlo convergence
+behaviour, confirming that no pathological variance inflation or serial
+dependence is present in the simulated profiles.
+
+The running upper-tail percentiles in
+Table~\ref{tab:mc_convergence_ch4} provide an empirical assessment of
+quantile estimation precision.  The 90th percentile varies within a band
+of R182 across simulation sizes (R22\,490 to R22\,672), the 95th
+percentile within R298 (R24\,030 to R24\,328), and the 99th percentile
+within R532 (R27\,131 to R27\,663).  The progressively wider variation
+at higher quantiles reflects the decreasing effective sample size in the
+tail: at $\tau_{99}$ with $B = 10\,000$, only $100$ observations
+determine the percentile estimate, compared with $1\,000$ at
+$\tau_{90}$ and $500$ at $\tau_{95}$.  Nonetheless, even at
+$\tau_{99}$, the running percentile has stabilised to within
+$\pm 1.0\%$ of its final value from $B = 5\,000$ onwards, indicating
+that the tail percentile estimates are sufficiently precise for the
+conditional Shapley analysis that follows.
+
 \subsubsection{Comparison with observed training charges}
 
 \begin{figure}[H]
@@ -936,6 +970,29 @@ $\boldsymbol{\tau_{95}}$ & $\boldsymbol{\tau_{99}}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+The ranking reversal at $\tau_{99}$ is based on
+$|\mathcal{H}_{0.99}| = 100$ profiles, which warrants scrutiny of its
+statistical reliability.  Three lines of evidence support the robustness
+of this finding.  First, the reversal is not an isolated artefact at a
+single threshold: the conditional importance values for
+\texttt{coverage\_level}, \texttt{medical\_history} and
+\texttt{family\_medical\_history} increase monotonically across all four
+conditioning levels (global, $\tau_{90}$, $\tau_{95}$, $\tau_{99}$),
+indicating a consistent trend rather than sampling noise.  Second, the
+magnitude of the reversal is substantial: at $\tau_{99}$,
+\texttt{family\_medical\_history} exceeds \texttt{smoker} by $0.056$ on
+the normalised scale ($0.622$ versus $0.566$), a relative difference of
+$9.9\%$.  Third, the profile-level composition analysis
+(Figure~\ref{fig:highcost_profiles_ch4}) provides a mechanistic
+explanation: $99\%$ of profiles in $\mathcal{H}_{0.99}$ are smokers, so
+the near-constant value of the \texttt{smoker} variable within this set
+reduces its discriminating power, as a binary variable that takes the
+same value for virtually all members of a conditioning set necessarily
+contributes a near-constant Shapley attribution.  The convergence of
+these three independent lines of evidence supports the conclusion that
+the ranking reversal reflects a genuine structural property of the
+fitted model's attribution surface, not a finite-sample artefact.
 
 \subsubsection{Threshold stability of the importance ranking}
 
