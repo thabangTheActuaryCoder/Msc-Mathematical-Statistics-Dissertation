@@ -645,8 +645,16 @@ Target variable
     & Continuous monetary charges
     & Claims frequency (count) \\
 Response distribution
-    & Continuous; Gamma GLM baseline
+    & Continuous
     & Poisson \\
+Models compared
+    & GLM, Random Forest, XGBoost, DNN
+    & FCN, ICEnet \\
+Best test-set result
+    & DNN $R^2 = 0.9957$; GLM $0.9571$;
+      RF $0.9899$; XGBoost $0.9955$
+    & ICEnet deviance $= 0.2388$;
+      FCN $0.2387$ \\
 Evaluation metric
     & $R^2$, RMSE, MAE
     & Poisson deviance \\
@@ -654,7 +662,7 @@ Dataset
     & Kaggle ($n = 1\,000\,000$)
     & French MTPL ($n = 678\,007$) \\
 Constraint mechanism
-    & None (unconstrained DNN)
+    & None (unconstrained models)
     & Smoothness and monotonicity penalties \\
 Interpretability
     & Post-hoc Shapley values
