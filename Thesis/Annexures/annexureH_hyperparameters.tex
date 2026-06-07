@@ -8,131 +8,17 @@
 \subsection{Five-Phase Sequential Comparison}
 \label{annexure:five_phase}
 
-\begin{lstlisting}[caption={Phase 1: Activation function comparison (fixed: lr=0.001, bs=256, Adam).}]
-MAX_EPOCHS = 100
-PATIENCE = 10
-VAL_EVERY = 5
-comparison_results = {}
+Hyperparameters were selected through a five-phase sequential comparison procedure. In each phase, one hyperparameter was varied while all others were held at their current best values. The phases proceeded in the following order:
 
-# Phase 1: Activation
-phase1_results = {}
-for act_name in ['CELU', 'GELU', 'Tanh']:
-    torch.manual_seed(SEED)
-    model = FunnelDNN(input_dim=22,
-                      activation=act_name)
-    result = train_model(
-        model, X_train_t, y_train_t,
-        X_val_t, y_val_t,
-        optimiser_cls=optim.Adam,
-        lr=0.001, batch_size=256,
-        max_epochs=MAX_EPOCHS,
-        patience=PATIENCE,
-        val_every=VAL_EVERY)
-    phase1_results[act_name] = result
+\begin{enumerate}
+    \item Activation function (CELU, GELU, Tanh), with fixed lr${}=0.001$, batch size${}=256$, Adam.
+    \item Learning rate ($0.01, 0.001, 0.0005, 0.0001$), with fixed best activation, batch size${}=256$, Adam.
+    \item Batch size ($64, 128, 256, 512$), with fixed best activation and learning rate, Adam.
+    \item Optimiser (Adam vs NAdam), with all previous best values fixed.
+    \item Momentum $\beta_1$ ($0.90, 0.95, 0.99$) with $\beta_2 = 0.999$ fixed, using the best optimiser.
+\end{enumerate}
 
-best_activation = max(
-    phase1_results,
-    key=lambda k: phase1_results[k]['best_val_r2'])
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Phase 2: Learning rate comparison (fixed: best activation, bs=256, Adam).}]
-phase2_results = {}
-for lr_val in [0.01, 0.001, 0.0005, 0.0001]:
-    torch.manual_seed(SEED)
-    model = FunnelDNN(input_dim=22,
-                      activation=best_activation)
-    result = train_model(
-        model, X_train_t, y_train_t,
-        X_val_t, y_val_t,
-        optimiser_cls=optim.Adam,
-        lr=lr_val, batch_size=256,
-        max_epochs=MAX_EPOCHS,
-        patience=PATIENCE,
-        val_every=VAL_EVERY)
-    phase2_results[str(lr_val)] = result
-
-best_lr = float(max(
-    phase2_results,
-    key=lambda k: phase2_results[k]['best_val_r2']))
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Phase 3: Batch size comparison (fixed: best activation and lr, Adam).}]
-phase3_results = {}
-for bs in [64, 128, 256, 512]:
-    torch.manual_seed(SEED)
-    model = FunnelDNN(input_dim=22,
-                      activation=best_activation)
-    result = train_model(
-        model, X_train_t, y_train_t,
-        X_val_t, y_val_t,
-        optimiser_cls=optim.Adam,
-        lr=best_lr, batch_size=bs,
-        max_epochs=MAX_EPOCHS,
-        patience=PATIENCE,
-        val_every=VAL_EVERY)
-    phase3_results[str(bs)] = result
-
-best_bs = int(max(
-    phase3_results,
-    key=lambda k: phase3_results[k]['best_val_r2']))
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Phase 4: Optimiser comparison (Adam vs NAdam).}]
-optimiser_candidates = {
-    'Adam': optim.Adam,
-    'NAdam': optim.NAdam}
-
-phase4_results = {}
-for opt_name, opt_cls in optimiser_candidates.items():
-    torch.manual_seed(SEED)
-    model = FunnelDNN(input_dim=22,
-                      activation=best_activation)
-    result = train_model(
-        model, X_train_t, y_train_t,
-        X_val_t, y_val_t,
-        optimiser_cls=opt_cls,
-        lr=best_lr, batch_size=best_bs,
-        max_epochs=MAX_EPOCHS,
-        patience=PATIENCE,
-        val_every=VAL_EVERY)
-    phase4_results[opt_name] = result
-
-best_optimiser_name = max(
-    phase4_results,
-    key=lambda k: phase4_results[k]['best_val_r2'])
-best_optimiser_cls = (
-    optimiser_candidates[best_optimiser_name])
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Phase 5: Momentum ($\beta_1$) comparison (fixed: all previous best values).}]
-momentum_candidates = {
-    'B1=0.90': (0.90, 0.999),
-    'B1=0.95': (0.95, 0.999),
-    'B1=0.99': (0.99, 0.999),
-}
-
-phase5_results = {}
-for mom_label, betas_val in (
-        momentum_candidates.items()):
-    torch.manual_seed(SEED)
-    model = FunnelDNN(input_dim=22,
-                      activation=best_activation)
-    result = train_model(
-        model, X_train_t, y_train_t,
-        X_val_t, y_val_t,
-        optimiser_cls=best_optimiser_cls,
-        lr=best_lr, batch_size=best_bs,
-        max_epochs=MAX_EPOCHS,
-        patience=PATIENCE,
-        val_every=VAL_EVERY,
-        betas=betas_val)
-    phase5_results[mom_label] = result
-
-best_momentum_label = max(
-    phase5_results,
-    key=lambda k: phase5_results[k]['best_val_r2'])
-best_betas = momentum_candidates[best_momentum_label]
-\end{lstlisting}
+Each configuration was trained with early stopping (patience of 10 validation checks at 5-epoch intervals) up to a maximum of 100 epochs. Table~\ref{tab:hyper_full} reports the full results.
 
 \begin{table}[htbp]
 \centering
@@ -140,127 +26,56 @@ best_betas = momentum_candidates[best_momentum_label]
 \label{tab:hyper_full}
 \footnotesize
 \begin{tabular}{llrrr}
-\hline
+\toprule
 \textbf{Phase} & \textbf{Configuration} & \textbf{Best Epoch} & \textbf{Val $R^2$} & \textbf{Time (s)} \\
-\hline
+\midrule
 \multirow{3}{*}{Phase 1: Activation}
   & CELU  & 100 & 0.995682 & 556.7 \\
   & GELU  &  25 & 0.995636 & 313.8 \\
   & Tanh  & 100 & 0.995532 & 565.9 \\
-\hline
+\midrule
 \multirow{4}{*}{Phase 2: Learning Rate}
   & 0.01   &  10 & 0.995453 & 222.9 \\
   & 0.001  & 100 & 0.995682 & 558.1 \\
   & 0.0005 & 100 & 0.995692 & 563.8 \\
   & 0.0001 & 100 & 0.995686 & 556.0 \\
-\hline
+\midrule
 \multirow{4}{*}{Phase 3: Batch Size}
   & 64  &  75 & 0.995678 & 1441.8 \\
   & 128 &  30 & 0.995669 &  491.9 \\
   & 256 & 100 & 0.995692 &  580.3 \\
   & 512 & 160 & 0.995685 &  487.3 \\
-\hline
+\midrule
 \multirow{2}{*}{Phase 4: Optimiser}
   & Adam  & 100 & 0.995692 & 562.7 \\
   & NAdam &  85 & 0.995693 & 582.5 \\
-\hline
+\midrule
 \multirow{3}{*}{Phase 5: Momentum}
   & $\beta_1=0.90$ & 85 & 0.995693 & 586.6 \\
   & $\beta_1=0.95$ & 40 & 0.995690 & 427.8 \\
   & $\beta_1=0.99$ & 95 & 0.995685 & 621.8 \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}
 
 % -------------------------------------------------------------
-\subsection{Bayesian Optimisation: GP Surrogate Methodology}
+\subsection{Bayesian Optimisation: GP Surrogate}
 \label{annexure:bo_methodology}
 
-\begin{lstlisting}[caption={GP surrogate surface fitting function.}]
-from sklearn.gaussian_process import (
-    GaussianProcessRegressor)
-from sklearn.gaussian_process.kernels import (
-    Matern, ConstantKernel, WhiteKernel)
+A Gaussian process surrogate with a Mat\'{e}rn $\nu = 5/2$ kernel was fitted to the observed hyperparameter evaluations to visualise the validation-error landscape. The GP was fitted using scikit-learn's \texttt{GaussianProcessRegressor} with 15 random restarts, seed 42, and a composite kernel consisting of a constant kernel multiplied by the Mat\'{e}rn kernel plus a white noise kernel. Log-scaled axes were used for the learning rate dimension. The fitted surface and its uncertainty were evaluated on a $100 \times 100$ grid with 15\% margin beyond the observed range.
 
-def fit_gp_surface(X_obs, y_obs, log_axes,
-                   grid_resolution=100):
-    """Fit a GP surrogate to observed evaluations.
-
-    Parameters
-    ----------
-    X_obs : np.ndarray, shape (n, 2)
-        Observed hyperparameter configurations.
-    y_obs : np.ndarray, shape (n,)
-        Observed objective (validation error).
-    log_axes : list of bool, length 2
-        Whether to transform each axis to log10.
-    grid_resolution : int
-        Grid points per axis for surface eval.
-
-    Returns
-    -------
-    gp, X1d, X2d, Zm, Zs, min_idx
-    """
-    X_gp = X_obs.copy()
-    for i, la in enumerate(log_axes):
-        if la:
-            X_gp[:, i] = np.log10(X_gp[:, i])
-
-    kernel = (
-        ConstantKernel(1.0, (1e-4, 1e4)) *
-        Matern(length_scale=[1.0, 1.0], nu=2.5,
-               length_scale_bounds=(1e-4, 1e4)) +
-        WhiteKernel(noise_level=1e-6,
-                    noise_level_bounds=(1e-10, 1e-2)))
-
-    gp = GaussianProcessRegressor(
-        kernel=kernel, n_restarts_optimizer=15,
-        random_state=SEED, alpha=1e-8)
-    gp.fit(X_gp, y_obs)
-
-    # Evaluation grid with 15% margin
-    bounds = []
-    for i in range(2):
-        c = X_gp[:, i]
-        margin = (c.max() - c.min()) * 0.15
-        bounds.append((c.min() - margin,
-                       c.max() + margin))
-
-    x1_g = np.linspace(bounds[0][0], bounds[0][1],
-                       grid_resolution)
-    x2_g = np.linspace(bounds[1][0], bounds[1][1],
-                       grid_resolution)
-    X1m, X2m = np.meshgrid(x1_g, x2_g)
-    X_grid = np.column_stack(
-        [X1m.ravel(), X2m.ravel()])
-
-    Zm, Zs = gp.predict(X_grid, return_std=True)
-    Zm = Zm.reshape(X1m.shape)
-    Zs = Zs.reshape(X1m.shape)
-
-    # Back-transform to display scale
-    X1d = 10**X1m if log_axes[0] else X1m
-    X2d = 10**X2m if log_axes[1] else X2m
-
-    mi = np.unravel_index(Zm.argmin(), Zm.shape)
-
-    return gp, X1d, X2d, Zm, Zs, mi
-\end{lstlisting}
-
-% -------------------------------------------------------------
 % -------------------------------------------------------------
 \subsection{Consolidated Best Hyperparameter Summary}
 \label{annexure:best_hyperparams}
-
 
 \begin{table}[htbp]
 \centering
 \caption{Best hyperparameter configuration selected for the final DNN model.}
 \label{tab:best_hyperparams}
 \begin{tabular}{ll}
-\hline
+\toprule
 \textbf{Hyperparameter} & \textbf{Selected Value} \\
-\hline
+\midrule
 Architecture    & $22 \to 256 \to 128 \to 64 \to 32 \to 16 \to 1$ \\
 Activation      & CELU \\
 Learning rate   & 0.0005 \\
@@ -272,6 +87,6 @@ Bias            & False (all layers) \\
 Max epochs      & 100 \\
 Early stopping  & 10 checks (every 5 epochs) \\
 Loss function   & MSE (on normalised scale) \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}

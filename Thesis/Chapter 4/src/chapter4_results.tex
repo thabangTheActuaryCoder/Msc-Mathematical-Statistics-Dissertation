@@ -103,7 +103,7 @@ values while maintaining stable convergence behaviour.
 
 \subsubsection{Phase 4: Optimiser}
 
-Adam and Nadam were compared with all previous best choices carried
+Adam and NAdam were compared with all previous best choices carried
 forward.
 
 \begin{figure}[H]
@@ -115,15 +115,15 @@ forward.
 \end{figure}
 
 \noindent
-Figure~\ref{fig:phase4_optimiser_ch4} shows that Nadam converges faster
+Figure~\ref{fig:phase4_optimiser_ch4} shows that NAdam converges faster
 than Adam in the initial epochs and exhibits smoother validation loss
 trajectories throughout training. From approximately epoch~40 onwards,
-Nadam consistently achieves lower validation loss and higher validation
-$R^2$ than Adam, with fewer loss spikes. Nadam was therefore retained.
+NAdam consistently achieves lower validation loss and higher validation
+$R^2$ than Adam, with fewer loss spikes. NAdam was therefore retained.
 
 \subsubsection{Phase 5: Momentum parameters}
 
-Three momentum configurations were compared for the Nadam optimiser:
+Three momentum configurations were compared for the NAdam optimiser:
 $(\beta_1, \beta_2) \in \{(0.90, 0.999),\; (0.95, 0.999),\;
 (0.99, 0.999)\}$.
 
@@ -160,7 +160,7 @@ configurations evaluated in Phases~1-5.}
 
 \noindent
 The selected configuration (CELU, $\eta = 0.0005$,
-$|\mathcal{B}| = 256$, Nadam, $\beta_1 = 0.95$) achieves the lowest
+$|\mathcal{B}| = 256$, NAdam, $\beta_1 = 0.95$) achieves the lowest
 validation loss among all evaluated configurations.
 Table~\ref{tab:final_hyperparameters_ch4} records the final training
 configuration.
@@ -178,7 +178,7 @@ configuration.
 1. Activation function & CELU, GELU, Tanh & CELU \\
 2. Learning rate & 0.01, 0.001, 0.0005, 0.0001 & 0.0005 \\
 3. Batch size & 64, 128, 256, 512 & 256 \\
-4. Optimiser & Adam, Nadam & Nadam \\
+4. Optimiser & Adam, NAdam & NAdam \\
 5. Momentum $(\beta_1, \beta_2)$ & (0.90, 0.999), (0.95, 0.999), (0.99, 0.999) & (0.95, 0.999) \\
 \bottomrule
 \end{tabular}
@@ -228,23 +228,25 @@ Section~\ref{sec:model_validation_diagnostics}.
 The model's predictive performance supports its use in the
 subsequent simulation and attribution analyses.
 
-\subsubsection{Baseline comparison: GLM (Gamma, log-link) versus DNN}
+\subsubsection{Baseline comparison: GLM, Random Forest, XGBoost and DNN}
 \label{sec:glm_vs_dnn_comparison_ch4}
 
 The \gls{glm} benchmark specified in
-Section~\ref{sec:glm_benchmark_methods} was evaluated alongside the
-\gls{dnn}.  Both models were fitted on the same training partition
-($n = 524\,288$) using the same encoded feature set and the same
-train/validation/test split, ensuring that the comparison reflects
-genuine model-class differences rather than data-handling artefacts.
+Section~\ref{sec:glm_benchmark_methods} and the two tree-based
+benchmarks specified in Section~\ref{sec:tree_benchmarks_methods} were
+evaluated alongside the \gls{dnn}.  All four models were fitted on the
+same training partition ($n = 524\,288$) using the same encoded feature
+set and the same train/validation/test split, ensuring that the
+comparison reflects genuine model-class differences rather than
+data-handling artefacts.
 Table~\ref{tab:glm_vs_dnn_comparison_ch4} reports the
-performance of both models across training, validation and test
+performance of all four models across training, validation and test
 partitions.
 
 \begin{table}[H]
 \centering
-\caption{Predictive performance comparison: \gls{glm} (Gamma, log-link)
-versus \gls{dnn} (funnel architecture) on the original monetary scale.}
+\caption{Predictive performance comparison across four model classes on
+the original monetary scale.}
 \label{tab:glm_vs_dnn_comparison_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
@@ -257,6 +259,16 @@ versus \gls{dnn} (funnel architecture) on the original monetary scale.}
     & Training   & 623 & 911 & 0.9574 \\
     & Validation & 622 & 913 & 0.9574 \\
     & Test       & 624 & 913 & 0.9571 \\
+\addlinespace
+Random Forest
+    & Training   & 261 & 324 & 0.9946 \\
+    & Validation & 359 & 443 & 0.9900 \\
+    & Test       & 358 & 443 & 0.9899 \\
+\addlinespace
+XGBoost
+    & Training   & 241 & 281 & 0.9959 \\
+    & Validation & 255 & 297 & 0.9955 \\
+    & Test       & 255 & 297 & 0.9955 \\
 \addlinespace
 \gls{dnn} (Funnel)
     & Training   & 251 & 291 & 0.9957 \\
@@ -341,7 +353,7 @@ structure.
 \label{sec:mc_results}
 
 The base parametric Monte Carlo simulation (Algorithm~3.1) was executed
-with $B = 10\,000$ synthetic policyholder profiles drawn from the
+with $B = 100\,000$ synthetic policyholder profiles drawn from the
 product-marginal input distribution specified in
 equation~\eqref{eq:raw_product_mc_distribution_ch3}. Each simulated
 profile was preprocessed, scored through the fitted \gls{dnn}, and
@@ -465,7 +477,7 @@ are indistinguishable by this non-parametric criterion.
 \end{figure}
 
 \noindent
-Figure~\ref{fig:tsne_joint_overlay_ch4} provides a non-linear
+Figure~\ref{fig:tsne_joint_overlay_ch4} provides a nonlinear
 complement to the linear PCA overlay reported in
 Section~\ref{sec:mc_input_validation}.  The t-SNE projection maps both
 the training and Monte Carlo profiles into two dimensions, preserving
@@ -507,7 +519,7 @@ at both the joint and marginal levels.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_mc_predicted_cost_distribution.png}
-\caption{Monte Carlo predicted-cost distribution ($B = 10\,000$):
+\caption{Monte Carlo predicted-cost distribution ($B = 100\,000$):
 histogram with kernel density overlay (left) and box plot (right).}
 \label{fig:mc_predicted_cost_distribution_ch4}
 \end{figure}
@@ -521,7 +533,7 @@ summary statistics.
 \begin{table}[H]
 \centering
 \caption{Distributional summary of the Monte Carlo predicted costs
-($B = 10\,000$).}
+($B = 100\,000$).}
 \label{tab:mc_distribution_summary_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
@@ -529,29 +541,29 @@ summary statistics.
 \toprule
 \textbf{Statistic} & \textbf{Value} \\
 \midrule
-Mean & R16\,707 \\
-Standard deviation & R4\,409 \\
-Skewness & $0.128$ \\
-Kurtosis & $-0.304$ \\
-Minimum & R5\,172 \\
-25th percentile & R13\,612 \\
+Mean & R16\,752 \\
+Standard deviation & R4\,417 \\
+Skewness & $0.132$ \\
+Kurtosis & $-0.337$ \\
+Minimum & R4\,172 \\
+25th percentile & R13\,621 \\
 Median & R16\,632 \\
-75th percentile & R19\,694 \\
-90th percentile & R22\,482 \\
-95th percentile & R24\,154 \\
-99th percentile & R27\,160 \\
-Maximum & R31\,466 \\
+75th percentile & R19\,792 \\
+90th percentile & R22\,585 \\
+95th percentile & R24\,249 \\
+99th percentile & R27\,049 \\
+Maximum & R31\,781 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \noindent
-The distribution is approximately symmetric (skewness $= 0.128$) and
-slightly platykurtic (kurtosis $= -0.304$), with a mean of R16\,707 and
-a standard deviation of R4\,409. The interquartile range spans
-R13\,612 to R19\,694, and the upper tail extends to a maximum predicted
-cost of R31\,466. The near-zero skewness and the close agreement
-between the mean and median (R16\,707 versus R16\,632) indicate that
+The distribution is approximately symmetric (skewness $= 0.132$) and
+slightly platykurtic (kurtosis $= -0.337$), with a mean of R16\,752 and
+a standard deviation of R4\,417. The interquartile range spans
+R13\,621 to R19\,792, and the upper tail extends to a maximum predicted
+cost of R31\,781. The near-zero skewness and the close agreement
+between the mean and median (R16\,752 versus R16\,632) indicate that
 the predicted-cost distribution is centred, without heavy-tailed
 distortion.
 
@@ -559,7 +571,7 @@ distortion.
 
 The Monte Carlo standard error and running distributional summaries were
 recorded at increasing simulation sizes
-$B \in \{1\,000,\; 2\,500,\; 5\,000,\; 10\,000,\; 20\,000\}$
+$B \in \{1\,000,\; 2\,500,\; 5\,000,\; 10\,000,\; 25\,000,\; 50\,000,\; 100\,000\}$
 following the convergence monitoring procedure in
 Section~\ref{sec:mc_simulation_design}.
 
@@ -572,11 +584,11 @@ Section~\ref{sec:mc_simulation_design}.
 
 \noindent
 Figure~\ref{fig:mc_convergence_ch4} shows that the running mean
-stabilises within a narrow band (R16\,651 to R16\,697) across all
-simulation sizes. The running standard deviation converges from R4\,460
-at $B = 1\,000$ to R4\,439 at $B = 20\,000$. The median and upper-tail
+stabilises within a narrow band (R16\,752 to R16\,873) across all
+simulation sizes. The running standard deviation converges from R4\,327
+at $B = 1\,000$ to R4\,417 at $B = 100\,000$. The median and upper-tail
 quantiles exhibit similar stability, with the 95th percentile ranging
-from R24\,030 to R24\,328 across all sizes.
+from R23\,953 to R24\,400 across all sizes.
 Table~\ref{tab:mc_convergence_ch4} reports the \gls{mcse} at each
 simulation size.
 
@@ -587,23 +599,25 @@ simulation size.}
 \label{tab:mc_convergence_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
-\begin{tabular}{rrrrrrrr}
+\begin{tabular}{rrrrrrr}
 \toprule
-$B$ & Mean & SD & Median & P90 & P95 & P99 & MCSE \\
+$B$ & Mean & SD & Median & P95 & P99 & MCSE \\
 \midrule
-1\,000 & 16\,651 & 4\,460 & 16\,467 & 22\,672 & 24\,328 & 27\,663 & 141.0 \\
-2\,500 & 16\,651 & 4\,388 & 16\,529 & 22\,490 & 24\,030 & 27\,341 & 87.8 \\
-5\,000 & 16\,651 & 4\,411 & 16\,492 & 22\,538 & 24\,121 & 27\,490 & 62.4 \\
-10\,000 & 16\,697 & 4\,434 & 16\,594 & 22\,582 & 24\,152 & 27\,322 & 44.3 \\
-20\,000 & 16\,673 & 4\,439 & 16\,571 & 22\,570 & 24\,121 & 27\,131 & 31.4 \\
+1\,000 & 16\,771 & 4\,327 & 16\,822 & 23\,953 & 26\,942 & 136.8 \\
+2\,500 & 16\,873 & 4\,381 & 16\,711 & 24\,181 & 26\,941 & 87.6 \\
+5\,000 & 16\,809 & 4\,484 & 16\,646 & 24\,400 & 27\,548 & 63.4 \\
+10\,000 & 16\,759 & 4\,427 & 16\,629 & 24\,278 & 27\,108 & 44.3 \\
+25\,000 & 16\,781 & 4\,408 & 16\,631 & 24\,278 & 27\,158 & 27.9 \\
+50\,000 & 16\,752 & 4\,408 & 16\,620 & 24\,255 & 27\,055 & 19.7 \\
+100\,000 & 16\,752 & 4\,417 & 16\,632 & 24\,249 & 27\,049 & 14.0 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \noindent
-The \gls{mcse} decreases from R141 at $B = 1\,000$ to R44.3 at
-$B = 10\,000$, representing $0.27\%$ of the mean predicted cost. At the
-selected simulation size of $B = 10\,000$, the running summaries have
+The \gls{mcse} decreases from R136.8 at $B = 1\,000$ to R14.0 at
+$B = 100\,000$, representing $0.08\%$ of the mean predicted cost. At the
+selected simulation size of $B = 100\,000$, the running summaries have
 stabilised and the simulation precision is adequate for the subsequent
 distributional and attribution analyses.
 
@@ -614,28 +628,26 @@ $\mathcal{O}(B^{-1/2})$.  The empirical convergence rate in
 Table~\ref{tab:mc_convergence_ch4} closely follows this theoretical
 law: the ratio
 $\mathrm{MCSE}(B{=}1\,000) \,/\, \mathrm{MCSE}(B{=}10\,000)
-= 141.0 / 44.3 = 3.18$ matches the theoretical ratio
+= 136.8 / 44.3 = 3.09$ matches the theoretical ratio
 $\sqrt{10\,000 / 1\,000} = \sqrt{10} \approx 3.16$, and
-$\mathrm{MCSE}(B{=}1\,000) \,/\, \mathrm{MCSE}(B{=}20\,000)
-= 141.0 / 31.4 = 4.49$ matches $\sqrt{20} \approx 4.47$.  The
+$\mathrm{MCSE}(B{=}1\,000) \,/\, \mathrm{MCSE}(B{=}100\,000)
+= 136.8 / 14.0 = 9.77$ matches $\sqrt{100} = 10.0$.  The
 simulation therefore exhibits the canonical Monte Carlo convergence
 behaviour, confirming that no pathological variance inflation or serial
 dependence is present in the simulated profiles.
 
 The running upper-tail percentiles in
 Table~\ref{tab:mc_convergence_ch4} provide an empirical assessment of
-quantile estimation precision.  The 90th percentile varies within a band
-of R182 across simulation sizes (R22\,490 to R22\,672), the 95th
-percentile within R298 (R24\,030 to R24\,328), and the 99th percentile
-within R532 (R27\,131 to R27\,663).  The progressively wider variation
-at higher quantiles reflects the decreasing effective sample size in the
-tail: at $\tau_{99}$ with $B = 10\,000$, only $100$ observations
-determine the percentile estimate, compared with $1\,000$ at
-$\tau_{90}$ and $500$ at $\tau_{95}$.  Nonetheless, even at
-$\tau_{99}$, the running percentile has stabilised to within
-$\pm 1.0\%$ of its final value from $B = 5\,000$ onwards, indicating
-that the tail percentile estimates are sufficiently precise for the
-conditional Shapley analysis that follows.
+quantile estimation precision.  The 95th percentile varies within a band
+of R447 across simulation sizes (R23\,953 to R24\,400), and the 99th
+percentile within R606 (R26\,941 to R27\,548).  The progressively wider
+variation at higher quantiles reflects the decreasing effective sample
+size in the tail: at $\tau_{99}$ with $B = 100\,000$, approximately
+$1\,000$ observations determine the percentile estimate, compared with
+$5\,000$ at $\tau_{95}$.  The running 99th percentile has stabilised to
+within $\pm 0.4\%$ of its final value from $B = 25\,000$ onwards,
+indicating that the tail percentile estimates are sufficiently precise
+for the conditional Shapley analysis that follows.
 
 \subsubsection{Comparison with observed training charges}
 
@@ -667,7 +679,7 @@ product-marginal simulation law and the empirical joint distribution.
 
 The residual-augmented sensitivity analysis
 (Section~\ref{sec:residual_augmented_mc}) was applied to the
-$B = 10\,000$ base Monte Carlo predictions.  Centred fitted residuals
+$B = 100\,000$ base Monte Carlo predictions.  Centred fitted residuals
 were drawn from the empirical residual distribution
 $\widehat{F}_{\varepsilon}$
 (equation~\eqref{eq:residual_draw_ch3}), and a fixed perturbation band
@@ -729,7 +741,7 @@ that follows.
 \subsection{Shapley-Value Attribution Results}
 \label{sec:shapley_results}
 
-Shapley values were computed for all $B = 10\,000$ simulated
+Shapley values were computed for all $B = 100\,000$ simulated
 profiles using the gradient-based SHAP explainer described in
 Table~\ref{tab:shap_implementation_settings_ch3}. Dummy-level
 attributions were aggregated to the raw-variable level ($q = 11$)
@@ -766,37 +778,37 @@ absolute values for all 11 raw variables on the normalised scale.}
 \toprule
 \textbf{Variable} & \textbf{Mean signed SHAP} & \textbf{Mean $|\text{SHAP}|$} \\
 \midrule
-\texttt{smoker} & $+0.022$ & $0.577$ \\
-\texttt{coverage\_level} & $+0.020$ & $0.401$ \\
-\texttt{medical\_history} & $-0.030$ & $0.368$ \\
-\texttt{family\_medical\_history} & $+0.007$ & $0.352$ \\
-\texttt{occupation} & $+0.011$ & $0.170$ \\
-\texttt{exercise\_frequency} & $+0.009$ & $0.151$ \\
+\texttt{smoker} & $+0.032$ & $0.578$ \\
+\texttt{coverage\_level} & $+0.022$ & $0.401$ \\
+\texttt{medical\_history} & $-0.031$ & $0.367$ \\
+\texttt{family\_medical\_history} & $+0.005$ & $0.351$ \\
+\texttt{occupation} & $+0.013$ & $0.171$ \\
+\texttt{exercise\_frequency} & $+0.005$ & $0.149$ \\
 \texttt{gender} & $-0.002$ & $0.122$ \\
-\texttt{bmi} & $-0.007$ & $0.099$ \\
-\texttt{children} & $+0.008$ & $0.068$ \\
-\texttt{age} & $-0.002$ & $0.058$ \\
-\texttt{region} & $+0.002$ & $0.056$ \\
+\texttt{bmi} & $-0.007$ & $0.100$ \\
+\texttt{children} & $+0.008$ & $0.067$ \\
+\texttt{age} & $-0.001$ & $0.059$ \\
+\texttt{region} & $+0.002$ & $0.057$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \noindent
 The four most important variables form a clear top tier:
-\texttt{smoker} ($I_g = 0.577$), \texttt{coverage\_level} ($0.401$),
-\texttt{medical\_history} ($0.368$) and
-\texttt{family\_medical\_history} ($0.352$). These four variables
+\texttt{smoker} ($I_g = 0.578$), \texttt{coverage\_level} ($0.401$),
+\texttt{medical\_history} ($0.367$) and
+\texttt{family\_medical\_history} ($0.351$). These four variables
 together account for the large majority of the fitted model's
 attribution magnitude. A second tier of moderate contributors includes
-\texttt{occupation} ($0.170$) and \texttt{exercise\_frequency}
-($0.151$). The remaining five variables (\texttt{gender},
+\texttt{occupation} ($0.171$) and \texttt{exercise\_frequency}
+($0.149$). The remaining five variables (\texttt{gender},
 \texttt{bmi}, \texttt{children}, \texttt{age} and \texttt{region})
 each have mean $|\text{SHAP}|$ values below $0.13$.
 
 The mean signed values are close to zero for all variables, indicating
 that the positive and negative Shapley contributions approximately
 cancel out across the simulated profiles. The largest signed value in
-absolute terms is \texttt{medical\_history} ($-0.030$), reflecting a
+absolute terms is \texttt{medical\_history} ($-0.031$), reflecting a
 mild directional asymmetry in how the model attributes cost to different
 medical history categories.
 
@@ -892,9 +904,9 @@ $\boldsymbol{u_{\tau}}$ \textbf{(R)} &
 $\boldsymbol{|\mathcal{H}_{\tau}|}$ &
 \textbf{Proportion} \\
 \midrule
-$\tau_{90}$ & 0.90 & 22\,482 & 1\,000 & 0.10 \\
-$\tau_{95}$ & 0.95 & 24\,154 & 500 & 0.05 \\
-$\tau_{99}$ & 0.99 & 27\,160 & 100 & 0.01 \\
+$\tau_{90}$ & 0.90 & 22\,585 & 10\,000 & 0.10 \\
+$\tau_{95}$ & 0.95 & 24\,249 & 5\,000 & 0.05 \\
+$\tau_{99}$ & 0.99 & 27\,049 & 1\,000 & 0.01 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -932,10 +944,10 @@ extreme upper tail:
     relative to their global values.
 
     \item At $\tau_{99}$, a ranking reversal occurs:
-    \texttt{family\_medical\_history} ($I_{g,0.99} = 0.622$) and
-    \texttt{medical\_history} ($I_{g,0.99} = 0.608$) overtake
-    \texttt{smoker} ($I_{g,0.99} = 0.566$) as the most important
-    variables. \texttt{coverage\_level} ($I_{g,0.99} = 0.599$) also
+    \texttt{family\_medical\_history} ($I_{g,0.99} = 0.649$) and
+    \texttt{medical\_history} ($I_{g,0.99} = 0.615$) overtake
+    \texttt{smoker} ($I_{g,0.99} = 0.563$) as the most important
+    variables. \texttt{coverage\_level} ($I_{g,0.99} = 0.595$) also
     exceeds \texttt{smoker} in the extreme tail.
 \end{itemize}
 
@@ -947,50 +959,56 @@ values.
 \begin{table}[H]
 \centering
 \caption{Mean absolute Shapley values: global and conditional at each
-high-cost threshold (normalised scale).}
+high-cost threshold (normalised scale), with 95\% bootstrap confidence
+intervals at $\tau_{99}$.}
 \label{tab:shap_conditional_values_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
-\begin{tabular}{lrrrr}
+\begin{tabular}{lrrrrr}
 \toprule
 \textbf{Variable} & \textbf{Global} & $\boldsymbol{\tau_{90}}$ &
-$\boldsymbol{\tau_{95}}$ & $\boldsymbol{\tau_{99}}$ \\
+$\boldsymbol{\tau_{95}}$ & $\boldsymbol{\tau_{99}}$ &
+\textbf{95\% CI at $\boldsymbol{\tau_{99}}$} \\
 \midrule
-\texttt{smoker} & 0.577 & 0.596 & 0.584 & 0.566 \\
-\texttt{coverage\_level} & 0.401 & 0.515 & 0.537 & 0.599 \\
-\texttt{medical\_history} & 0.368 & 0.502 & 0.518 & 0.608 \\
-\texttt{family\_medical\_history} & 0.352 & 0.498 & 0.531 & 0.622 \\
-\texttt{occupation} & 0.170 & 0.183 & 0.185 & 0.178 \\
-\texttt{exercise\_frequency} & 0.151 & 0.164 & 0.171 & 0.191 \\
-\texttt{gender} & 0.122 & 0.122 & 0.122 & 0.120 \\
-\texttt{bmi} & 0.099 & 0.099 & 0.095 & 0.092 \\
-\texttt{children} & 0.068 & 0.068 & 0.068 & 0.065 \\
-\texttt{age} & 0.058 & 0.058 & 0.057 & 0.057 \\
-\texttt{region} & 0.056 & 0.062 & 0.062 & 0.070 \\
+\texttt{smoker} & 0.578 & 0.593 & 0.585 & 0.563 & $[0.559,\; 0.568]$ \\
+\texttt{coverage\_level} & 0.401 & 0.511 & 0.536 & 0.595 & $[0.585,\; 0.604]$ \\
+\texttt{medical\_history} & 0.367 & 0.488 & 0.517 & 0.615 & $[0.604,\; 0.625]$ \\
+\texttt{family\_medical\_history} & 0.351 & 0.496 & 0.530 & 0.649 & $[0.638,\; 0.659]$ \\
+\texttt{occupation} & 0.171 & 0.178 & 0.180 & 0.181 & $[0.176,\; 0.185]$ \\
+\texttt{exercise\_frequency} & 0.149 & 0.161 & 0.166 & 0.171 & $[0.165,\; 0.178]$ \\
+\texttt{gender} & 0.122 & 0.121 & 0.121 & 0.120 & $[0.119,\; 0.121]$ \\
+\texttt{bmi} & 0.100 & 0.099 & 0.099 & 0.100 & $[0.096,\; 0.103]$ \\
+\texttt{children} & 0.067 & 0.068 & 0.068 & 0.069 & $[0.067,\; 0.072]$ \\
+\texttt{age} & 0.059 & 0.058 & 0.058 & 0.059 & $[0.057,\; 0.061]$ \\
+\texttt{region} & 0.057 & 0.062 & 0.063 & 0.063 & $[0.060,\; 0.065]$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 The ranking reversal at $\tau_{99}$ is based on
-$|\mathcal{H}_{0.99}| = 100$ profiles, which warrants scrutiny of its
-statistical reliability.  Three lines of evidence support the robustness
-of this finding.  First, the reversal is not an isolated artefact at a
-single threshold: the conditional importance values for
+$|\mathcal{H}_{0.99}| = 1\,000$ profiles, providing a substantial
+sample for the conditional analysis.  Four lines of evidence support the
+robustness of this finding.  First, the reversal is not an isolated
+artefact at a single threshold: the conditional importance values for
 \texttt{coverage\_level}, \texttt{medical\_history} and
 \texttt{family\_medical\_history} increase monotonically across all four
 conditioning levels (global, $\tau_{90}$, $\tau_{95}$, $\tau_{99}$),
 indicating a consistent trend rather than sampling noise.  Second, the
 magnitude of the reversal is substantial: at $\tau_{99}$,
-\texttt{family\_medical\_history} exceeds \texttt{smoker} by $0.056$ on
-the normalised scale ($0.622$ versus $0.566$), a relative difference of
-$9.9\%$.  Third, the profile-level composition analysis
+\texttt{family\_medical\_history} exceeds \texttt{smoker} by $0.086$ on
+the normalised scale ($0.649$ versus $0.563$), a relative difference of
+$15.3\%$.  Third, the 95\% bootstrap confidence intervals
+(Table~\ref{tab:shap_conditional_values_ch4}) confirm that the
+intervals for the top three non-smoker variables do not overlap with
+that of \texttt{smoker}, providing formal statistical support for the
+reversal.  Fourth, the profile-level composition analysis
 (Figure~\ref{fig:highcost_profiles_ch4}) provides a mechanistic
 explanation: $99\%$ of profiles in $\mathcal{H}_{0.99}$ are smokers, so
 the near-constant value of the \texttt{smoker} variable within this set
 reduces its discriminating power, as a binary variable that takes the
 same value for virtually all members of a conditioning set necessarily
 contributes a near-constant Shapley attribution.  The convergence of
-these three independent lines of evidence supports the conclusion that
+these four independent lines of evidence supports the conclusion that
 the ranking reversal reflects a genuine structural property of the
 fitted model's attribution surface, not a finite-sample artefact.
 
@@ -1012,8 +1030,8 @@ increase in the conditional importance of
 \texttt{coverage\_level}, \texttt{medical\_history} and
 \texttt{family\_medical\_history} as the threshold moves from the global
 level through $\tau_{90}$ and $\tau_{95}$ to $\tau_{99}$. In contrast,
-\texttt{smoker} shows a slight decline in conditional importance at the
-most extreme threshold ($0.566$ at $\tau_{99}$ versus $0.577$ globally).
+\texttt{smoker} shows a marked decline in conditional importance at the
+most extreme threshold ($0.563$ at $\tau_{99}$ versus $0.578$ globally).
 This decline does not indicate that smoking status becomes
 unimportant; rather, it reflects a ceiling effect: nearly all profiles
 in the extreme upper tail are smokers (as confirmed in
@@ -1091,33 +1109,34 @@ covariates.
 \centering
 \includegraphics[width=0.75\textwidth]{Thesis/Chapter 4/Figures/fig_shap_highcost_waterfall.png}
 \caption{SHAP waterfall plot for a representative high-cost profile
-at the $\tau_{95}$ threshold (predicted cost R24\,154).}
+at the $\tau_{95}$ threshold (predicted cost R24\,249).}
 \label{fig:shap_waterfall_ch4}
 \end{figure}
 
 \noindent
 Figure~\ref{fig:shap_waterfall_ch4} decomposes a representative
 high-cost profile at the $\tau_{95}$ threshold. The profile has the
-following characteristics: age~$= 47$, \texttt{bmi}~$= 38.5$,
-\texttt{children}~$= 4$, \texttt{smoker}~$=$ yes,
+following characteristics: age~$= 34$, \texttt{bmi}~$= 31.4$,
+\texttt{children}~$= 0$, \texttt{smoker}~$=$ yes,
 \texttt{family\_medical\_history}~$=$ Heart disease,
 \texttt{exercise\_frequency}~$=$ Frequently,
-\texttt{medical\_history}~$=$ High blood pressure,
+\texttt{medical\_history}~$=$ Heart disease,
 \texttt{gender}~$=$ female, \texttt{occupation}~$=$ Blue collar,
-\texttt{region}~$=$ northeast,
-\texttt{coverage\_level}~$=$ Standard.
+\texttt{region}~$=$ southeast,
+\texttt{coverage\_level}~$=$ Basic.
 
 The waterfall decomposition shows that the prediction is driven upward
 from the baseline ($E[f(X)] = -0.044$) to the final prediction
-($f(x) = 1.933$) primarily by three variables:
-\texttt{smoker} ($+0.78$), \texttt{family\_medical\_history} ($+0.68$)
-and \texttt{exercise\_frequency} ($+0.29$). A negative contribution
-from \texttt{medical\_history} ($-0.29$) partially offsets these
-positive effects, reflecting that High blood pressure carries a lower
-attribution than Heart disease within the \texttt{medical\_history}
-variable. The remaining variables contribute small positive amounts,
-with \texttt{coverage\_level} contributing nearly zero ($-0.00$) because
-the Standard tier occupies a middle position in the coverage hierarchy.
+($f(x) = 1.699$) primarily by three variables:
+\texttt{medical\_history} ($+0.67$), \texttt{family\_medical\_history}
+($+0.67$) and \texttt{smoker} ($+0.59$). A negative contribution from
+\texttt{coverage\_level} ($-0.51$) partially offsets these positive
+effects, reflecting that the Basic tier carries a lower predicted cost
+than the Premium tier. The remaining variables contribute smaller
+amounts: \texttt{exercise\_frequency} ($+0.26$), \texttt{gender}
+($+0.13$), \texttt{occupation} ($+0.11$), while \texttt{children}
+($-0.11$), \texttt{bmi} ($-0.04$), \texttt{age} ($-0.03$) and
+\texttt{region} ($-0.01$) exert modest negative effects.
 
 This waterfall illustrates the additive decomposition guaranteed by the
 Shapley efficiency axiom: the contributions sum exactly to the
@@ -1137,11 +1156,11 @@ which input variables are associated with those regions.
 
 The Monte Carlo predicted-cost distribution
 (Figure~\ref{fig:mc_predicted_cost_distribution_ch4}) is approximately
-symmetric with a mean of R16\,707 and an upper tail extending to
-R31\,466. Within this landscape, three quantile-based thresholds
+symmetric with a mean of R16\,752 and an upper tail extending to
+R31\,781. Within this landscape, three quantile-based thresholds
 define high-cost regions of increasing severity:
-$u_{0.90} = \text{R22\,482}$, $u_{0.95} = \text{R24\,154}$ and
-$u_{0.99} = \text{R27\,160}$.
+$u_{0.90} = \text{R22\,585}$, $u_{0.95} = \text{R24\,249}$ and
+$u_{0.99} = \text{R27\,049}$.
 
 The global Shapley analysis
 (Figure~\ref{fig:shap_global_importance_ch4}) identifies

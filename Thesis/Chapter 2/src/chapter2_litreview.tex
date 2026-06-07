@@ -1541,7 +1541,7 @@ Adam is widely used in applied deep learning because it combines adaptive
 parameter-wise scaling with a first-moment estimate of the gradient.
 
 \noindent
-Nesterov Adaptive Moment Estimation, or Nadam, modifies Adam by incorporating a
+Nesterov Adaptive Moment Estimation, or NAdam, modifies Adam by incorporating a
 Nesterov-type momentum correction into the first-moment component
 \citep{dozat2016incorporating}. A common form replaces the Adam numerator by
 \[
@@ -1562,7 +1562,7 @@ so that
     \frac{\widetilde{\mathbf{m}}_{t}}
          {\sqrt{\widehat{\mathbf{s}}_{t}}+\epsilon}.
 \]
-Nadam therefore retains Adam's adaptive second-moment scaling while modifying
+NAdam therefore retains Adam's adaptive second-moment scaling while modifying
 the momentum component through a Nesterov-style lookahead correction. These
 optimisers are introduced as candidate training mechanisms. The final optimiser
 choice is an empirical modelling decision and is justified in the methodology
@@ -1854,7 +1854,7 @@ complexity that gives a favourable balance between bias and variance.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.72\textwidth]{Thesis/Chapter 2/Figures/Screenshot 2026-05-17 at 00.48.56.png}
+    \includegraphics[width=0.72\textwidth]{Thesis/Chapter 2/Figures/bias_variance_tradeoff.png}
     \caption{Illustration of the bias-variance trade-off.
     Adapted from \citep{james2021introduction}.}
     \label{fig:bias_variance_tradeoff}
@@ -2032,10 +2032,10 @@ estimator of the cost surface rather than a replacement for actuarial reasoning.
 \noindent
 Recent actuarial work has demonstrated that neural networks can be incorporated
 into actuarial pricing structures without abandoning the underlying
-frequency severity logic. \citet{laporta2025neural} propose neural-network
+frequency-severity logic. \citet{laporta2025neural} propose neural-network
 models for pricing correlated health risks by embedding negative multinomial
 neural networks for claim frequency and gamma neural networks for claim
-severity within a classical frequency severity structure. Their empirical
+severity within a classical frequency-severity structure. Their empirical
 results on real-world health insurance data show that neural-network models
 achieve lower out-of-sample deviance and better risk diversification than
 established regression methods such as generalised linear models, as measured

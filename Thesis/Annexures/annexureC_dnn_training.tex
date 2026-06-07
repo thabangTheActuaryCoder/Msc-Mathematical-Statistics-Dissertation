@@ -1,236 +1,68 @@
 % =============================================================
-% Annexure C: Code for DNN Training
+% Annexure C: DNN Architecture and Training Procedure
 % =============================================================
-\section{Code for DNN Training}
+\section{DNN Architecture and Training Procedure}
 \label{annexure:dnn_training}
 
-% -------------------------------------------------------------
-\subsection{FunnelDNN Class Definition}
-\label{annexure:funneldnn}
-
-\begin{lstlisting}[caption={\texttt{FunnelDNN} class definition (bias-free, parameterised activation).}]
-import copy
-import torch
-import torch.nn as nn
-
-class FunnelDNN(nn.Module):
-    """Feed-forward DNN with funnel architecture (bias-free)."""
-
-    def __init__(self, input_dim=22,
-                 hidden_layers=[256, 128, 64, 32, 16],
-                 activation='CELU'):
-        super(FunnelDNN, self).__init__()
-
-        act_map = {
-            'CELU': nn.CELU(),
-            'GELU': nn.GELU(),
-            'Tanh': nn.Tanh()
-        }
-        act_fn = act_map[activation]
-
-        layers = []
-        prev_dim = input_dim
-        for h_dim in hidden_layers:
-            layers.append(nn.Linear(prev_dim, h_dim, bias=False))
-            layers.append(copy.deepcopy(act_fn))
-            prev_dim = h_dim
-        # Output layer: linear, no activation, no bias
-        layers.append(nn.Linear(prev_dim, 1, bias=False))
-
-        self.network = nn.Sequential(*layers)
-
-    def forward(self, x):
-        return self.network(x)
-\end{lstlisting}
+The FunnelDNN model uses a feed-forward architecture with monotonically decreasing hidden layer widths: $22 \to 256 \to 128 \to 64 \to 32 \to 16 \to 1$. All layers are bias-free, and the CELU activation function is applied after each hidden layer. The output layer is linear with no activation.
 
 % -------------------------------------------------------------
-\subsection{Evaluation Helper Functions}
-\label{annexure:eval_helpers}
-
-\begin{lstlisting}[caption={$R^2$ score, dot-product $r^2$, RMSE, MAE and de-normalisation helpers.}]
-def r2_score(y_true, y_pred):
-    """Standard R-squared: 1 - SS_res / SS_tot."""
-    ss_res = torch.sum((y_true - y_pred) ** 2)
-    ss_tot = torch.sum((y_true - y_true.mean()) ** 2)
-    if ss_tot == 0:
-        return 0.0
-    return (1 - ss_res / ss_tot).item()
-
-def r2_dot(y_true, y_pred):
-    """Dot-product R^2 (squared correlation).
-
-    Used during training on normalised data for speed."""
-    num = torch.dot(y_true.squeeze(),
-                    y_pred.squeeze()) ** 2
-    den = (torch.dot(y_true.squeeze(), y_true.squeeze()) *
-           torch.dot(y_pred.squeeze(), y_pred.squeeze()))
-    if den == 0:
-        return 0.0
-    return (num / den).item()
-
-def denormalise(y_norm):
-    """Convert normalised predictions to original Rand scale."""
-    return y_norm * y_std + y_mean
-
-def rmse(y_true, y_pred):
-    """Root Mean Squared Error."""
-    return torch.sqrt(
-        torch.mean((y_true - y_pred) ** 2)).item()
-
-def mae(y_true, y_pred):
-    """Mean Absolute Error."""
-    return torch.mean(
-        torch.abs(y_true - y_pred)).item()
-\end{lstlisting}
-
-% -------------------------------------------------------------
-\subsection{Training Function}
+\subsection{Training Procedure}
 \label{annexure:train_model}
 
-\begin{lstlisting}[caption={\texttt{train\_model} function.}]
-import time
-import numpy as np
-import torch.optim as optim
-from torch.utils.data import TensorDataset, DataLoader
+Training minimises the mean squared error loss on normalised data using the NAdam optimiser. Validation-based early stopping monitors the dot-product $R^2$ on the validation set every 5 epochs, with a patience of 10 checks.
 
-def train_model(model, X_tr, y_tr, X_va, y_va,
-                optimiser_cls, lr, batch_size,
-                max_epochs=200, patience=10, val_every=5,
-                betas=None, device=DEVICE, verbose=True):
-    model = model.to(device)
-    criterion = nn.MSELoss()
-
-    # Build optimiser with optional momentum parameters
-    if betas is not None:
-        optimizer = optimiser_cls(
-            model.parameters(), lr=lr, betas=betas)
-    else:
-        optimizer = optimiser_cls(
-            model.parameters(), lr=lr)
-
-    train_ds = TensorDataset(X_tr, y_tr)
-    train_loader = DataLoader(
-        train_ds, batch_size=batch_size,
-        shuffle=True, drop_last=False)
-
-    X_va_d = X_va.to(device)
-    y_va_d = y_va.to(device)
-    X_tr_d = X_tr.to(device)
-    y_tr_d = y_tr.to(device)
-
-    train_losses = []
-    val_epochs, val_losses = [], []
-    train_r2s, val_r2s = [], []
-
-    best_val_r2 = -np.inf
-    best_epoch = 0
-    best_state = None
-    checks_no_improve = 0
-
-    start = time.time()
-
-    for epoch in range(1, max_epochs + 1):
-        # --- Training phase (every epoch) ---
-        model.train()
-        batch_losses = []
-        for xb, yb in train_loader:
-            xb, yb = xb.to(device), yb.to(device)
-            optimizer.zero_grad()
-            pred = model(xb)
-            loss = criterion(pred, yb)
-            loss.backward()
-            optimizer.step()
-            batch_losses.append(loss.item() * xb.size(0))
-
-        train_loss = sum(batch_losses) / len(X_tr)
-        train_losses.append(train_loss)
-
-        # --- Validation phase (every val_every epochs) ---
-        if epoch % val_every == 0 or epoch == 1:
-            model.eval()
-            with torch.no_grad():
-                preds_tr = model(X_tr_d)
-                tr_r2 = r2_dot(y_tr_d, preds_tr)
-                preds_va = model(X_va_d)
-                val_loss = criterion(preds_va, y_va_d).item()
-                va_r2 = r2_dot(y_va_d, preds_va)
-
-            val_epochs.append(epoch)
-            val_losses.append(val_loss)
-            train_r2s.append(tr_r2)
-            val_r2s.append(va_r2)
-
-            if va_r2 > best_val_r2:
-                best_val_r2 = va_r2
-                best_epoch = epoch
-                best_state = copy.deepcopy(
-                    model.state_dict())
-                checks_no_improve = 0
-            else:
-                checks_no_improve += 1
-
-            if checks_no_improve >= patience:
-                break
-
-    elapsed = time.time() - start
-
-    return {
-        'best_model_state': best_state,
-        'best_epoch': best_epoch,
-        'best_val_r2': best_val_r2,
-        'train_losses': train_losses,
-        'val_epochs': val_epochs,
-        'val_losses': val_losses,
-        'train_r2s': train_r2s,
-        'val_r2s': val_r2s,
-        'elapsed': elapsed
-    }
-\end{lstlisting}
+\begin{algorithm}[htbp]
+\caption{FunnelDNN training with early stopping.}
+\label{alg:dnn_training}
+\begin{algorithmic}[1]
+\Require Standardised data $(\mathbf{X}_{\mathrm{train}}, \mathbf{y}_{\mathrm{train}}, \mathbf{X}_{\mathrm{val}}, \mathbf{y}_{\mathrm{val}})$, learning rate $\eta$, batch size $B$, patience $P$, validation interval $V$
+\Ensure Trained model state $\boldsymbol{\theta}^*$
+\State Initialise FunnelDNN with seed 42
+\State $\boldsymbol{\theta}^* \gets \boldsymbol{\theta}_0$, \; $R^{2*} \gets -\infty$, \; $c \gets 0$
+\For{$t = 1, 2, \ldots, T_{\max}$}
+    \For{each mini-batch $(\mathbf{X}_b, \mathbf{y}_b)$ of size $B$}
+        \State Compute $\mathcal{L} = \mathrm{MSE}\bigl(f_{\boldsymbol{\theta}}(\mathbf{X}_b),\, \mathbf{y}_b\bigr)$
+        \State Update $\boldsymbol{\theta}$ via NAdam with learning rate $\eta$
+    \EndFor
+    \If{$t \bmod V = 0$}
+        \State Compute $R^2_{\mathrm{val}} = r^2_{\mathrm{dot}}\bigl(\mathbf{y}_{\mathrm{val}},\, f_{\boldsymbol{\theta}}(\mathbf{X}_{\mathrm{val}})\bigr)$
+        \If{$R^2_{\mathrm{val}} > R^{2*}$}
+            \State $R^{2*} \gets R^2_{\mathrm{val}}$, \; $\boldsymbol{\theta}^* \gets \boldsymbol{\theta}$, \; $c \gets 0$
+        \Else
+            \State $c \gets c + 1$
+        \EndIf
+        \If{$c \geq P$}
+            \State \textbf{break} \Comment{Early stopping triggered}
+        \EndIf
+    \EndIf
+\EndFor
+\State \Return $\boldsymbol{\theta}^*$
+\end{algorithmic}
+\end{algorithm}
 
 % -------------------------------------------------------------
-\subsection{Final Model Training and Checkpoint Saving}
+\subsection{Evaluation Metrics}
+\label{annexure:eval_helpers}
+
+Three metrics are computed on the original Rand scale after de-normalisation:
+\begin{itemize}
+    \item $R^2 = 1 - \mathrm{SS}_{\mathrm{res}} / \mathrm{SS}_{\mathrm{tot}}$, where $\mathrm{SS}_{\mathrm{res}} = \sum_i (y_i - \hat{y}_i)^2$ and $\mathrm{SS}_{\mathrm{tot}} = \sum_i (y_i - \bar{y})^2$.
+    \item $\mathrm{RMSE} = \sqrt{n^{-1} \sum_i (y_i - \hat{y}_i)^2}$.
+    \item $\mathrm{MAE} = n^{-1} \sum_i |y_i - \hat{y}_i|$.
+\end{itemize}
+
+During training, the dot-product $R^2$ (squared correlation between predicted and observed values) is used on normalised data for computational speed.
+
+% -------------------------------------------------------------
+\subsection{Checkpoint Contents}
 \label{annexure:final_model}
 
-\begin{lstlisting}[caption={Final model training and checkpoint saving.}]
-torch.manual_seed(SEED)
-final_model = FunnelDNN(input_dim=22,
-                        activation=best_activation)
-
-final_result = train_model(
-    final_model, X_train_t, y_train_t,
-    X_val_t, y_val_t,
-    optimiser_cls=best_optimiser_cls,
-    lr=best_lr, batch_size=best_bs,
-    max_epochs=MAX_EPOCHS, patience=PATIENCE,
-    val_every=VAL_EVERY, betas=best_betas)
-
-final_model.load_state_dict(
-    final_result['best_model_state'])
-final_model.eval()
-
-# Save checkpoint
-checkpoint = {
-    'model_state_dict': final_model.state_dict(),
-    'architecture': {
-        'input_dim': 22,
-        'hidden_layers': [256, 128, 64, 32, 16],
-        'activation': best_activation,
-        'bias': False
-    },
-    'hyperparameters': {
-        'learning_rate': best_lr,
-        'batch_size': best_bs,
-        'optimiser': best_optimiser_name,
-        'betas': best_betas,
-        'best_epoch': final_result['best_epoch']
-    },
-    'standardisation': {
-        'X_mean': X_mean, 'X_std': X_std,
-        'y_mean': float(y_mean), 'y_std': float(y_std)
-    },
-    'features': FEATURES,
-    'metrics': metrics
-}
-
-torch.save(checkpoint, 'chapter3_final_model.pth')
-\end{lstlisting}
+The final trained model is saved as \texttt{chapter3\_final\_model.pth}, a PyTorch checkpoint containing:
+\begin{itemize}
+    \item Model weight tensors (state dictionary).
+    \item Architecture specification (layer widths, activation, bias setting).
+    \item Selected hyperparameters (learning rate, batch size, optimiser, momentum).
+    \item Standardisation parameters ($\boldsymbol{\mu}_X$, $\boldsymbol{\sigma}_X$, $\mu_y$, $\sigma_y$).
+    \item Feature names and evaluation metrics.
+\end{itemize}

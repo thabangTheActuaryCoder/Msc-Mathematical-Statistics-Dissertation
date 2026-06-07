@@ -7,7 +7,7 @@
 
 \noindent
 This chapter translates the conceptual DNN, Monte Carlo and Shapley framework
-of Chapter \ref{sec:literature_review} into a concrete empirical workflow.  The analysis uses a publicly available health insurance benchmark dataset containing one
+of Chapter~\ref{sec:literature_review} into a concrete empirical workflow.  The analysis uses a publicly available health insurance benchmark dataset containing one
 million policyholder records, eleven raw predictors, and a continuous
 response variable, \texttt{charges}.  The chapter proceeds sequentially:
 it first describes the data and the exploratory diagnostics that motivate
@@ -743,7 +743,7 @@ diagnostics (Section~\ref{sec:model_validation_diagnostics}) showed no
 evidence that removing it would improve out-of-sample performance.
 
 The network is constructed without bias vectors.  As discussed in
-Chapter \ref{sec:literature_review}, when all numerical inputs and the response are standardised the
+Chapter~\ref{sec:literature_review}, when all numerical inputs and the response are standardised the
 wide first hidden layer can approximate any necessary additive shift
 through the weight parameters alone, and the bias-free specification is
 therefore not restrictive.  The total number of trainable parameters is
@@ -808,7 +808,7 @@ The gradient of the loss with respect to the weight matrix of layer $l$ is
     \label{eq:weight_gradient}
 \end{equation}
 Because bias vectors are omitted, no bias‑update term appears.  The weight
-matrices are then updated by the Nadam optimiser
+matrices are then updated by the NAdam optimiser
 (Section~\ref{sec:training_configuration}), which combines Nesterov‑
 accelerated momentum with adaptive learning rates.
 
@@ -828,8 +828,8 @@ optimisation.
 
 The network is trained by minimising the mean squared error on the
 standardised response scale (equation~\eqref{eq:mse_loss}).  Weights are
-updated with the Nadam optimiser \citep{dozat2016incorporating}, described
-in Chapter~\ref{sec:loss_optimisation}.  Validation performance is
+updated with the NAdam optimiser \citep{dozat2016incorporating}, described
+in Section~\ref{sec:loss_optimisation}.  Validation performance is
 evaluated every $v = 5$ epochs.  For a fixed validation set, minimising
 the validation \gls{mse} is equivalent to maximising the validation \gls{r2}; the
 dot-product \gls{r2} is therefore used as the operational model-selection
@@ -876,7 +876,7 @@ Training response & Standardised \texttt{charges} \\
 Prediction scale & De-normalised to the original monetary scale \\
 Training objective & Mean squared error on the standardised response scale \\
 Secondary evaluation metrics & MAE, RMSE and \gls{r2} on the original response scale \\
-Optimiser & Nadam \citep{dozat2016incorporating} \\
+Optimiser & NAdam \citep{dozat2016incorporating} \\
 Momentum parameters & $(\beta_1,\beta_2)$ selected by validation comparison from $\{(0.90,0.999),\ (0.95,0.999),\ (0.99,0.999)\}$ \\
 Learning rate & Selected by validation comparison from $\{0.01, 0.001, 0.0005, 0.0001\}$ \\
 Batch size & Selected by validation comparison from $\{64, 128, 256, 512\}$ \\
@@ -904,9 +904,9 @@ prediction surface are compared sequentially:
           are tested with the best activation carried forward.
     \item \textbf{Batch size:}  Sizes $\{64, 128, 256, 512\}$ are tested
           with the best activation and learning rate.
-    \item \textbf{Optimiser:}  Adam and Nadam are compared with all previous
+    \item \textbf{Optimiser:}  Adam and NAdam are compared with all previous
           best choices carried forward.
-    \item \textbf{Momentum parameters:} $(\beta_1,\beta_2)$.  Since Nadam is
+    \item \textbf{Momentum parameters:} $(\beta_1,\beta_2)$.  Since NAdam is
           selected in the previous step, its Nesterov-accelerated momentum
           parameters are compared over
           $\{(0.90,0.999),\linebreak[1] (0.95,0.999),\linebreak[1] (0.99,0.999)\}$.  The first
@@ -976,7 +976,7 @@ training history, selected epoch $e^{*}$. \\[3pt]
 
 1. Set the random seed to $s$. \\
 2. Initialise network weights $\theta^{(0)}$ using Kaiming uniform
-   initialisation \citep{he2015}. \\
+   initialisation \citep{he2015delving}. \\
 3. For epoch $e = 1, \ldots, E_{\max}$: \\
 \quad (a) Partition $\mathcal{D}_{\mathrm{train}}$ into random
         mini-batches of size $|\mathcal{B}|$. \\
@@ -1019,6 +1019,17 @@ transformations.  It is fitted to the training partition by maximum likelihood
 and serves as a reference for the predictive performance of the \gls{dnn}.
 No hyperparameter tuning is applied to the GLM; its role as a benchmark
 was motivated in Section~\ref{sec:statistical_learning_supervised_regression}.
+
+\subsubsection{Tree-Based Benchmarks}
+\label{sec:tree_benchmarks_methods}
+
+Two tree-based ensemble methods are included alongside the \gls{glm} to provide a more comprehensive model-class comparison. Both models use the same 22 encoded features and 60/20/20 partition as the \gls{dnn} and \gls{glm}.
+
+A random forest regressor \citep{breiman2001random} is fitted with 500 trees, maximum depth unrestricted, minimum samples per leaf of 5, and \texttt{random\_state=42}. Random forests aggregate predictions across decorrelated decision trees, reducing variance through bootstrap aggregation (bagging) while maintaining low bias.
+
+A gradient-boosted tree regressor is fitted using the XGBoost implementation \citep{chen2016xgboost} with 1\,000 boosting rounds, a learning rate of 0.05, maximum depth of 8, and early stopping on the validation set with a patience of 50 rounds. XGBoost constructs an additive ensemble of shallow trees via gradient boosting, using approximate histogram-based splitting for computational efficiency.
+
+Hyperparameters for both tree-based models are set to commonly recommended defaults rather than tuned via cross-validation, paralleling the no-tuning treatment of the \gls{glm}. This ensures that the comparison isolates model-class differences rather than tuning effort. All four models are evaluated using $R^2$, \gls{rmse} and \gls{mae} on the original monetary scale across all three partitions.
 
 % =============================================================
 \subsection{Predictive and Structural Diagnostics}
@@ -1626,10 +1637,10 @@ restrictions are treated as compulsory: simulated ages remain between 18 and
 
 \subsubsection{Sample size and convergence monitoring}
 
-The base simulation uses $B = 10\,000$ generated policyholder profiles.  A
+The base simulation uses $B = 100\,000$ generated policyholder profiles.  A
 pilot convergence check is conducted by repeating the simulation for
 increasing values of $B \in \{1\,000,\ 2\,500,\ 5\,000,\ 10\,000,\
-20\,000\}$.  For each $B$, the running mean, standard deviation, and
+25\,000,\ 50\,000,\ 100\,000\}$.  For each $B$, the running mean, standard deviation, and
 selected quantiles of the simulated predicted costs are recorded.  The Monte
 Carlo standard error is estimated using equation~\eqref{eq:mcse}, with
 $s_B$ denoting the simulated standard deviation.  The selected simulation
@@ -1855,8 +1866,8 @@ Independent (product of marginals) &
 Empirical (preserves all dependencies) \\
 
 Sample size &
-$B = 10{,}000$ &
-$B = 10{,}000$ \\
+$B = 100{,}000$ &
+$B = 100{,}000$ \\
 
 Purpose &
 Primary simulation for cost distribution and Shapley analysis &
@@ -2118,7 +2129,7 @@ simulated model-ready profile $\mathbf{z}^{(b)}$, the fitted prediction is
 decomposed following equation~\eqref{eq:shapley_decomp}, with $p = 22$
 encoded features. The baseline prediction $\phi_0$ and the feature-level
 contributions $\phi_j(\mathbf{z}^{(b)})$ are defined exactly as in
-Chapter~\ref{sec:explainability_shapley_shap}.  As discussed there,
+Section~\ref{sec:explainability_shapley_shap}.  As discussed there,
 Shapley values are model attributions rather than causal effects.
 
 \subsubsection{Implementation settings}
@@ -2188,7 +2199,7 @@ several dummy columns belonging to the same original variable.
 
 The four Shapley axioms that uniquely characterise the Shapley value
 \citep{shapley1953value} were discussed in
-Chapter~\ref{sec:explainability_shapley_shap}.  In the present context, the
+Section~\ref{sec:explainability_shapley_shap}.  In the present context, the
 efficiency, symmetry, dummy, and additivity properties ensure that the
 aggregation from encoded features to raw variables is a linear
 repartitioning that preserves the complete decomposition.  The raw-variable
@@ -2264,6 +2275,21 @@ profiles classified as high cost change when fitted residual variability is
 introduced. Since the residual component is added after the fitted DNN
 prediction, Shapley values explain the fitted DNN component
 $\widehat{m}(\mathbf{z}^{(b)})$ rather than the residual addition.
+
+\subsubsection{Bootstrap confidence intervals for conditional Shapley values}
+
+At $\tau_{99}$ the conditioning set contains only $|\mathcal{H}_{0.99}| = 0.01B$ profiles, so the conditional mean absolute Shapley values are estimated from a small effective sample. To quantify estimation uncertainty, a nonparametric bootstrap is applied. Let $\boldsymbol{\Phi}_{\tau} \in \mathbb{R}^{|\mathcal{H}_{\tau}| \times q}$ denote the matrix of raw-variable Shapley values for profiles in $\mathcal{H}_{\tau}$. The bootstrap procedure is:
+
+\begin{enumerate}
+    \item Draw $R = 10\,000$ bootstrap resamples $\boldsymbol{\Phi}_{\tau}^{*(r)}$, each of size $|\mathcal{H}_{\tau}|$, with replacement from $\boldsymbol{\Phi}_{\tau}$.
+    \item For each resample $r$, compute the mean absolute Shapley value for each variable:
+    \[
+        I_{j,\tau}^{*(r)} = \frac{1}{|\mathcal{H}_{\tau}|} \sum_{i=1}^{|\mathcal{H}_{\tau}|} \bigl|\phi_{ij}^{*(r)}\bigr|, \qquad j = 1, \ldots, q.
+    \]
+    \item The 95\% bootstrap confidence interval for $I_{j,\tau}$ is the interval $\bigl[I_{j,\tau}^{*(0.025)},\; I_{j,\tau}^{*(0.975)}\bigr]$, where $I_{j,\tau}^{*(\alpha)}$ is the $\alpha$-quantile of the bootstrap distribution $\{I_{j,\tau}^{*(1)}, \ldots, I_{j,\tau}^{*(R)}\}$.
+\end{enumerate}
+
+This percentile bootstrap is reported alongside the conditional importance values at $\tau_{99}$ to assess the reliability of the ranking reversal discussed in Chapter~\ref{sec:results}.
 
 \begin{table}[H]
 \centering

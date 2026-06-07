@@ -1,279 +1,85 @@
 % =============================================================
-% Annexure D: Code for Monte Carlo Simulation
+% Annexure D: Monte Carlo Simulation Procedure
 % =============================================================
-\section{Code for Monte Carlo Simulation}
+\section{Monte Carlo Simulation Procedure}
 \label{annexure:mc_simulation}
 
+The parametric Monte Carlo simulation generates $B = 100\,000$ synthetic policyholder profiles from marginal distributions estimated on the full dataset. Each profile is encoded, standardised and scored through the trained FunnelDNN to produce a model-implied predicted-cost distribution.
+
 % -------------------------------------------------------------
-\subsection{Marginal Distribution Estimation}
+\subsection{Marginal Distributions}
 \label{annexure:mc_marginals}
 
-\begin{lstlisting}[caption={Marginal distribution estimation.}]
-import numpy as np
-import pandas as pd
+Table~\ref{tab:mc_marginals} summarises the marginal distribution assumed for each input variable.
 
-df_raw = pd.read_csv('insurance_dataset.csv')
-df_raw['medical_history'] = (
-    df_raw['medical_history'].fillna('None'))
-df_raw['family_medical_history'] = (
-    df_raw['family_medical_history'].fillna('None'))
-
-p_male = (df_raw['gender'] == 'male').mean()
-p_smoker = (df_raw['smoker'] == 'yes').mean()
-
-region_levels = ['northeast', 'northwest',
-                 'southeast', 'southwest']
-region_probs = np.array(
-    [(df_raw['region'] == r).mean()
-     for r in region_levels])
-
-med_hist_levels = ['None', 'Heart disease',
-                   'High blood pressure', 'Diabetes']
-med_hist_probs = np.array(
-    [(df_raw['medical_history'] == m).mean()
-     for m in med_hist_levels])
-
-fam_hist_levels = ['None', 'Heart disease',
-                   'High blood pressure', 'Diabetes']
-fam_hist_probs = np.array(
-    [(df_raw['family_medical_history'] == f).mean()
-     for f in fam_hist_levels])
-
-exercise_levels = ['Rarely', 'Occasionally',
-                   'Frequently', 'Never']
-exercise_probs = np.array(
-    [(df_raw['exercise_frequency'] == e).mean()
-     for e in exercise_levels])
-
-occ_levels = ['Unemployed', 'Student',
-              'Blue collar', 'White collar']
-occ_probs = np.array(
-    [(df_raw['occupation'] == o).mean()
-     for o in occ_levels])
-
-cov_levels = ['Basic', 'Standard', 'Premium']
-cov_probs = np.array(
-    [(df_raw['coverage_level'] == c).mean()
-     for c in cov_levels])
-\end{lstlisting}
+\begin{table}[htbp]
+\centering
+\caption{Marginal distributions used for Monte Carlo profile generation.}
+\label{tab:mc_marginals}
+\begin{tabular}{lll}
+\toprule
+\textbf{Variable} & \textbf{Distribution} & \textbf{Parameters} \\
+\midrule
+age       & Discrete Uniform  & $\{18, 19, \ldots, 65\}$ \\
+bmi       & Continuous Uniform & $[18.00,\; 50.00]$ \\
+children  & Discrete Uniform  & $\{0, 1, \ldots, 5\}$ \\
+gender    & Bernoulli          & $\hat{p}_{\mathrm{male}}$ from data \\
+smoker    & Bernoulli          & $\hat{p}_{\mathrm{smoker}}$ from data \\
+region    & Multinomial        & 4 levels, estimated proportions \\
+medical\_history        & Multinomial & 4 levels, estimated proportions \\
+family\_medical\_history & Multinomial & 4 levels, estimated proportions \\
+exercise\_frequency     & Multinomial & 4 levels, estimated proportions \\
+occupation              & Multinomial & 4 levels, estimated proportions \\
+coverage\_level         & Multinomial & 3 levels, estimated proportions \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 % -------------------------------------------------------------
-\subsection{Profile Generation Function}
+\subsection{Profile Generation and Scoring}
 \label{annexure:mc_generate}
 
-\begin{lstlisting}[caption={\texttt{generate\_mc\_profiles}: generate $B$ synthetic policyholder profiles from fitted marginals.}]
-B = 10_000  # Number of MC samples
-
-def generate_mc_profiles(n, rng):
-    """Generate n raw MC profiles from fitted marginals.
-
-    Marginal distributions:
-        age:      DiscreteUniform(18, 65)
-        bmi:      ContinuousUniform(18, 50)
-        children: DiscreteUniform(0, 5)
-        Categorical variables: Multinomial with
-                               estimated proportions
-    """
-    age = rng.integers(18, 66, size=n)
-    bmi = rng.uniform(18.0, 50.0, size=n)
-    children = rng.integers(0, 6, size=n)
-    gender = rng.choice(['male', 'female'],
-                        size=n, p=[p_male, 1-p_male])
-    smoker = rng.choice(['yes', 'no'],
-                        size=n, p=[p_smoker, 1-p_smoker])
-    region = rng.choice(region_levels,
-                        size=n, p=region_probs)
-    medical_history = rng.choice(
-        med_hist_levels, size=n, p=med_hist_probs)
-    family_medical_history = rng.choice(
-        fam_hist_levels, size=n, p=fam_hist_probs)
-    exercise_frequency = rng.choice(
-        exercise_levels, size=n, p=exercise_probs)
-    occupation = rng.choice(
-        occ_levels, size=n, p=occ_probs)
-    coverage_level = rng.choice(
-        cov_levels, size=n, p=cov_probs)
-
-    return pd.DataFrame({
-        'age': age, 'gender': gender,
-        'bmi': bmi, 'children': children,
-        'smoker': smoker, 'region': region,
-        'medical_history': medical_history,
-        'family_medical_history':
-            family_medical_history,
-        'exercise_frequency': exercise_frequency,
-        'occupation': occupation,
-        'coverage_level': coverage_level
-    })
-\end{lstlisting}
+\begin{algorithm}[htbp]
+\caption{Parametric Monte Carlo simulation.}
+\label{alg:mc_simulation}
+\begin{algorithmic}[1]
+\Require Fitted marginals, trained DNN $f_{\boldsymbol{\theta}^*}$, standardisation parameters, sample size $B = 100\,000$
+\Ensure Predicted-cost vector $\hat{\mathbf{y}}_{\mathrm{MC}} \in \mathbb{R}^B$
+\State Initialise random number generator with seed 42
+\For{$i = 1, \ldots, B$}
+    \State Sample each variable independently from its marginal distribution
+    \State Apply reference-category encoding to obtain $\mathbf{x}_i \in \mathbb{R}^{22}$
+\EndFor
+\State Standardise: $\mathbf{X}_{\mathrm{MC}} \gets (\mathbf{X}_{\mathrm{MC}}^{\mathrm{raw}} - \boldsymbol{\mu}_X) / \boldsymbol{\sigma}_X$
+\State Forward pass: $\hat{\mathbf{y}}_{\mathrm{norm}} \gets f_{\boldsymbol{\theta}^*}(\mathbf{X}_{\mathrm{MC}})$
+\State De-normalise: $\hat{\mathbf{y}}_{\mathrm{MC}} \gets \hat{\mathbf{y}}_{\mathrm{norm}} \cdot \sigma_y + \mu_y$
+\end{algorithmic}
+\end{algorithm}
 
 % -------------------------------------------------------------
-\subsection{Profile Encoding Function}
-\label{annexure:mc_encode}
-
-\begin{lstlisting}[caption={\texttt{encode\_profiles}: reference-category encoding for MC samples.}]
-def encode_profiles(df_mc):
-    """Apply reference-category encoding to match
-    the 22 model features.
-
-    Returns np.ndarray of shape (n, 22).
-    """
-    n = len(df_mc)
-    X = np.zeros((n, 22), dtype=np.float32)
-
-    X[:, 0] = df_mc['age'].values
-    X[:, 1] = (df_mc['gender'] == 'male'
-               ).astype(np.float32).values
-    X[:, 2] = df_mc['bmi'].values
-    X[:, 3] = df_mc['children'].values
-    X[:, 4] = (df_mc['smoker'] == 'yes'
-               ).astype(np.float32).values
-
-    # region dummies (ref = northeast)
-    X[:, 5] = (df_mc['region'] == 'southwest'
-               ).astype(np.float32).values
-    X[:, 6] = (df_mc['region'] == 'northwest'
-               ).astype(np.float32).values
-    X[:, 7] = (df_mc['region'] == 'southeast'
-               ).astype(np.float32).values
-
-    # medical_history (ref = None)
-    X[:, 8] = (df_mc['medical_history']
-               == 'Heart disease'
-               ).astype(np.float32).values
-    X[:, 9] = (df_mc['medical_history']
-               == 'High blood pressure'
-               ).astype(np.float32).values
-    X[:,10] = (df_mc['medical_history']
-               == 'Diabetes'
-               ).astype(np.float32).values
-
-    # family_medical_history (ref = None)
-    X[:,11] = (df_mc['family_medical_history']
-               == 'Heart disease'
-               ).astype(np.float32).values
-    X[:,12] = (df_mc['family_medical_history']
-               == 'High blood pressure'
-               ).astype(np.float32).values
-    X[:,13] = (df_mc['family_medical_history']
-               == 'Diabetes'
-               ).astype(np.float32).values
-
-    # exercise_frequency (ref = Rarely)
-    X[:,14] = (df_mc['exercise_frequency']
-               == 'Occasionally'
-               ).astype(np.float32).values
-    X[:,15] = (df_mc['exercise_frequency']
-               == 'Frequently'
-               ).astype(np.float32).values
-    X[:,16] = (df_mc['exercise_frequency']
-               == 'Never'
-               ).astype(np.float32).values
-
-    # occupation (ref = Unemployed)
-    X[:,17] = (df_mc['occupation'] == 'Student'
-               ).astype(np.float32).values
-    X[:,18] = (df_mc['occupation'] == 'Blue collar'
-               ).astype(np.float32).values
-    X[:,19] = (df_mc['occupation'] == 'White collar'
-               ).astype(np.float32).values
-
-    # coverage_level (ref = Basic)
-    X[:,20] = (df_mc['coverage_level'] == 'Standard'
-               ).astype(np.float32).values
-    X[:,21] = (df_mc['coverage_level'] == 'Premium'
-               ).astype(np.float32).values
-
-    return X
-\end{lstlisting}
-
-% -------------------------------------------------------------
-\subsection{DNN Scoring Helper}
-\label{annexure:mc_score}
-
-\begin{lstlisting}[caption={\texttt{score\_dnn}: standardise, forward-pass, de-normalise.}]
-import torch
-
-def score_dnn(X_encoded_raw,
-              standardise=True, denormalise=True):
-    """Score profiles through the trained DNN.
-
-    Parameters
-    ----------
-    X_encoded_raw : np.ndarray, shape (n, 22)
-    standardise : bool
-        Apply (X - X_mean) / X_std before scoring.
-    denormalise : bool
-        Convert output to original Rand scale.
-
-    Returns
-    -------
-    np.ndarray, shape (n,)
-    """
-    X = X_encoded_raw.astype(np.float32)
-    if standardise:
-        X = (X - X_mean) / X_std
-    X_t = torch.tensor(
-        X, dtype=torch.float32).to(DEVICE)
-    with torch.no_grad():
-        preds = model(X_t).cpu().numpy().flatten()
-    if denormalise:
-        preds = preds * y_std + y_mean
-    return preds
-\end{lstlisting}
-
-% -------------------------------------------------------------
-\subsection{MC Convergence Diagnostics}
+\subsection{Convergence Diagnostics}
 \label{annexure:mc_convergence}
 
-\begin{lstlisting}[caption={MC convergence diagnostics.}]
-from scipy import stats
-
-pilot_sizes = [1000, 2500, 5000, 10000, 20000]
-
-rng_pilot = np.random.default_rng(SEED)
-df_pilot = generate_mc_profiles(
-    max(pilot_sizes), rng_pilot)
-X_pilot_enc = encode_profiles(df_pilot)
-y_pilot = score_dnn(X_pilot_enc)
-
-convergence_stats = []
-for B_pilot in pilot_sizes:
-    y_sub = y_pilot[:B_pilot]
-    row = {
-        'B': B_pilot,
-        'Mean': y_sub.mean(),
-        'SD': y_sub.std(),
-        'P50': np.percentile(y_sub, 50),
-        'P90': np.percentile(y_sub, 90),
-        'P95': np.percentile(y_sub, 95),
-        'P99': np.percentile(y_sub, 99),
-        'MCSE': y_sub.std() / np.sqrt(B_pilot)
-    }
-    convergence_stats.append(row)
-\end{lstlisting}
+Monte Carlo convergence was assessed by computing summary statistics (mean, standard deviation, quantiles and Monte Carlo standard error) at pilot sizes $B \in \{1\,000;\; 2\,500;\; 5\,000;\; 10\,000;\; 25\,000;\; 50\,000;\; 100\,000\}$. Stabilisation of the mean and tail quantiles confirmed that $B = 100\,000$ provides adequate precision.
 
 % -------------------------------------------------------------
-\subsection{Residual-Augmented MC Sensitivity}
+\subsection{Residual-Augmented Sensitivity}
 \label{annexure:mc_residual}
 
-\begin{lstlisting}[caption={Residual-augmented MC sensitivity.}]
-# Compute training residuals
-y_train_pred = score_dnn(X_train_raw)
-residuals_train = y_train_raw - y_train_pred
+Sensitivity of the predicted-cost distribution to model uncertainty was assessed by augmenting point predictions with resampled centred training residuals:
+\[
+  \hat{y}_i^{\mathrm{aug}} = \hat{y}_i + \varepsilon_i,
+\]
+where $\varepsilon_i$ is drawn with replacement from the centred residual vector. Fixed perturbation bands of $\pm 0.5\,\hat{\sigma}_\varepsilon$ were also computed.
 
-# Centre the residuals
-residuals_centred = (
-    residuals_train - residuals_train.mean())
-sigma_e = residuals_centred.std()
+% -------------------------------------------------------------
+\subsection{Encoding for MC Profiles}
+\label{annexure:mc_encode}
 
-# Augmented predictions: Y_res = Y_hat + epsilon
-rng_res = np.random.default_rng(SEED + 1)
-eps_sample = rng_res.choice(
-    residuals_centred, size=B, replace=True)
-y_mc_augmented = y_mc + eps_sample
+The same reference-category encoding scheme described in Annexure~\ref{annexure:encoding} was applied to the Monte Carlo profiles, producing an $B \times 22$ feature matrix that matches the trained model's input specification.
 
-# Fixed perturbation bands
-y_mc_upper = y_mc + 0.5 * sigma_e
-y_mc_lower = y_mc - 0.5 * sigma_e
-\end{lstlisting}
+% -------------------------------------------------------------
+\subsection{DNN Scoring}
+\label{annexure:mc_score}
+
+Each encoded profile is standardised using the training-set parameters ($\boldsymbol{\mu}_X$, $\boldsymbol{\sigma}_X$), passed through the trained DNN in a single forward pass (with gradients disabled), and de-normalised to the original Rand scale using the training-set response parameters ($\mu_y$, $\sigma_y$).

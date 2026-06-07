@@ -107,13 +107,16 @@ baseline comparison established that the DNN outperforms the Gamma GLM
 and the test MAE by $59.8\%$.  The GLM's inferior fit was attributable to
 the log-link's multiplicative structure, which does not match the
 approximately additive data-generating process of the benchmark data.
-It should be noted, however, that this comparison was limited to a single
-classical baseline; a broader comparison including tree-based ensembles
-and Bayesian alternatives would provide a more complete picture of the
-DNN's relative standing within the landscape of flexible model classes.
+The tree-based benchmarks confirmed that a random forest ($R^2 = 0.9899$)
+and XGBoost ($R^2 = 0.9955$) also achieve strong performance, with
+XGBoost approaching the DNN's accuracy.  These comparisons serve to
+contextualise the DNN within a broader model-class landscape, but the
+central purpose of the dissertation remains the Monte Carlo and
+Shapley-value framework applied to the fitted DNN rather than the model
+comparison itself.
 
 The Monte Carlo simulation produced a predicted-cost distribution centred
-at R16\,707 with a standard deviation of R4\,409 and near-zero skewness.
+at R16\,752 with a standard deviation of R4\,417 and near-zero skewness.
 The beauty of this construction lies in the fact that it transforms the
 fitted network from a point-prediction device into a distributional
 object: the network is no longer evaluated at specific observed covariate
@@ -126,16 +129,16 @@ that the distributional conclusions are robust to fitted residual
 perturbation.
 
 The Shapley-value analysis revealed the expected global hierarchy:
-smoking status dominates ($I_g = 0.577$), followed by coverage level
-($0.401$), medical history ($0.368$) and family medical history
-($0.352$).  The training versus Monte Carlo attribution invariance check
+smoking status dominates ($I_g = 0.578$), followed by coverage level
+($0.401$), medical history ($0.367$) and family medical history
+($0.351$).  The training versus Monte Carlo attribution invariance check
 yielded a perfect Spearman rank correlation ($\rho_{\mathrm{S}} =
 1.000$), confirming that the DNN's internal feature-importance structure
 is preserved across input regimes.  The most striking finding, however,
 emerged from the conditional Shapley analysis.  At $\tau_{99}$, the
 feature-importance ranking reverses: family medical history
-($I_{g,0.99} = 0.622$), medical history ($0.608$) and coverage level
-($0.599$) overtake smoking status ($0.566$).  The profile-level analysis
+($I_{g,0.99} = 0.649$), medical history ($0.615$) and coverage level
+($0.595$) overtake smoking status ($0.563$).  The profile-level analysis
 explained this reversal through a simple but powerful observation: at the
 99th percentile, virtually all high-cost profiles are smokers ($99\%$),
 so smoking status no longer differentiates among them.  The residual
@@ -183,18 +186,18 @@ What is the shape and distributional behaviour of the
 model-implied predicted-cost distribution obtained by propagating
 parametric Monte Carlo input profiles through the trained network?
 
-The distribution is approximately symmetric (skewness $= 0.128$) and
-slightly platykurtic (kurtosis $= -0.304$), with a mean of R16\,707 and
-a standard deviation of R4\,409.  It is unimodal, with the interquartile
-range spanning R13\,612 to R19\,694 and the upper tail extending to a
-maximum predicted cost of R31\,466.  The close agreement between the mean
-and median (R16\,707 versus R16\,632) confirms the absence of
+The distribution is approximately symmetric (skewness $= 0.132$) and
+slightly platykurtic (kurtosis $= -0.337$), with a mean of R16\,752 and
+a standard deviation of R4\,417.  It is unimodal, with the interquartile
+range spanning R13\,621 to R19\,792 and the upper tail extending to a
+maximum predicted cost of R31\,781.  The close agreement between the mean
+and median (R16\,752 versus R16\,632) confirms the absence of
 heavy-tailed distortion.  The comparison with the observed training
 charges (Figure~\ref{fig:mc_predicted_vs_actual_ch4}) established that the
 model-implied distribution is consistent with the distributional
 characteristics of the observed data.  The convergence diagnostics
-confirmed that the Monte Carlo standard error at $B = 10\,000$ is R44.3,
-representing $0.27\%$ of the mean predicted cost, and that the running
+confirmed that the Monte Carlo standard error at $B = 100\,000$ is R14.0,
+representing $0.08\%$ of the mean predicted cost, and that the running
 summaries have stabilised.
 
 \subsubsection*{Research Question~\ref{rq:3}}
@@ -239,16 +242,16 @@ attributions globally, and how does the feature-importance ranking change
 conditionally within high-cost regions of the predicted-cost distribution?
 
 At the global level, four variables form a clear top tier: smoking status
-($I_g = 0.577$), coverage level ($0.401$), medical history ($0.368$) and
-family medical history ($0.352$).  Occupation ($0.170$) and exercise
-frequency ($0.151$) contribute at a secondary level.  The remaining five
+($I_g = 0.578$), coverage level ($0.401$), medical history ($0.367$) and
+family medical history ($0.351$).  Occupation ($0.171$) and exercise
+frequency ($0.149$) contribute at a secondary level.  The remaining five
 variables each have mean absolute Shapley values below $0.13$.  The
 conditional analysis at three thresholds reveals a progressive shift.  At
 $\tau_{90}$, the ranking mirrors the global ordering.  At $\tau_{95}$,
 family medical history and medical history show increased conditional
 importance.  At $\tau_{99}$, the ranking reverses: family medical history
-($0.622$), medical history ($0.608$) and coverage level ($0.599$)
-overtake smoking status ($0.566$).  The second-tier variables remain
+($0.649$), medical history ($0.615$) and coverage level ($0.595$)
+overtake smoking status ($0.563$).  The second-tier variables remain
 stable across all thresholds, indicating that the reversal is driven
 entirely by changes in the relative importance of the top-tier
 categorical risk factors.
@@ -426,16 +429,16 @@ serves the purpose of demonstrating the methodology on a controlled,
 reproducible dataset, but the specific numerical results are properties of
 this dataset and not of health insurance cost prediction in general.
 
-The study compares the DNN against a single classical baseline.
-Tree-based models such as random forests and gradient-boosted trees
-(XGBoost, LightGBM), ensemble methods and Bayesian alternatives were not
-evaluated.  The existing literature suggests that gradient-boosted trees
-often perform competitively with neural networks on tabular data
-\citep{richman2021ai}, and the absence of this comparison limits the
-generality of the conclusion that the DNN is the superior model class.  A
-broader model-selection study would strengthen the case for the DNN as the
-preferred prediction surface, or would identify contexts in which other
-model classes perform comparably or better.
+The study compares the DNN against a Gamma/log-link GLM, a random forest
+and an XGBoost gradient-boosted tree regressor.  While these benchmarks
+span three major model classes (parametric, bagging and boosting), ensemble
+methods such as stacking, Bayesian neural networks and other advanced
+alternatives were not evaluated.  The existing literature suggests that
+gradient-boosted trees often perform competitively with neural networks on
+tabular data \citep{richman2021ai}, and indeed the XGBoost benchmark
+achieves near-DNN accuracy on this dataset.  A broader model-selection
+study including additional architectures and datasets would further
+strengthen the conclusions.
 
 The Monte Carlo and Shapley analyses are conditional on a single trained
 network with a fixed random seed.  While the early stopping criterion and
@@ -468,11 +471,13 @@ approximation is the standard approach in the SHAP literature
 quantified for this specific setting.
 
 The conditional Shapley summaries at $\tau_{99}$ rely on approximately
-100 simulated profiles.  While the ranking reversal is consistent with the
-monotonic trends at $\tau_{90}$ and $\tau_{95}$, the small sample size
-introduces uncertainty into the conditional importance estimates.
-Bootstrap confidence intervals or larger simulation sizes would improve
-the precision and provide formal statistical evidence for the reversal.
+1\,000 simulated profiles (the top $1\%$ of $B = 100\,000$).  The
+nonparametric bootstrap confidence intervals ($R = 10\,000$ resamples)
+reported in Table~\ref{tab:shap_conditional_values_ch4} provide formal
+statistical support for the ranking reversal, and the monotonic trends
+across $\tau_{90}$, $\tau_{95}$ and $\tau_{99}$ strengthen the finding.
+Nevertheless, the precision of the conditional estimates remains lower
+than the global estimates, which are computed over the full simulation.
 It is worth noting that the upper-tail analysis in this dissertation is
 conducted through quantile-based thresholding of the predicted-cost
 distribution, rather than through the formal apparatus of extreme value
@@ -532,7 +537,7 @@ the log-link's multiplicative structure.  For actuarial practitioners,
 this motivates the evaluation of neural networks as supplementary or
 alternative pricing models alongside existing GLM-based tariffs,
 particularly in settings where the relationship between covariates and
-costs may be additive, non-linear or interactive in ways that the log-link
+costs may be additive, nonlinear or interactive in ways that the log-link
 cannot capture.  The conditional Shapley analysis has direct relevance to
 actuarial risk management.  Insurance professionals are typically
 interested not only in the average cost drivers across a portfolio, but
@@ -622,15 +627,12 @@ the attribution and interpretation components.
 
 \begin{itemize}
     \item Future work could extend the baseline comparison to include
-          tree-based ensembles (random forests, XGBoost, LightGBM) and
-          Bayesian neural networks.  Such comparisons would clarify
-          whether the DNN's predictive advantage over the GLM extends to
-          other flexible model classes, and whether the Shapley
-          attribution patterns are model-dependent or model-invariant.
-          On tabular insurance data, gradient-boosted trees have been
-          shown to perform competitively with neural networks
-          \citep{richman2021ai}, and a direct comparison on this benchmark
-          dataset would be informative.
+          Bayesian neural networks, stacking ensembles and alternative
+          deep-learning architectures (e.g.\ TabNet, FT-Transformer).
+          Such comparisons would clarify whether the Shapley attribution
+          patterns documented here are model-dependent or model-invariant,
+          and whether more complex architectures offer further predictive
+          gains beyond the DNN and XGBoost benchmarks already evaluated.
 
     \item Replacing the product-marginal input distribution with a
           copula-based joint distribution would allow the simulation to

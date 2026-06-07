@@ -20,9 +20,9 @@ Python~3.11 via the Anaconda distribution. Jupyter Notebook was used for interac
 \caption{Python package versions used in the dissertation.}
 \label{tab:packages}
 \begin{tabular}{lll}
-\hline
+\toprule
 \textbf{Package} & \textbf{Version} & \textbf{Purpose} \\
-\hline
+\midrule
 PyTorch           & 2.x              & DNN architecture, training and inference \\
 SHAP              & 0.43+            & Shapley value computation (GradientExplainer) \\
 statsmodels       & 0.14+            & GLM (Gamma, log-link) fitting \\
@@ -33,12 +33,10 @@ scikit-learn      & 1.3+             & GP surrogate, train/test splitting, metri
 matplotlib        & 3.8+             & Static figure generation \\
 seaborn           & 0.13+            & Statistical visualisation \\
 scikit-optimize   & 0.10+            & Bayesian Optimisation (\texttt{gp\_minimize}) \\
+XGBoost           & 3.x              & Gradient-boosted tree benchmark \\
 Plotly            & 5.x              & Interactive 3D surface plots \\
-\hline
+\bottomrule
 \end{tabular}
-
-\medskip
-Note: Exact patch versions may vary. The versions above represent the minimum versions with which the code was tested. Update these entries with the output of \texttt{pip freeze} or \texttt{conda list} before final submission.
 \end{table}
 
 % -------------------------------------------------------------
@@ -52,16 +50,7 @@ Note: Exact patch versions may vary. The versions above represent the minimum ve
     \item Fallback: CPU (used when MPS is unavailable or for SHAP computations)
 \end{itemize}
 
-\begin{lstlisting}[caption={Device selection logic for PyTorch.}]
-import torch
-
-if torch.backends.mps.is_available():
-    DEVICE = torch.device('mps')
-elif torch.cuda.is_available():
-    DEVICE = torch.device('cuda')
-else:
-    DEVICE = torch.device('cpu')
-\end{lstlisting}
+The PyTorch device was selected automatically: MPS (Metal Performance Shaders) if available on Apple Silicon, CUDA if available on NVIDIA hardware, and CPU as fallback.
 
 % -------------------------------------------------------------
 \subsection{Reproducibility}
@@ -87,3 +76,19 @@ Fixed random seed of 42:
 
     \item \texttt{model\_ready\_charges\_train\_20260517\_115748.csv}: reference-category encoded training partition (60\% of the dataset, 22 features + charges).
 \end{itemize}
+
+% -------------------------------------------------------------
+\subsection{Code Availability}
+\label{annexure:code_availability}
+
+The Python code used for data preprocessing, model training, Monte Carlo simulation, GLM benchmarking, Shapley-value computation and diagnostic figure generation is available as supplementary material. The code is organised into separate Jupyter notebooks corresponding to each stage of the analysis:
+
+\begin{itemize}
+    \item Data preprocessing and reference-category encoding (Annexure~\ref{annexure:preprocessing}).
+    \item DNN architecture definition and training (Annexure~\ref{annexure:dnn_training}).
+    \item Parametric Monte Carlo simulation (Annexure~\ref{annexure:mc_simulation}).
+    \item GLM benchmark fitting and comparison (Annexure~\ref{annexure:glm_benchmark}).
+    \item Shapley-value computation and conditional analysis (Annexure~\ref{annexure:shapley}).
+\end{itemize}
+
+Package versions and computing environment details are reported in Subsections~\ref{annexure:packages} to \ref{annexure:reproducibility} above. Full source code is available from the author on request.
