@@ -416,6 +416,9 @@
     title={List of Acronyms / Abbreviations},
     style=acronymtable
 ]
+% The longtable inside the glossary style increments the table counter;
+% reset it so that the first chapter table is numbered Table 1.
+\addtocounter{table}{-1}
 
 % =============================================================
 % Table of Contents
