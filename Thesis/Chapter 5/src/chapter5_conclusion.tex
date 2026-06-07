@@ -663,6 +663,19 @@ the attribution and interpretation components.
           distribution, transforming it from a point-prediction landscape
           into a set-valued prediction landscape with formal coverage
           properties.
+
+    \item Quantile regression offers a complementary perspective on the
+          conditional cost distribution that warrants investigation.
+          Rather than modelling the conditional mean and subsequently
+          examining quantiles of the Monte Carlo output, a quantile
+          regression neural network could directly estimate conditional
+          quantiles of the cost distribution at specified probability
+          levels.  This approach would provide a natural alternative to
+          the threshold-based conditioning used in the conditional Shapley
+          analysis and would allow the analyst to study how the
+          feature-importance structure varies across quantile levels
+          within the fitted model itself, without the need for a separate
+          Monte Carlo simulation stage.
 \end{itemize}
 
 \textbf{Attribution and interpretation extensions.}

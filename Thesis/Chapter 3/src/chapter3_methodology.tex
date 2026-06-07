@@ -1607,12 +1607,19 @@ and subsequently encoded using the reference-category scheme.
 \subsubsection{Goodness-of-fit and support checks}
 
 For continuous variables, empirical histograms and density overlays are
-inspected, and Kolmogorov--Smirnov and Anderson--Darling statistics are
-recorded.  For discrete and categorical variables, observed and fitted
-category probabilities are compared using frequency tables and chi-squared
-summaries.  Because the sample size is large, formal tests are interpreted
-cautiously: very small distributional differences may be statistically
-significant without being practically important for simulation.  Support
+inspected, and Kolmogorov--Smirnov (K-S) and Anderson--Darling (A-D)
+statistics are recorded.  These two tests were selected because they are
+among the most powerful omnibus goodness-of-fit tests for the continuous
+distributions under consideration: the K-S statistic measures the maximum
+absolute deviation between the empirical and fitted cumulative distribution
+functions, while the A-D statistic places greater weight on the tails,
+making it particularly sensitive to distributional departures in the regions
+most relevant to the high-cost analysis.  For discrete and categorical
+variables, observed and fitted category probabilities are compared using
+frequency tables and chi-squared summaries.  Because the sample size is
+large, formal tests are interpreted cautiously: very small distributional
+differences may be statistically significant without being practically
+important for simulation.  Support
 restrictions are treated as compulsory: simulated ages remain between 18 and
 65, \texttt{bmi} values between 18 and 50, \texttt{children} values between
 0 and 5, and categorical variables take only valid observed levels.
