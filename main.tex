@@ -345,31 +345,21 @@
 \begin{document}
 
 % =============================================================
+% Title Page (M&D template format)
+% =============================================================
+\input{Thesis/Cover Page/src/title_page}
+
+% =============================================================
 % Cover Page
 % =============================================================
-\includepdf[pages=2]{Thesis/Cover Page/src/cover_only_v4.pdf}
+\clearpage
+\includepdf[pages=1]{Thesis/Cover Page/src/cover_page_final.pdf}
 
 % =============================================================
-% Plagiarism Declaration
+% Originality Declaration
 % =============================================================
 \clearpage
-\phantomsection
-\addcontentsline{toc}{section}{Plagiarism Declaration}
-\includepdf[
-    pages=-,
-    pagecommand={\thispagestyle{plain}}
-]{Thesis/Declarations/Declaration by Masters Student 2.pdf}
-
-% =============================================================
-% Departmental Anti-Plagiarism Declaration
-% =============================================================
-\clearpage
-\phantomsection
-\addcontentsline{toc}{section}{Anti-Plagiarism Declaration}
-\includepdf[
-    pages=-,
-    pagecommand={\thispagestyle{plain}}
-]{Thesis/Declarations/Stats_AntiPlagiarism_Declaration.pdf}
+\input{Thesis/Declarations/originality_declaration}
 
 % =============================================================
 % Declaration on the Use of Generative AI
