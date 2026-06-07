@@ -612,7 +612,93 @@ the Shapley analysis, and by assessing whether the attribution patterns
 are sensitive to the specific choice of threshold.
 
 % ---------------------------------------------------------
-% 5.7 RECOMMENDATIONS FOR FUTURE RESEARCH
+% 5.7 COMPARISON WITH CONSTRAINED NEURAL-NETWORK APPROACHES
+% ---------------------------------------------------------
+
+\subsection{Comparison with Constrained Neural-Network Approaches}
+\label{sec:comparison_constrained_nn}
+
+A recent line of actuarial research imposes explicit shape constraints
+on neural networks during training.  The ICEnet of
+\citet{richman2024icenet}, presented in Chapter~7 of
+\citet{richman2025phd}, adds smoothness and monotonicity penalty terms
+to the loss function so that the network's Individual Conditional
+Expectation (ICE) outputs vary smoothly and monotonically with respect
+to selected covariates.  Because the two studies differ in their
+response variables, evaluation metrics and datasets, a direct numerical
+comparison of predictive performance is not appropriate.
+Table~\ref{tab:comparison_icenet} summarises the principal differences.
+
+\begin{table}[H]
+\centering
+\caption{Methodological comparison between the present dissertation and
+the ICEnet of \citet{richman2024icenet}.}
+\label{tab:comparison_icenet}
+\small
+\renewcommand{\arraystretch}{1.20}
+\begin{tabular}{p{0.26\textwidth}p{0.33\textwidth}p{0.33\textwidth}}
+\toprule
+\textbf{Aspect} & \textbf{Present dissertation} &
+\textbf{ICEnet} \\
+\midrule
+Target variable
+    & Continuous monetary charges
+    & Claims frequency (count) \\
+Response distribution
+    & Continuous; Gamma GLM baseline
+    & Poisson \\
+Evaluation metric
+    & $R^2$, RMSE, MAE
+    & Poisson deviance \\
+Dataset
+    & Kaggle ($n = 1\,000\,000$)
+    & French MTPL ($n = 678\,007$) \\
+Constraint mechanism
+    & None (unconstrained DNN)
+    & Smoothness and monotonicity penalties \\
+Interpretability
+    & Post-hoc Shapley values
+    & In-training ICE/PDP constraints \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+\textbf{Predictive performance.}
+\citet{richman2024icenet} reports that the ICEnet achieves a test-set
+Poisson deviance of $0.2388$, compared with $0.2387$ for the
+unconstrained network, a difference of $0.0001$.  When monotonicity
+constraints are applied alone, the out-of-sample deviance improves
+slightly to $0.2382$, suggesting that these constraints act as a
+regulariser; the smoothness constraints account for the small overall
+performance decline.  In the present dissertation, the unconstrained DNN
+achieves a test-set $R^2$ of $0.9957$ on a continuous cost outcome.
+Because the response variables differ (count data versus continuous
+monetary charges) and the evaluation metrics differ (Poisson deviance
+versus $R^2$), these figures are not directly comparable and no
+cross-study ranking of accuracy is claimed.  Both studies, however,
+demonstrate that deep neural networks improve upon GLM baselines within
+their respective insurance domains.
+
+\noindent
+\textbf{Interpretability.}
+The ICEnet enforces actuarial reasonableness during training by
+constraining the covariate--response relationships to be smooth and
+monotonic, which is important for commercial pricing and regulatory
+compliance.  The present dissertation pursues interpretability post hoc
+through Shapley-value decomposition, revealing that the dominant cost
+drivers shift between the global level and the upper tail of the
+predicted-cost distribution.  This distributional insight is not
+accessible through the ICE or PDP framework alone.  The two approaches
+address different aspects of model interpretability and are
+complementary rather than competing: constrained training ensures that
+the learned relationships are commercially reasonable, while
+Shapley attribution identifies which features contribute most to
+individual predictions and how these contributions change in high-cost
+regions.
+
+% ---------------------------------------------------------
+% 5.8 RECOMMENDATIONS FOR FUTURE RESEARCH
 % ---------------------------------------------------------
 
 \subsection{Recommendations for Future Research}
@@ -678,6 +764,20 @@ the attribution and interpretation components.
           feature-importance structure varies across quantile levels
           within the fitted model itself, without the need for a separate
           Monte Carlo simulation stage.
+
+    \item As discussed in
+          Section~\ref{sec:comparison_constrained_nn}, integrating
+          constrained neural-network training with the Monte
+          Carlo--Shapley workflow would combine actuarial reasonableness
+          with feature-level explainability.  The smoothness and
+          monotonicity constraints of the ICEnet
+          \citep{richman2024icenet} could be incorporated into the
+          DNN's loss function, and Shapley-value attribution could then
+          be applied to the constrained model to verify that the imposed
+          constraints do not distort the feature-importance ranking in
+          the upper tail.  This extension would also permit an empirical
+          assessment of whether the negligible accuracy cost observed for
+          frequency models extends to continuous-cost prediction.
 \end{itemize}
 
 \subsubsection*{Attribution and interpretation extensions}
@@ -734,7 +834,7 @@ the attribution and interpretation components.
 \end{itemize}
 
 % ---------------------------------------------------------
-% 5.8 CONCLUDING REMARK
+% 5.9 CONCLUDING REMARK
 % ---------------------------------------------------------
 
 \subsection{Concluding Remark}
