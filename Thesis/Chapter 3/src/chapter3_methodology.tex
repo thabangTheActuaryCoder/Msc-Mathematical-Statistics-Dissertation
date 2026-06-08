@@ -1003,33 +1003,506 @@ training history, selected epoch $e^{*}$. \\[3pt]
 \subsubsection{Benchmark Generalised Linear Model}
 \label{sec:glm_benchmark_methods}
 
-A classical actuarial benchmark is provided by a generalized linear model
+A classical actuarial benchmark is provided by a generalised linear model
 (\gls{glm}) with a gamma distribution and logarithmic link function
 \citep{dobson2008introduction, denuit2007actuarial}.  For a policyholder with
-model‑ready input vector $\mathbf{z}_i \in \mathbb{R}^{22}$ (the same encoded
+model-ready input vector $\mathbf{z}_i \in \mathbb{R}^{22}$ (the same encoded
 predictors used by the \gls{dnn}), the GLM assumes
-\[
+\begin{equation}
     Y_i \sim \text{Gamma}(\mu_i, \phi),
     \qquad
     \log(\mu_i) = \beta_0 + \sum_{j=1}^{22} \beta_j z_{ij},
-\]
-where $\mu_i = \mathbb{E}[Y_i \mid \mathbf{z}_i]$ and $\phi$ is the dispersion
-parameter.  The model includes no interaction terms or non‑linear
-transformations.  It is fitted to the training partition by maximum likelihood
-and serves as a reference for the predictive performance of the \gls{dnn}.
+    \label{eq:glm_specification}
+\end{equation}
+\equationlistentry{GLM specification with gamma distribution and log link}
+where $\mu_i = \mathbb{E}[Y_i \mid \mathbf{z}_i]$ and $\phi$ is the
+dispersion parameter.  The gamma distribution is a natural choice for
+positive, continuous, right-skewed monetary outcomes such as insurance
+charges, and the logarithmic link function ensures that the predicted
+mean $\mu_i = \exp(\beta_0 + \sum_j \beta_j z_{ij})$ is always positive
+\citep{denuit2007actuarial}.
+
+The model includes no interaction terms or non-linear transformations.  It
+is fitted to the training partition by maximum likelihood estimation.  The
+log-likelihood for the gamma \gls{glm} is
+\begin{equation}
+    \ell(\boldsymbol{\beta}, \phi)
+    =
+    \sum_{i=1}^{n}
+    \left[
+        \frac{1}{\phi}
+        \left(
+            -\frac{y_i}{\mu_i} - \log \mu_i
+        \right)
+        +
+        \left(\frac{1}{\phi} - 1\right) \log y_i
+        -
+        \log \Gamma\!\left(\frac{1}{\phi}\right)
+        -
+        \frac{1}{\phi}\log \phi
+    \right],
+    \label{eq:glm_loglikelihood}
+\end{equation}
+\equationlistentry{Gamma GLM log-likelihood}
+where $\mu_i = \exp(\mathbf{z}_i^{\top}\boldsymbol{\beta})$ and
+$\boldsymbol{\beta} = (\beta_0, \beta_1, \ldots, \beta_{22})^{\top}$.
+The parameter vector $\boldsymbol{\beta}$ is estimated by iteratively
+reweighted least squares (IRLS), which solves the score equations
+\begin{equation}
+    \sum_{i=1}^{n}
+    \frac{(y_i - \mu_i)}{\mathrm{Var}(Y_i)}
+    \,
+    \frac{\partial \mu_i}{\partial \eta_i}
+    \,
+    z_{ij}
+    = 0,
+    \qquad j = 0, 1, \ldots, 22,
+    \label{eq:glm_score}
+\end{equation}
+\equationlistentry{GLM score equations}
+where $\eta_i = \log(\mu_i)$ is the linear predictor and
+$\mathrm{Var}(Y_i) = \phi\,\mu_i^{2}$ under the gamma family.  Each IRLS
+iteration computes a weighted least squares regression of an adjusted
+dependent variable on the design matrix, with weights inversely
+proportional to the variance function evaluated at the current fitted
+values \citep{dobson2008introduction}.
+
+Algorithm~\ref{tab:glm_algorithm_ch3} formalises the fitting procedure.
+
+\begin{table}[H]
+\centering
+\caption{GLM fitting algorithm.}
+\label{tab:glm_algorithm_ch3}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{p{0.92\textwidth}}
+\toprule
+\textbf{Algorithm 3.0c: Gamma GLM with log link} \\
+\midrule
+\textbf{Input:} model-ready training data
+$\{(\mathbf{z}_i, y_i)\}_{i \in \mathcal{D}_{\mathrm{train}}}$,
+distribution family (gamma), link function ($\log$). \\[3pt]
+
+\textbf{Output:} fitted coefficient vector
+$\widehat{\boldsymbol{\beta}}$, dispersion estimate
+$\widehat{\phi}$. \\[3pt]
+
+1. Initialise the linear predictor:
+   $\eta_i^{(0)} = \log(\bar{y}_{\mathrm{train}})$ for all $i$. \\
+2. Repeat until convergence: \\
+\quad (a) Compute fitted values:
+        $\mu_i^{(t)} = \exp(\eta_i^{(t)})$. \\
+\quad (b) Compute working weights:
+        $w_i^{(t)} = \mu_i^{(t)\,2} / (\phi\,\mu_i^{(t)\,2})
+        = 1/\phi$. \\
+\quad (c) Compute the adjusted dependent variable:
+        $\tilde{y}_i^{(t)} = \eta_i^{(t)}
+        + (y_i - \mu_i^{(t)}) / \mu_i^{(t)}$. \\
+\quad (d) Solve the weighted least squares problem:
+        $\boldsymbol{\beta}^{(t+1)}
+        = (\mathbf{Z}^{\top} \mathbf{W}^{(t)} \mathbf{Z})^{-1}
+          \mathbf{Z}^{\top} \mathbf{W}^{(t)}
+          \tilde{\mathbf{y}}^{(t)}$. \\
+\quad (e) Update the linear predictor:
+        $\eta_i^{(t+1)} = \mathbf{z}_i^{\top}
+        \boldsymbol{\beta}^{(t+1)}$. \\
+3. Estimate the dispersion parameter:
+   $\widehat{\phi} = \frac{1}{n - p - 1}
+   \sum_{i=1}^{n}
+   \bigl((y_i - \widehat{\mu}_i)/\widehat{\mu}_i\bigr)^{2}$. \\
+4. Predict on the original monetary scale:
+   $\widehat{y}_i = \exp(\mathbf{z}_i^{\top}
+   \widehat{\boldsymbol{\beta}})$. \\
+5. Evaluate $R^2$, \gls{rmse} and \gls{mae} on the training,
+   validation and test partitions. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 No hyperparameter tuning is applied to the GLM; its role as a benchmark
 was motivated in Section~\ref{sec:statistical_learning_supervised_regression}.
 
 \subsubsection{Tree-Based Benchmarks}
 \label{sec:tree_benchmarks_methods}
 
-Two tree-based ensemble methods are included alongside the \gls{glm} to provide a more comprehensive model-class comparison. Both models use the same 22 encoded features and 60/20/20 partition as the \gls{dnn} and \gls{glm}.
+Two tree-based ensemble methods are included alongside the \gls{glm} to
+provide a more comprehensive model-class comparison.  Both models use the
+same 22 encoded features and 60/20/20 partition as the \gls{dnn} and
+\gls{glm}.
 
-A \gls{rf} regressor \citep{breiman2001random} is fitted with 500 trees, maximum depth unrestricted, minimum samples per leaf of 5, and \texttt{random\_state=42}. \gls{rf} aggregates predictions across decorrelated decision trees, reducing variance through bootstrap aggregation (bagging) while maintaining low bias.
+% ----- Random Forest -----
 
-A gradient-boosted tree regressor is fitted using the \gls{xgboost} implementation \citep{chen2016xgboost} with 1\,000 boosting rounds, a learning rate of 0.05, maximum depth of 8, and early stopping on the validation set with a patience of 50 rounds. \gls{xgboost} constructs an additive ensemble of shallow trees via gradient boosting, using approximate histogram-based splitting for computational efficiency.
+\paragraph{Random Forest.}
+A \gls{rf} regressor \citep{breiman2001random} is fitted with 500 trees,
+maximum depth unrestricted, minimum samples per leaf of 5, and
+\texttt{random\_state=42}.  \gls{rf} aggregates predictions across
+decorrelated decision trees, reducing variance through bootstrap
+aggregation (bagging) while maintaining low bias.
 
-Hyperparameters for both tree-based models are set to commonly recommended defaults rather than tuned via cross-validation, paralleling the no-tuning treatment of the \gls{glm}. This ensures that the comparison isolates model-class differences rather than tuning effort. All four models are evaluated using $R^2$, \gls{rmse} and \gls{mae} on the original monetary scale across all three partitions.
+The \gls{rf} constructs an ensemble of $B$ regression trees, each grown on
+a bootstrap sample of the training data.  At every candidate split the
+algorithm considers only a random subset of $m$ out of $p$ predictors,
+thereby decorrelating the individual trees and reducing the variance of the
+averaged prediction.  For a regression tree $T_b$ grown on bootstrap
+sample $\mathcal{D}_b^{*}$, the prediction for input $\mathbf{z}$ is
+$\hat{y}_b(\mathbf{z}) = T_b(\mathbf{z})$.  The \gls{rf} prediction is
+the average across all $B$ trees:
+\begin{equation}
+    \hat{f}_{\mathrm{RF}}(\mathbf{z})
+    =
+    \frac{1}{B}
+    \sum_{b=1}^{B}
+    T_b(\mathbf{z}).
+    \label{eq:rf_prediction}
+\end{equation}
+\equationlistentry{Random Forest ensemble prediction}
+
+Each tree $T_b$ is grown by recursively partitioning the feature space.
+At each internal node, the algorithm selects a random subset of
+$m = \lfloor p/3 \rfloor$ predictors (the default for regression) and
+chooses the split variable $j^{*}$ and split point $s^{*}$ that minimise
+the weighted sum of squared residuals in the resulting child nodes:
+\begin{equation}
+    (j^{*}, s^{*})
+    =
+    \arg\min_{j \in \mathcal{S},\; s}
+    \Biggl[
+        \sum_{i:\, z_{ij} \le s} (y_i - \bar{y}_{L})^{2}
+        +
+        \sum_{i:\, z_{ij} > s} (y_i - \bar{y}_{R})^{2}
+    \Biggr],
+    \label{eq:rf_split_criterion}
+\end{equation}
+\equationlistentry{Random Forest split criterion}
+where $\mathcal{S} \subset \{1,\dots,p\}$ with $|\mathcal{S}| = m$ is the
+randomly selected predictor subset, and $\bar{y}_{L}$ and $\bar{y}_{R}$
+denote the sample means in the left and right child nodes respectively.
+Trees are grown until each terminal node contains at most 5 observations.
+
+The variance reduction mechanism of the \gls{rf} can be understood
+through the decomposition of the variance of the ensemble average.  If
+individual tree predictions have variance $\sigma^{2}$ and pairwise
+correlation $\rho$, then
+\begin{equation}
+    \mathrm{Var}\bigl(\hat{f}_{\mathrm{RF}}\bigr)
+    =
+    \rho\,\sigma^{2}
+    +
+    \frac{1 - \rho}{B}\,\sigma^{2}.
+    \label{eq:rf_variance_reduction}
+\end{equation}
+\equationlistentry{Random Forest variance reduction}
+As $B$ increases, the second term vanishes, and the ensemble variance is
+governed by $\rho\,\sigma^{2}$.  By restricting splits to a random
+predictor subset, the \gls{rf} reduces $\rho$ below the value obtained by
+standard bagging (which uses all $p$ predictors at every split), yielding
+a lower ensemble variance \citep{hastie2009elements}.
+
+Algorithm~\ref{tab:rf_algorithm_ch3} formalises the training procedure.
+
+\begin{table}[H]
+\centering
+\caption{Random Forest training algorithm.}
+\label{tab:rf_algorithm_ch3}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{p{0.92\textwidth}}
+\toprule
+\textbf{Algorithm 3.0a: Random Forest regression} \\
+\midrule
+\textbf{Input:} model-ready training data
+$\{(\mathbf{z}_i, y_i)\}_{i \in \mathcal{D}_{\mathrm{train}}}$,
+number of trees $B = 500$, number of candidate predictors per split
+$m = \lfloor p/3 \rfloor$, minimum samples per leaf
+$n_{\min} = 5$, random seed $s = 42$. \\[3pt]
+
+\textbf{Output:} ensemble of fitted trees
+$\{T_1, \ldots, T_B\}$. \\[3pt]
+
+1. Set the random seed to $s$. \\
+2. For $b = 1, \ldots, B$: \\
+\quad (a) Draw a bootstrap sample $\mathcal{D}_{b}^{*}$ of size
+        $n_{\mathrm{train}}$ with replacement from
+        $\mathcal{D}_{\mathrm{train}}$. \\
+\quad (b) Grow an unpruned regression tree $T_b$ on
+        $\mathcal{D}_{b}^{*}$: \\
+\quad\quad (i) At each node, select a random subset
+            $\mathcal{S} \subset \{1,\ldots,p\}$ with
+            $|\mathcal{S}| = m$. \\
+\quad\quad (ii) Choose the split variable $j^{*}$ and split point
+            $s^{*}$ from $\mathcal{S}$ that minimise the weighted
+            residual sum of squares
+            (equation~\eqref{eq:rf_split_criterion}). \\
+\quad\quad (iii) Split the node into two child nodes and repeat
+            until each terminal node contains at most $n_{\min}$
+            observations. \\
+\quad (c) Assign the sample mean of the response values in each
+        terminal node as the node prediction. \\
+3. For a new input $\mathbf{z}$, predict
+   $\hat{f}_{\mathrm{RF}}(\mathbf{z})
+   = \frac{1}{B}\sum_{b=1}^{B} T_b(\mathbf{z})$. \\
+4. Evaluate $R^2$, \gls{rmse} and \gls{mae} on the training,
+   validation and test partitions on the original monetary scale. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:rf_hyperparameters_ch3} summarises the \gls{rf}
+configuration.
+
+\begin{table}[H]
+\centering
+\caption{Random Forest configuration.}
+\label{tab:rf_hyperparameters_ch3}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{p{0.34\textwidth}p{0.56\textwidth}}
+\toprule
+\textbf{Component} & \textbf{Specification} \\
+\midrule
+Number of trees ($B$) & 500 \\
+Candidate predictors per split ($m$) & $\lfloor p/3 \rfloor = 7$ \\
+Maximum depth & Unrestricted \\
+Minimum samples per leaf & 5 \\
+Bootstrap sampling & With replacement, sample size $= n_{\mathrm{train}}$ \\
+Split criterion & Mean squared error (equation~\eqref{eq:rf_split_criterion}) \\
+Hyperparameter tuning & Not applied (default values) \\
+Random seed & 42 \\
+Implementation & \texttt{scikit-learn} \texttt{RandomForestRegressor} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ----- XGBoost -----
+
+\paragraph{XGBoost.}
+A gradient-boosted tree regressor is fitted using the \gls{xgboost}
+implementation \citep{chen2016xgboost} with 1\,000 boosting rounds, a
+learning rate of 0.05, maximum depth of 8, and early stopping on the
+validation set with a patience of 50 rounds.  \gls{xgboost} constructs an
+additive ensemble of shallow trees via gradient boosting, using
+approximate histogram-based splitting for computational efficiency.
+
+Gradient boosting builds an additive model in a stage-wise fashion.  The
+ensemble prediction after $M$ boosting rounds is
+\begin{equation}
+    \hat{f}_{M}(\mathbf{z})
+    =
+    \sum_{m=0}^{M}
+    \eta \, h_m(\mathbf{z}),
+    \label{eq:xgb_additive_model}
+\end{equation}
+\equationlistentry{XGBoost additive ensemble model}
+where $h_0(\mathbf{z}) = \bar{y}$ is the initial constant prediction
+(the training-set mean), $h_m$ is the regression tree fitted at round $m$,
+and $\eta \in (0,1]$ is the learning rate (shrinkage parameter) that
+scales each tree's contribution.
+
+At each boosting round $m$, \gls{xgboost} fits a new tree $h_m$ to
+minimise a regularised objective.  For the squared-error loss used in
+regression, the objective at round $m$ is
+\begin{equation}
+    \mathcal{O}^{(m)}
+    =
+    \sum_{i=1}^{n}
+    \ell\!\bigl(y_i,\, \hat{f}_{m-1}(\mathbf{z}_i) + h_m(\mathbf{z}_i)\bigr)
+    +
+    \Omega(h_m),
+    \label{eq:xgb_objective}
+\end{equation}
+\equationlistentry{XGBoost regularised objective}
+where $\ell(y, \hat{y}) = \tfrac{1}{2}(y - \hat{y})^{2}$ is the
+squared-error loss and $\Omega(h_m)$ is a regularisation penalty on the
+complexity of tree $h_m$.  The regularisation term is defined as
+\begin{equation}
+    \Omega(h)
+    =
+    \gamma \, J
+    +
+    \tfrac{1}{2}\,\lambda
+    \sum_{j=1}^{J}
+    w_j^{2},
+    \label{eq:xgb_regularisation}
+\end{equation}
+\equationlistentry{XGBoost tree complexity penalty}
+where $J$ is the number of terminal nodes (leaves), $w_j$ is the
+predicted value in leaf $j$, $\gamma \ge 0$ penalises additional leaves,
+and $\lambda \ge 0$ applies $\mathcal{L}_2$ shrinkage to the leaf weights.
+
+The key computational innovation of \gls{xgboost} is the use of a
+second-order Taylor expansion of the loss around the current prediction
+$\hat{f}_{m-1}(\mathbf{z}_i)$.  Define the first- and second-order
+gradient statistics for observation $i$:
+\begin{equation}
+    g_i
+    =
+    \frac{\partial\, \ell(y_i,\, \hat{y})}{\partial\, \hat{y}}
+    \bigg|_{\hat{y} = \hat{f}_{m-1}(\mathbf{z}_i)},
+    \qquad
+    h_i
+    =
+    \frac{\partial^{2}\, \ell(y_i,\, \hat{y})}{\partial\, \hat{y}^{2}}
+    \bigg|_{\hat{y} = \hat{f}_{m-1}(\mathbf{z}_i)}.
+    \label{eq:xgb_gradient_hessian}
+\end{equation}
+\equationlistentry{XGBoost gradient and Hessian statistics}
+For the squared-error loss, $g_i = \hat{f}_{m-1}(\mathbf{z}_i) - y_i$
+(the negative residual) and $h_i = 1$.  With these gradient statistics,
+the approximate objective simplifies to
+\begin{equation}
+    \tilde{\mathcal{O}}^{(m)}
+    =
+    \sum_{j=1}^{J}
+    \Biggl[
+        G_j \, w_j
+        +
+        \frac{1}{2}(H_j + \lambda)\, w_j^{2}
+    \Biggr]
+    +
+    \gamma \, J,
+    \label{eq:xgb_approx_objective}
+\end{equation}
+\equationlistentry{XGBoost second-order approximate objective}
+where $G_j = \sum_{i \in I_j} g_i$ and $H_j = \sum_{i \in I_j} h_i$ are
+the sums of gradient and Hessian statistics over the observations
+$I_j$ assigned to leaf $j$.  The optimal leaf weight and the
+corresponding optimal objective value are
+\begin{equation}
+    w_j^{*}
+    =
+    -\frac{G_j}{H_j + \lambda},
+    \qquad
+    \tilde{\mathcal{O}}^{*}
+    =
+    -\frac{1}{2}
+    \sum_{j=1}^{J}
+    \frac{G_j^{2}}{H_j + \lambda}
+    +
+    \gamma \, J.
+    \label{eq:xgb_optimal_leaf}
+\end{equation}
+\equationlistentry{XGBoost optimal leaf weight and objective}
+
+To evaluate a candidate split that partitions observations in a node into
+left ($I_L$) and right ($I_R$) child nodes, \gls{xgboost} computes the
+gain:
+\begin{equation}
+    \mathrm{Gain}
+    =
+    \frac{1}{2}
+    \left[
+        \frac{G_L^{2}}{H_L + \lambda}
+        +
+        \frac{G_R^{2}}{H_R + \lambda}
+        -
+        \frac{(G_L + G_R)^{2}}{H_L + H_R + \lambda}
+    \right]
+    -
+    \gamma,
+    \label{eq:xgb_split_gain}
+\end{equation}
+\equationlistentry{XGBoost split gain criterion}
+where $G_L = \sum_{i \in I_L} g_i$, $G_R = \sum_{i \in I_R} g_i$,
+$H_L = \sum_{i \in I_L} h_i$, and $H_R = \sum_{i \in I_R} h_i$.  A
+split is made only if $\mathrm{Gain} > 0$; the regularisation parameter
+$\gamma$ acts as a minimum-gain threshold that prunes unprofitable splits
+\citep{chen2016xgboost}.
+
+Algorithm~\ref{tab:xgb_algorithm_ch3} formalises the training procedure.
+
+\begin{table}[H]
+\centering
+\caption{XGBoost training algorithm.}
+\label{tab:xgb_algorithm_ch3}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{p{0.92\textwidth}}
+\toprule
+\textbf{Algorithm 3.0b: XGBoost gradient-boosted tree regression} \\
+\midrule
+\textbf{Input:} model-ready training data
+$\{(\mathbf{z}_i, y_i)\}_{i \in \mathcal{D}_{\mathrm{train}}}$,
+model-ready validation data
+$\{(\mathbf{z}_i, y_i)\}_{i \in \mathcal{D}_{\mathrm{val}}}$,
+maximum boosting rounds $M = 1\,000$, learning rate $\eta = 0.05$,
+maximum tree depth $d_{\max} = 8$, $\mathcal{L}_2$ regularisation
+$\lambda$, minimum split gain $\gamma$, early stopping patience
+$P = 50$ rounds, random seed $s = 42$. \\[3pt]
+
+\textbf{Output:} fitted additive ensemble
+$\hat{f}_{M^{*}}(\mathbf{z})$, selected round $M^{*}$. \\[3pt]
+
+1. Set the random seed to $s$. \\
+2. Initialise the prediction:
+   $\hat{f}_{0}(\mathbf{z}_i) = \bar{y}_{\mathrm{train}}$
+   for all $i$. \\
+3. For boosting round $m = 1, \ldots, M$: \\
+\quad (a) Compute gradient statistics $g_i$ and $h_i$ for each
+        training observation using
+        equation~\eqref{eq:xgb_gradient_hessian}. \\
+\quad (b) Grow a regression tree $h_m$ of maximum depth $d_{\max}$: \\
+\quad\quad (i) At each node, evaluate all candidate split points
+            across all $p$ predictors. \\
+\quad\quad (ii) Select the split $(j^{*}, s^{*})$ that maximises
+            the gain (equation~\eqref{eq:xgb_split_gain}). \\
+\quad\quad (iii) Split only if $\mathrm{Gain} > 0$; otherwise the
+            node becomes a leaf. \\
+\quad\quad (iv) Assign optimal leaf weights
+            $w_j^{*} = -G_j / (H_j + \lambda)$
+            (equation~\eqref{eq:xgb_optimal_leaf}). \\
+\quad (c) Update predictions:
+        $\hat{f}_{m}(\mathbf{z}_i)
+        = \hat{f}_{m-1}(\mathbf{z}_i) + \eta \, h_m(\mathbf{z}_i)$. \\
+\quad (d) Evaluate validation loss
+        $\mathcal{L}_{\mathrm{val}}(m)$. If the validation loss
+        has not improved for $P$ consecutive rounds, terminate
+        training. \\
+4. Select the round
+   $M^{*} = \arg\min_{m \in \{1,\ldots,M\}}
+   \mathcal{L}_{\mathrm{val}}(m)$
+   and retain the ensemble up to that round. \\
+5. Evaluate $R^2$, \gls{rmse} and \gls{mae} on the training,
+   validation and test partitions on the original monetary scale. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:xgb_hyperparameters_ch3} summarises the \gls{xgboost}
+configuration.
+
+\begin{table}[H]
+\centering
+\caption{XGBoost configuration.}
+\label{tab:xgb_hyperparameters_ch3}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{p{0.34\textwidth}p{0.56\textwidth}}
+\toprule
+\textbf{Component} & \textbf{Specification} \\
+\midrule
+Maximum boosting rounds ($M$) & 1\,000 \\
+Learning rate ($\eta$) & 0.05 \\
+Maximum tree depth ($d_{\max}$) & 8 \\
+Booster & \texttt{gbtree} (tree-based) \\
+Objective & \texttt{reg:squarederror} \\
+Split evaluation & Approximate histogram-based \\
+$\mathcal{L}_2$ regularisation ($\lambda$) & Default (1.0) \\
+Minimum split gain ($\gamma$) & Default (0.0) \\
+Early stopping patience & 50 rounds on validation loss \\
+Hyperparameter tuning & Not applied (default values) \\
+Random seed & 42 \\
+Implementation & \texttt{xgboost} \texttt{XGBRegressor} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Benchmark design rationale.}
+Hyperparameters for both tree-based models are set to commonly recommended
+defaults rather than tuned via cross-validation, paralleling the no-tuning
+treatment of the \gls{glm}.  This ensures that the comparison isolates
+model-class differences rather than tuning effort.  All four models are
+evaluated using $R^2$, \gls{rmse} and \gls{mae} on the original monetary
+scale across all three partitions.
 
 % =============================================================
 \subsection{Predictive and Structural Diagnostics}
