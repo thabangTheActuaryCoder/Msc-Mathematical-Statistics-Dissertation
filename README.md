@@ -36,17 +36,23 @@ This dissertation develops a three-stage statistical framework for health insura
 .
 ├── README.md
 ├── Msc_Mathematical_Statistics_Dissertation.pdf
-├── src/                    # Model training and evaluation scripts
-│   ├── dnn_model.py
-│   ├── glm_benchmark.py
-│   ├── rf_benchmark.py
-│   ├── xgboost_benchmark.py
-│   ├── monte_carlo.py
-│   └── shapley_analysis.py
-├── data/                   # Data loading and preprocessing
-├── notebooks/              # Exploratory analysis and figures
-├── results/                # Saved model outputs and figures
-└── requirements.txt
+├── main.tex                        # Root LaTeX document
+├── References.bib                  # Bibliography
+├── Code/                           # Jupyter notebooks for all analyses
+│   ├── chapter3_eda_insurance.ipynb
+│   ├── chapter3_dnn_training.ipynb
+│   ├── chapter3_mc_shapley.ipynb
+│   ├── chapter3_tree_benchmarks.ipynb
+│   ├── chapter3_model_comparison.ipynb
+│   └── chapter3_leakage_checks.ipynb
+├── Thesis/                         # LaTeX source by chapter
+│   ├── Chapter 1/ ... Chapter 5/  # Each with src/ and Figures/
+│   ├── Annexures/                  # Supplementary material (A through I)
+│   ├── Abstract/
+│   ├── Acknowledgments/
+│   ├── Cover Page/
+│   └── Declarations/
+└── Research Proposal/              # Original research proposal
 ```
 
 ## Dissertation Structure
