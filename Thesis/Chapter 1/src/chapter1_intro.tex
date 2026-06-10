@@ -548,11 +548,19 @@ variables that drive average predicted costs are the same as those that
 drive extreme predicted costs has not been systematically addressed in
 the health insurance context.
 
-The combination of a fitted neural network, Monte Carlo simulation under
-an explicit input distribution, and conditional Shapley summaries in
-high-cost regions has not been presented as an integrated workflow in the
-health insurance literature.  This gap is developed through the reviewed
-studies in Section~\ref{sec:literature_review} and stated formally in
+Each of these three components is individually well established in the
+statistical and machine-learning literatures
+\citep{vapnik1998statistical, robert2004monte, lundberg2017unified}.
+The contribution of this dissertation is therefore one of
+application and integration: combining a fitted neural network,
+Monte Carlo simulation under an explicit input distribution, and
+conditional Shapley summaries in high-cost regions within a single,
+reproducible workflow applied to health insurance cost prediction.  This
+integrated workflow has not been presented in the health insurance
+literature, and the combination produces empirical insight that none of
+the individual components could provide in isolation.  The gap is
+developed through the reviewed studies in
+Section~\ref{sec:literature_review} and stated formally in
 Section~\ref{sec:research_gap}.
 
 % ---------------------------------------------------------

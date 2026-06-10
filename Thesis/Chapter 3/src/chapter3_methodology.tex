@@ -760,7 +760,7 @@ therefore not restrictive.  The total number of trainable parameters is
 
 The operation of the contracting funnel specified in figure
 \ref{fig:dnn_architecture_ch3} can be described compactly by the
-forward‑ and backward‑pass equations that underpin all gradient‑based
+forward- and backward-pass equations that underpin all gradient-based
 training.  For a single input vector $\mathbf{x}$ (with
 $\mathbf{a}^{(0)} = \mathbf{x}$), the forward computation of layer $l$ is
 \begin{align}
@@ -781,7 +781,7 @@ equation~\eqref{eq:bias_free_recursion}.
 
 The network is trained by minimising the mean squared error loss
 $\mathcal{L} = \frac{1}{2}(y - \hat{y})^{2}$.  Defining the gradient of the
-loss with respect to the output pre‑activation as
+loss with respect to the output pre-activation as
 \begin{equation}
     \delta^{(L)} \equiv \frac{\partial \mathcal{L}}{\partial \mathbf{z}^{(L)}}
     = \hat{y} - y,
@@ -796,10 +796,10 @@ layer $l = L-1, L-2, \dots, 1$, the recursion is
       \odot \sigma_{l}'\!\bigl(\mathbf{z}^{(l)}\bigr),
     \label{eq:backprop_delta}
 \end{equation}
-where $\odot$ denotes element‑wise multiplication and $\sigma_{l}'$ is the
+where $\odot$ denotes element-wise multiplication and $\sigma_{l}'$ is the
 derivative of the activation function.  For the \gls{celu} activation
 employed in every hidden layer (equation~\eqref{eq:celu}), the derivative is
-smooth and non‑zero for all inputs, ensuring stable gradient flow.
+smooth and non-zero for all inputs, ensuring stable gradient flow.
 
 The gradient of the loss with respect to the weight matrix of layer $l$ is
 \begin{equation}
@@ -807,19 +807,18 @@ The gradient of the loss with respect to the weight matrix of layer $l$ is
     = \mathbf{a}^{(l-1)} \bigl(\delta^{(l)}\bigr)^{\!\top}.
     \label{eq:weight_gradient}
 \end{equation}
-Because bias vectors are omitted, no bias‑update term appears.  The weight
+Because bias vectors are omitted, no bias-update term appears.  The weight
 matrices are then updated by the NAdam optimiser
-(Section~\ref{sec:training_configuration}), which combines Nesterov‑
-accelerated momentum with adaptive learning rates.
+(Section~\ref{sec:training_configuration}), which combines Nesterov-accelerated momentum with adaptive learning rates.
 
 These equations are standard in the deep learning literature
 \citep{goodfellow2016deep} and are reproduced here for completeness; they
-make the training procedure explicit and justify the bias‑free
+make the training procedure explicit and justify the bias-free
 simplification.  In practice, all gradients are computed automatically by
-the deep learning framework (PyTorch) through reverse‑mode automatic
-differentiation, so the closed‑form expressions are never coded directly.
+the deep learning framework (PyTorch) through reverse-mode automatic
+differentiation, so the closed-form expressions are never coded directly.
 Their inclusion ensures that the reader can relate the chosen architecture,
-loss function, and activation to the mechanics of gradient‑based
+loss function, and activation to the mechanics of gradient-based
 optimisation.
 
 

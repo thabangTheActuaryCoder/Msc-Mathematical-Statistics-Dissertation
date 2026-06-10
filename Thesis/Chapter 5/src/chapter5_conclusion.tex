@@ -300,20 +300,33 @@ population.
 
 The dissertation makes several contributions to the intersection of
 statistical learning, simulation-based inference and explainable
-modelling.
+modelling.  The nature of these contributions is one of
+application and integration: each of the three methodological
+components, namely deep neural network regression, parametric Monte Carlo
+simulation and Shapley-value attribution, is individually well
+established in the statistical literature
+\citep{vapnik1998statistical, robert2004monte, kroese2011handbook,
+lundberg2017unified, molnar2022interpretable}.  The contribution lies in
+combining them within a single, reproducible framework and demonstrating
+the empirical value of that combination for health insurance cost
+prediction.
 
-The primary contribution is the integration of deep neural network
-regression, parametric Monte Carlo simulation and Shapley-value
-attribution within a single, reproducible framework.  In the existing
-literature, these three components are typically applied in isolation:
-prediction studies report out-of-sample performance metrics without
-distributional analysis; Monte Carlo studies simulate quantities of
-interest without connecting the results to feature-level attribution; and
-Shapley-value studies decompose predictions on observed data without
-examining how the attribution structure changes across specific regions of
-the predicted-cost distribution.  This dissertation demonstrates that the
-integration produces insight that none of the three components could
-provide in isolation.  The Monte Carlo distribution defines the regions of
+The primary contribution is the integrated workflow itself.  In the
+existing literature, these three components are typically applied in
+isolation: prediction studies report out-of-sample performance metrics
+without distributional analysis
+\citep{samiuddin2023health, dreweboss2022deep}; Monte Carlo studies
+simulate quantities of interest without connecting the results to
+feature-level attribution \citep{glasserman2004monte}; and Shapley-value
+studies decompose predictions on observed data without examining how the
+attribution structure changes across specific regions of the
+predicted-cost distribution \citep{kaushik2022machine}.
+\citet{blomerus2026longterm} demonstrates the viability of deep learning
+for long-term life insurance valuations, while the present study extends
+the deep-learning approach to health insurance cost prediction with an
+added simulation and attribution layer.  This dissertation demonstrates
+that the integration produces insight that none of the three components
+could provide in isolation.  The Monte Carlo distribution defines the regions of
 interest for the Shapley analysis, and the conditional Shapley analysis
 decomposes the model behaviour within those regions.  Each component
 produces outputs that serve as inputs to the next, creating a connected
@@ -340,7 +353,8 @@ distribution from a formally stated input distribution, rather than
 reporting predictions only at observed data points.  This connects the
 neural network to the simulation-based inference tradition within
 mathematical statistics \citep{glasserman2004monte,
-rubinstein2016simulation}, where the behaviour of estimators and
+rubinstein2016simulation, robert2004monte}, where the behaviour of
+estimators and
 predictive quantities is routinely studied through Monte Carlo
 experiments.  The distinction is methodologically significant: evaluating a
 model on observed data provides point predictions at covariate
@@ -352,8 +366,9 @@ predictions as statistical quantities in their own right.
 
 The multi-layered validation protocol, comprising joint-distribution
 diagnostics, convergence monitoring, residual-augmented sensitivity
-analysis and Shapley attribution invariance checks, provides a template
-for validating Monte Carlo and Shapley analyses in other applied settings.
+analysis \citep{saltelli2002making} and Shapley attribution invariance
+checks, provides a template for validating Monte Carlo and Shapley
+analyses in other applied settings.
 These diagnostics address specific threats to validity that are not
 routinely checked in the machine-learning interpretability literature,
 where Shapley values are often reported without assessing their
@@ -707,7 +722,7 @@ their respective insurance domains.
 \noindent
 \textbf{Interpretability.}
 The ICEnet enforces actuarial reasonableness during training by
-constraining the covariate--response relationships to be smooth and
+constraining the covariate-response relationships to be smooth and
 monotonic, which is important for commercial pricing and regulatory
 compliance.  The present dissertation pursues interpretability post hoc
 through Shapley-value decomposition, revealing that the dominant cost
@@ -792,7 +807,7 @@ the attribution and interpretation components.
     \item As discussed in
           Section~\ref{sec:comparison_constrained_nn}, integrating
           constrained neural-network training with the Monte
-          Carlo--Shapley workflow would combine actuarial reasonableness
+          Carlo-Shapley workflow would combine actuarial reasonableness
           with feature-level explainability.  The smoothness and
           monotonicity constraints of the ICEnet
           \citep{richman2024icenet} could be incorporated into the
