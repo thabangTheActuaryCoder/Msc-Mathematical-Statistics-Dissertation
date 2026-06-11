@@ -946,58 +946,17 @@ penalty encourages sparse parameter estimates, while the $\mathcal{L}_2$ penalty
 shrinks parameters towards zero without necessarily setting them exactly equal
 to zero.}.
 
-Algorithm~\ref{tab:dnn_training_algorithm_ch3} formalises the training
-procedure.
-
-\begin{table}[H]
-\centering
-\caption{DNN training algorithm.}
-\label{tab:dnn_training_algorithm_ch3}
-\small
-\renewcommand{\arraystretch}{1.15}
-\begin{tabular}{p{0.92\textwidth}}
-\toprule
-\textbf{Algorithm 3.0: Feed-forward DNN training and model selection} \\
-\midrule
-\textbf{Input:} model-ready training data
-$\{(\mathbf{z}_i, \widetilde{y}_i)\}_{i \in \mathcal{D}_{\mathrm{train}}}$,
-model-ready validation data
-$\{(\mathbf{z}_i, \widetilde{y}_i)\}_{i \in \mathcal{D}_{\mathrm{val}}}$,
-architecture specification $(d_0, d_1, \ldots, d_L)$,
-activation function $g(\cdot)$, loss function $\mathcal{L}_{\mathrm{MSE}}$,
-optimiser, learning rate $\eta$, momentum parameters $(\beta_1,\beta_2)$,
-batch size $|\mathcal{B}|$,
-maximum epochs $E_{\max} = 200$, validation frequency $v = 5$,
-early stopping patience $P = 10$, random seed $s = 42$. \\[3pt]
-
-\textbf{Output:} fitted network weights $\widehat{\theta}$,
-training history, selected epoch $e^{*}$. \\[3pt]
-
-1. Set the random seed to $s$. \\
-2. Initialise network weights $\theta^{(0)}$ using Kaiming uniform
-   initialisation \citep{he2015delving}. \\
-3. For epoch $e = 1, \ldots, E_{\max}$: \\
-\quad (a) Partition $\mathcal{D}_{\mathrm{train}}$ into random
-        mini-batches of size $|\mathcal{B}|$. \\
-\quad (b) For each mini-batch $\mathcal{B}$, compute
-        $\mathcal{L}_{\mathrm{MSE}}(\theta; \mathcal{B})$ and update
-        $\theta$ using the optimiser. \\
-\quad (c) Record training loss $\mathcal{L}_{\mathrm{train}}(e)$. \\
-\quad (d) If $e \bmod v = 0$: evaluate validation loss
-        $\mathcal{L}_{\mathrm{val}}(e)$ and dot-product \gls{r2} on both
-        partitions.  If validation \gls{r2} improves, checkpoint the model
-        weights; otherwise, increment the patience counter. \\
-\quad (e) If the patience counter reaches $P$, terminate training. \\
-4. Select $e^{*} = \arg\max_{e \in \mathcal{E}_{\mathrm{val}}}
-   R^2_{\mathrm{val}}(e)$. \\
-5. Retain the network weights $\widehat{\theta} = \theta^{(e^{*})}$. \\
-6. De-normalise predictions and evaluate on the held-out test set using
-   \gls{r2}, \gls{rmse} and \gls{mae} on the original monetary scale. \\
-7. Save $\widehat{\theta}$, architecture specification, standardisation
-   parameters, training history, and all evaluation outputs. \\
-\bottomrule
-\end{tabular}
-\end{table}
+The training procedure consists of: (1)~random weight initialisation
+using Kaiming uniform initialisation \citep{he2015delving};
+(2)~mini-batch gradient descent with the NAdam optimiser;
+(3)~validation evaluation every 5 epochs using the dot-product \gls{r2};
+(4)~early stopping when the validation \gls{r2} has not improved for 10
+consecutive checks; (5)~selection of the checkpoint with the highest
+validation \gls{r2}; and (6)~final test-set evaluation on the original
+monetary scale using \gls{r2}, \gls{rmse} and \gls{mae}.  The complete
+pseudocode is presented in
+Algorithm~\ref{tab:dnn_training_algorithm_annex}
+(Annexure~\ref{annexure:dnn_algorithm_detailed}).
 
 \subsubsection{Benchmark Generalised Linear Model}
 \label{sec:glm_benchmark_methods}
@@ -1068,55 +1027,15 @@ values \citep{dobson2008introduction}.
 
 Algorithm~\ref{tab:glm_algorithm_ch3} formalises the fitting procedure.
 
-\begin{table}[H]
-\centering
-\caption{GLM fitting algorithm.}
-\label{tab:glm_algorithm_ch3}
-\small
-\renewcommand{\arraystretch}{1.15}
-\begin{tabular}{p{0.92\textwidth}}
-\toprule
-\textbf{Algorithm 3.0c: Gamma GLM with log link} \\
-\midrule
-\textbf{Input:} model-ready training data
-$\{(\mathbf{z}_i, y_i)\}_{i \in \mathcal{D}_{\mathrm{train}}}$,
-distribution family (gamma), link function ($\log$). \\[3pt]
-
-\textbf{Output:} fitted coefficient vector
-$\widehat{\boldsymbol{\beta}}$, dispersion estimate
-$\widehat{\phi}$. \\[3pt]
-
-1. Initialise the linear predictor:
-   $\eta_i^{(0)} = \log(\bar{y}_{\mathrm{train}})$ for all $i$. \\
-2. Repeat until convergence: \\
-\quad (a) Compute fitted values:
-        $\mu_i^{(t)} = \exp(\eta_i^{(t)})$. \\
-\quad (b) Compute working weights:
-        $w_i^{(t)} = \mu_i^{(t)\,2} / (\phi\,\mu_i^{(t)\,2})
-        = 1/\phi$. \\
-\quad (c) Compute the adjusted dependent variable:
-        $\tilde{y}_i^{(t)} = \eta_i^{(t)}
-        + (y_i - \mu_i^{(t)}) / \mu_i^{(t)}$. \\
-\quad (d) Solve the weighted least squares problem:
-        $\boldsymbol{\beta}^{(t+1)}
-        = (\mathbf{Z}^{\top} \mathbf{W}^{(t)} \mathbf{Z})^{-1}
-          \mathbf{Z}^{\top} \mathbf{W}^{(t)}
-          \tilde{\mathbf{y}}^{(t)}$. \\
-\quad (e) Update the linear predictor:
-        $\eta_i^{(t+1)} = \mathbf{z}_i^{\top}
-        \boldsymbol{\beta}^{(t+1)}$. \\
-3. Estimate the dispersion parameter:
-   $\widehat{\phi} = \frac{1}{n - p - 1}
-   \sum_{i=1}^{n}
-   \bigl((y_i - \widehat{\mu}_i)/\widehat{\mu}_i\bigr)^{2}$. \\
-4. Predict on the original monetary scale:
-   $\widehat{y}_i = \exp(\mathbf{z}_i^{\top}
-   \widehat{\boldsymbol{\beta}})$. \\
-5. Evaluate $R^2$, \gls{rmse} and \gls{mae} on the training,
-   validation and test partitions. \\
-\bottomrule
-\end{tabular}
-\end{table}
+The GLM is fitted via iteratively reweighted least squares (IRLS),
+which computes working weights and adjusted dependent variables at each
+iteration until convergence.  The dispersion parameter
+$\widehat{\phi}$ is estimated from the Pearson residuals, and
+predictions are obtained on the original monetary scale by applying the
+inverse link $\widehat{y}_i = \exp(\mathbf{z}_i^{\top}
+\widehat{\boldsymbol{\beta}})$.  The complete IRLS algorithm is
+presented in Algorithm~\ref{tab:glm_algorithm_annex}
+(Annexure~\ref{annexure:glm_algorithm}).
 
 No hyperparameter tuning is applied to the GLM; its role as a benchmark
 was motivated in Section~\ref{sec:statistical_learning_supervised_regression}.
@@ -1197,54 +1116,15 @@ predictor subset, the \gls{rf} reduces $\rho$ below the value obtained by
 standard bagging (which uses all $p$ predictors at every split), yielding
 a lower ensemble variance \citep{hastie2009elements}.
 
-Algorithm~\ref{tab:rf_algorithm_ch3} formalises the training procedure.
-
-\begin{table}[H]
-\centering
-\caption{Random Forest training algorithm.}
-\label{tab:rf_algorithm_ch3}
-\small
-\renewcommand{\arraystretch}{1.15}
-\begin{tabular}{p{0.92\textwidth}}
-\toprule
-\textbf{Algorithm 3.0a: Random Forest regression} \\
-\midrule
-\textbf{Input:} model-ready training data
-$\{(\mathbf{z}_i, y_i)\}_{i \in \mathcal{D}_{\mathrm{train}}}$,
-number of trees $B = 500$, number of candidate predictors per split
-$m = \lfloor p/3 \rfloor$, minimum samples per leaf
-$n_{\min} = 5$, random seed $s = 42$. \\[3pt]
-
-\textbf{Output:} ensemble of fitted trees
-$\{T_1, \ldots, T_B\}$. \\[3pt]
-
-1. Set the random seed to $s$. \\
-2. For $b = 1, \ldots, B$: \\
-\quad (a) Draw a bootstrap sample $\mathcal{D}_{b}^{*}$ of size
-        $n_{\mathrm{train}}$ with replacement from
-        $\mathcal{D}_{\mathrm{train}}$. \\
-\quad (b) Grow an unpruned regression tree $T_b$ on
-        $\mathcal{D}_{b}^{*}$: \\
-\quad\quad (i) At each node, select a random subset
-            $\mathcal{S} \subset \{1,\ldots,p\}$ with
-            $|\mathcal{S}| = m$. \\
-\quad\quad (ii) Choose the split variable $j^{*}$ and split point
-            $s^{*}$ from $\mathcal{S}$ that minimise the weighted
-            residual sum of squares
-            (equation~\eqref{eq:rf_split_criterion}). \\
-\quad\quad (iii) Split the node into two child nodes and repeat
-            until each terminal node contains at most $n_{\min}$
-            observations. \\
-\quad (c) Assign the sample mean of the response values in each
-        terminal node as the node prediction. \\
-3. For a new input $\mathbf{z}$, predict
-   $\hat{f}_{\mathrm{RF}}(\mathbf{z})
-   = \frac{1}{B}\sum_{b=1}^{B} T_b(\mathbf{z})$. \\
-4. Evaluate $R^2$, \gls{rmse} and \gls{mae} on the training,
-   validation and test partitions on the original monetary scale. \\
-\bottomrule
-\end{tabular}
-\end{table}
+The training procedure grows $B = 500$ unpruned trees on bootstrap
+samples, with $m = \lfloor p/3 \rfloor$ candidate predictors evaluated
+at each split.  The split criterion minimises the weighted residual sum
+of squares (equation~\eqref{eq:rf_split_criterion}), and splitting
+continues until each terminal node contains at most $n_{\min} = 5$
+observations.  The ensemble prediction is the average across all trees.
+The complete algorithm is presented in
+Algorithm~\ref{tab:rf_algorithm_annex}
+(Annexure~\ref{annexure:rf_algorithm}).
 
 Table~\ref{tab:rf_hyperparameters_ch3} summarises the \gls{rf}
 configuration.
@@ -1407,64 +1287,17 @@ split is made only if $\mathrm{Gain} > 0$; the regularisation parameter
 $\gamma$ acts as a minimum-gain threshold that prunes unprofitable splits
 \citep{chen2016xgboost}.
 
-Algorithm~\ref{tab:xgb_algorithm_ch3} formalises the training procedure.
-
-\begin{table}[H]
-\centering
-\caption{XGBoost training algorithm.}
-\label{tab:xgb_algorithm_ch3}
-\small
-\renewcommand{\arraystretch}{1.15}
-\begin{tabular}{p{0.92\textwidth}}
-\toprule
-\textbf{Algorithm 3.0b: XGBoost gradient-boosted tree regression} \\
-\midrule
-\textbf{Input:} model-ready training data
-$\{(\mathbf{z}_i, y_i)\}_{i \in \mathcal{D}_{\mathrm{train}}}$,
-model-ready validation data
-$\{(\mathbf{z}_i, y_i)\}_{i \in \mathcal{D}_{\mathrm{val}}}$,
-maximum boosting rounds $M = 1\,000$, learning rate $\eta = 0.05$,
-maximum tree depth $d_{\max} = 8$, $\mathcal{L}_2$ regularisation
-$\lambda$, minimum split gain $\gamma$, early stopping patience
-$P = 50$ rounds, random seed $s = 42$. \\[3pt]
-
-\textbf{Output:} fitted additive ensemble
-$\hat{f}_{M^{*}}(\mathbf{z})$, selected round $M^{*}$. \\[3pt]
-
-1. Set the random seed to $s$. \\
-2. Initialise the prediction:
-   $\hat{f}_{0}(\mathbf{z}_i) = \bar{y}_{\mathrm{train}}$
-   for all $i$. \\
-3. For boosting round $m = 1, \ldots, M$: \\
-\quad (a) Compute gradient statistics $g_i$ and $h_i$ for each
-        training observation using
-        equation~\eqref{eq:xgb_gradient_hessian}. \\
-\quad (b) Grow a regression tree $h_m$ of maximum depth $d_{\max}$: \\
-\quad\quad (i) At each node, evaluate all candidate split points
-            across all $p$ predictors. \\
-\quad\quad (ii) Select the split $(j^{*}, s^{*})$ that maximises
-            the gain (equation~\eqref{eq:xgb_split_gain}). \\
-\quad\quad (iii) Split only if $\mathrm{Gain} > 0$; otherwise the
-            node becomes a leaf. \\
-\quad\quad (iv) Assign optimal leaf weights
-            $w_j^{*} = -G_j / (H_j + \lambda)$
-            (equation~\eqref{eq:xgb_optimal_leaf}). \\
-\quad (c) Update predictions:
-        $\hat{f}_{m}(\mathbf{z}_i)
-        = \hat{f}_{m-1}(\mathbf{z}_i) + \eta \, h_m(\mathbf{z}_i)$. \\
-\quad (d) Evaluate validation loss
-        $\mathcal{L}_{\mathrm{val}}(m)$. If the validation loss
-        has not improved for $P$ consecutive rounds, terminate
-        training. \\
-4. Select the round
-   $M^{*} = \arg\min_{m \in \{1,\ldots,M\}}
-   \mathcal{L}_{\mathrm{val}}(m)$
-   and retain the ensemble up to that round. \\
-5. Evaluate $R^2$, \gls{rmse} and \gls{mae} on the training,
-   validation and test partitions on the original monetary scale. \\
-\bottomrule
-\end{tabular}
-\end{table}
+The training procedure begins with a constant initialisation and
+iteratively adds depth-limited regression trees, each fitted to the
+gradient and Hessian statistics of the current residuals
+(equation~\eqref{eq:xgb_gradient_hessian}).  Splits are selected to
+maximise the gain (equation~\eqref{eq:xgb_split_gain}), and the
+optimal leaf weights are computed in closed form
+(equation~\eqref{eq:xgb_optimal_leaf}).  Validation-based early
+stopping with patience $P = 50$ rounds terminates training when the
+validation loss ceases to improve.  The complete algorithm is presented
+in Algorithm~\ref{tab:xgb_algorithm_annex}
+(Annexure~\ref{annexure:xgb_algorithm}).
 
 Table~\ref{tab:xgb_hyperparameters_ch3} summarises the \gls{xgboost}
 configuration.
@@ -2860,3 +2693,4 @@ High-cost profiles are defined by empirical upper-tail quantiles of the simulate
 With the data, architecture, simulation design, attribution method and
 modelling assumptions now fully specified, the empirical results of the
 three-stage framework are presented in Chapter~\ref{sec:results}.
+

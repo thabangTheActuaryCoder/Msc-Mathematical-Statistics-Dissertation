@@ -112,9 +112,15 @@ the log-link's multiplicative structure, which does not match the
 approximately additive data-generating process of the benchmark data.
 The tree-based benchmarks confirmed that a random forest ($R^2 = 0.9899$)
 and XGBoost ($R^2 = 0.9955$) also achieve strong performance, with
-XGBoost approaching the DNN's accuracy.  These comparisons serve to
-contextualise the DNN within a broader model-class landscape, but the
-central purpose of the dissertation remains the Monte Carlo and
+XGBoost approaching the DNN's accuracy.  When both tree-based benchmarks
+were subsequently tuned via randomised search with cross-validation, the
+tuned random forest improved to $R^2 = 0.9924$ and the tuned XGBoost
+reached $R^2 = 0.9956$, matching the DNN to four decimal places.  The
+DNN was nevertheless retained for the subsequent analyses on the grounds
+of its differentiability for gradient-based SHAP computation, rather than
+on the basis of a meaningful predictive advantage.  These comparisons
+serve to contextualise the DNN within a broader model-class landscape,
+but the central purpose of the dissertation remains the Monte Carlo and
 Shapley-value framework applied to the fitted DNN rather than the model
 comparison itself.
 
@@ -150,6 +156,20 @@ This finding demonstrates that global importance rankings, while useful as
 summary measures, can be misleading when the interest lies in specific
 regions of the output distribution.
 
+The multi-seed robustness analysis established that the entire chain of
+results is invariant to the stochastic training process.  The DNN was
+retrained under five independent random seeds, yielding a cross-seed
+test $R^2$ of $0.99566 \pm 0.00001$.  The Monte Carlo mean predicted
+cost varied by only R15 across seeds, and the global Shapley importance
+ranking was perfectly preserved across all ten pairwise seed combinations
+(Spearman $\rho_{\mathrm{S}} = 1.0000$).  The $\tau_{99}$ ranking
+reversal was replicated in every seed, with conditional Spearman
+correlations ranging from $0.9909$ to $1.0000$.  The SHAP interaction
+analysis further confirmed that the DNN learned an essentially additive
+mapping, with all 55 pairwise Shapley-value correlations below
+$|r| = 0.033$.  These cross-seed findings resolve the open question
+identified as a limitation in the original single-seed analysis.
+
 % ---------------------------------------------------------
 % 5.2 ADDRESSING THE RESEARCH QUESTIONS
 % ---------------------------------------------------------
@@ -184,8 +204,18 @@ link, recover most of this gap, confirming that the GLM's disadvantage
 is structural rather than a general property of simpler model classes.
 The five-phase sequential hyperparameter comparison selected the final
 DNN configuration from among 16 candidate settings, documented in full
-in Annexure~\ref{annexure:hyperparameters}.  This finding is consistent
-with the broader health-cost prediction literature
+in Annexure~\ref{annexure:hyperparameters}.  When the tree-based
+benchmarks were subsequently tuned via randomised search with
+cross-validation, the tuned random forest reached $R^2 = 0.9924$ and
+the tuned XGBoost matched the DNN at $R^2 = 0.9956$.  The DNN retains
+a marginal advantage ($R^2 = 0.9957$), but the practical gap is
+negligible; the DNN was retained for its differentiability rather than
+for predictive superiority.  Multi-seed replication across five random
+initialisations confirmed that the DNN's test $R^2$ varies by only
+$1.28 \times 10^{-5}$ (Table~\ref{tab:multiseed_test_performance_ch4}),
+establishing that the reported performance is robust to the stochastic
+training process.  This finding is consistent with the broader
+health-cost prediction literature
 \citep{dreweboss2022deep, samiuddin2023health, kaushik2022machine},
 although the unusually high $R^2$ reflects the clean, structured nature
 of the benchmark data and should not be extrapolated to real-world
@@ -208,7 +238,11 @@ model-implied distribution is consistent with the distributional
 characteristics of the observed data.  The convergence diagnostics
 confirmed that the Monte Carlo standard error at $B = 100\,000$ is R14.0,
 representing $0.08\%$ of the mean predicted cost, and that the running
-summaries have stabilised.
+summaries have stabilised.  The multi-seed replication confirmed that
+the Monte Carlo mean predicted cost varies by only R15 across five DNN
+training seeds (Section~\ref{sec:cross_seed_mc_ch4}), establishing that
+the distributional characterisation is invariant to the network's
+random initialisation.
 
 \subsubsection*{Research Question~\ref{rq:3}}
 Is the product-marginal Monte Carlo input distribution a
@@ -244,7 +278,12 @@ the same location, spread and shape.  The fixed perturbation band of
 $\pm 0.5\,\widehat{\sigma}_{\varepsilon}$ produced a smooth widening
 without asymmetry or heavy-tailed distortion.  The DNN's residuals on
 this benchmark dataset are sufficiently small and well-behaved that their
-addition does not alter the distributional conclusions.
+addition does not alter the distributional conclusions.  The cross-seed
+residual-augmented analysis (Section~\ref{sec:cross_seed_residual_ch4})
+confirmed that the residual standard deviation
+$\hat{\sigma}_{\varepsilon} \approx \text{R}290$ is consistent across
+all five training seeds, and the augmentation adds approximately 2\%
+extra variance in every case.
 
 \subsubsection*{Research Question~\ref{rq:5}}
 Which input variables receive the largest Shapley-value
@@ -264,7 +303,17 @@ importance.  At $\tau_{99}$, the ranking reverses: family medical history
 overtake smoking status ($0.563$).  The second-tier variables remain
 stable across all thresholds, indicating that the reversal is driven
 entirely by changes in the relative importance of the top-tier
-categorical risk factors.
+categorical risk factors.  The multi-seed analysis
+(Section~\ref{sec:cross_seed_shap}) confirmed that the global importance
+ranking is perfectly preserved across all ten pairwise seed combinations
+(Spearman $\rho_{\mathrm{S}} = 1.0000$), and the $\tau_{99}$ ranking
+reversal is replicated in all five seeds with pairwise conditional
+Spearman correlations between $0.9909$ and $1.0000$.  The SHAP
+interaction analysis (Section~\ref{sec:shap_interactions}) further
+established that all 55 pairwise Shapley-value correlations fall below
+$|r| = 0.033$, confirming that the DNN learned an essentially additive
+mapping and that the main-effect Shapley summaries capture the full
+attribution structure.
 
 \subsubsection*{Research Question~\ref{rq:6}}
 What explains any differences between the global and conditional
@@ -364,11 +413,22 @@ model's output landscape under a specified input law, allowing the
 analyst to study the range, dispersion and tail behaviour of the
 predictions as statistical quantities in their own right.
 
+The multi-seed robustness analysis represents a further contribution.
+By retraining the DNN under five independent random seeds and
+replicating the entire Monte Carlo and Shapley pipeline for each seed,
+the dissertation demonstrates that the predictive performance, the
+model-implied cost distribution, the global Shapley ranking, and the
+$\tau_{99}$ ranking reversal are all invariant to the stochastic
+training process.  This type of comprehensive cross-seed replication is
+not routinely performed in the applied machine-learning interpretability
+literature, where results are typically reported for a single trained
+network.
+
 The multi-layered validation protocol, comprising joint-distribution
 diagnostics, convergence monitoring, residual-augmented sensitivity
-analysis \citep{saltelli2002making} and Shapley attribution invariance
-checks, provides a template for validating Monte Carlo and Shapley
-analyses in other applied settings.
+analysis \citep{saltelli2002making}, Shapley attribution invariance
+checks and cross-seed replication, provides a template for validating
+Monte Carlo and Shapley analyses in other applied settings.
 These diagnostics address specific threats to validity that are not
 routinely checked in the machine-learning interpretability literature,
 where Shapley values are often reported without assessing their
@@ -415,6 +475,19 @@ convergence diagnostics, the residual-augmented sensitivity analysis and
 the Shapley attribution invariance checks, collectively establish that the
 Monte Carlo and Shapley results are not artefacts of data contamination,
 distributional mismatch, residual instability or input-regime dependence.
+
+The multi-seed replication across five random initialisations provides a
+layer of robustness verification that is uncommon in the applied
+machine-learning interpretability literature.  The cross-seed standard
+deviation of the test $R^2$ ($1.28 \times 10^{-5}$), the cross-seed
+Monte Carlo mean variation (R15), and the perfect Spearman preservation
+of the global Shapley ranking ($\rho_{\mathrm{S}} = 1.0000$ across all
+ten seed pairs) collectively demonstrate that neither the predictive
+performance nor the attribution structure depends on the specific weight
+initialisation.  The replication of the $\tau_{99}$ ranking reversal in
+all five seeds is particularly noteworthy, as it transforms what could
+have been a single-seed observation into a reproducible structural
+property of the fitted model class.
 
 The Shapley-value analysis at both the global and conditional levels, with
 three upper-tail thresholds providing a graded view, reveals patterns that
@@ -466,14 +539,27 @@ achieves near-DNN accuracy on this dataset.  A broader model-selection
 study including additional architectures and datasets would further
 strengthen the conclusions.
 
-The Monte Carlo and Shapley analyses are conditional on a single trained
-network with a fixed random seed.  While the early stopping criterion and
-the near-identical training and test performance provide evidence of stable
-convergence, the sensitivity of the Shapley attributions to the stochastic
-training process is an open question.  Different random seeds may produce
-slightly different weight configurations, which could produce slightly
-different Shapley distributions.  The magnitude of this effect is unknown
-for the architecture and dataset used in this study.
+The Monte Carlo and Shapley analyses were initially conditional on a
+single trained network with a fixed random seed.  The multi-seed
+robustness analysis (Section~\ref{sec:multiseed_dnn}) subsequently
+addressed this limitation by retraining the DNN under five independent
+seeds and replicating the full simulation and attribution pipeline.  The
+cross-seed variability proved negligible across all stages: the test
+$R^2$ standard deviation is $1.28 \times 10^{-5}$, the Monte Carlo mean
+varies by R15, and the global Shapley ranking is perfectly preserved
+($\rho_{\mathrm{S}} = 1.0000$).  While five seeds do not constitute an
+exhaustive exploration of the initialisation space, the convergent
+results across these independent replications provide strong evidence
+that the findings are not artefacts of a single random initialisation.
+
+The tuned XGBoost benchmark achieves $R^2 = 0.9956$, matching the DNN
+($R^2 = 0.9957$) to within one unit in the fourth decimal place.  This
+parity implies that the DNN's selection over XGBoost for the subsequent
+analyses is motivated by the availability of gradient-based SHAP rather
+than by a meaningful predictive advantage.  On datasets where
+differentiability is not required, XGBoost may be a more parsimonious
+alternative that achieves equivalent accuracy with less computational
+cost.
 
 The Monte Carlo input distribution is constructed as a product of
 independent marginals.  While the joint-distribution validation confirmed
@@ -767,14 +853,14 @@ the attribution and interpretation components.
           the empirical correlation structure, eliminating the implausible
           profiles that can arise under the independence assumption.
 
-    \item Training the DNN under multiple random initialisations and
-          reporting the distribution of predictive-performance metrics and
-          Shapley-value summaries across seeds would quantify the
-          sensitivity of the results to the stochastic training process.
-          This analysis would establish whether the ranking reversal at
-          $\tau_{99}$ is a robust property of the architecture and data,
-          or whether it is sensitive to the specific weight
-          initialisation.
+    \item The multi-seed robustness analysis presented in
+          Section~\ref{sec:multiseed_dnn} addressed the cross-seed
+          sensitivity question for this benchmark dataset by retraining
+          under five independent seeds.  Future work could extend this
+          analysis to a larger number of seeds (e.g.\ 50 or 100) or to
+          different architectures, establishing whether the observed
+          cross-seed stability generalises beyond the FunnelDNN and the
+          present dataset.
 
     \item Applying the framework to proprietary or regulatory insurance
           datasets with genuine underwriting heterogeneity would test
@@ -837,12 +923,16 @@ the attribution and interpretation components.
           reversal is a property of the fitted model rather than an
           artefact of the gradient-based approximation.
 
-    \item Interaction Shapley values, which decompose the total Shapley
-          value into main effects and pairwise interactions
-          \citep{lundberg2017unified}, would reveal whether the ranking
-          reversal is driven by changes in the main-effect attributions
-          or by changes in the interaction structure among the top-tier
-          variables.
+    \item The SHAP interaction analysis in
+          Section~\ref{sec:shap_interactions} established that pairwise
+          Shapley-value correlations are negligible on this benchmark
+          dataset (all below $|r| = 0.033$), confirming an essentially
+          additive learned mapping.  On real-world insurance portfolios
+          with genuine covariate interactions, the interaction structure
+          may be more complex.  Extending the interaction analysis to
+          datasets with known non-additive relationships would clarify
+          when main-effect Shapley summaries remain adequate and when
+          higher-order interaction decompositions are necessary.
 
     \item The conditioning could be extended from univariate threshold
           exceedances to multivariate regions defined by combinations of
@@ -895,12 +985,16 @@ status is the dominant contributor to predicted costs globally, it loses
 its discriminating power in the extreme upper tail, where virtually all
 profiles are smokers.  Within this tail, the variables that differentiate
 the costliest profiles from one another are coverage level, medical
-history and family medical history.  This finding illustrates a general
-principle that extends well beyond insurance pricing: a variable's
-importance in a statistical model is not a fixed property, but depends on
-the region of the output space under consideration.  Global importance
-summaries, while useful, can obscure the attribution structure within
-subpopulations of particular interest.
+history and family medical history.  The multi-seed replication across
+five independent random initialisations confirms that this reversal is a
+robust structural property of the fitted model class rather than an
+artefact of a single training run, lending additional confidence to the
+finding.  This result illustrates a general principle that extends well
+beyond insurance pricing: a variable's importance in a statistical model
+is not a fixed property, but depends on the region of the output space
+under consideration.  Global importance summaries, while useful, can
+obscure the attribution structure within subpopulations of particular
+interest.
 
 The framework developed here is not specific to health insurance or to the
 particular benchmark dataset analysed.  The three-stage framework of
@@ -930,3 +1024,4 @@ machine learning is, in its own way, a contribution to the broader
 enterprise of understanding how statistical models learn from data, what
 they learn, and where their learned representations succeed or fail in
 capturing the structure of the phenomena they are designed to predict.
+

@@ -42,3 +42,137 @@
     \caption{Dummy variable proportions across partitions.}
     \label{fig:annexure_split_dummies}
 \end{figure}
+
+% -------------------------------------------------------------
+\subsection{Monte Carlo Joint-Distribution Validation}
+\label{annexure:mc_joint_validation}
+
+The figures in this subsection provide detailed bivariate and
+multivariate diagnostics comparing the joint distributional structure of
+the training data with that of the Monte Carlo sample.  These
+diagnostics support the validation conclusions summarised in
+Section~\ref{sec:simulated_input_validation_ch4}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_mc_joint_continuous_pairs.png}
+\caption{Continuous variable pairs: training (top row, blue) versus
+Monte Carlo (bottom row, red).  All pairwise Pearson correlations are
+negligible in both samples, confirming that the product-marginal
+simulation does not discard meaningful continuous dependence.}
+\label{fig:mc_joint_continuous_pairs_annex}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_mc_joint_crosstabs.png}
+\caption{Conditional distributions of selected categorical variable
+pairs: training (solid bars) versus Monte Carlo (hatched bars).  The
+conditional proportions are approximately uniform across the categories
+of the conditioning variable in both regimes, indicating effective
+independence among the training-data categoricals.}
+\label{fig:mc_joint_crosstabs_annex}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_threeway_crosstabs.png}
+\caption{Three-way cross-tabulations of the four key categorical
+variables: training (blue) versus Monte Carlo (red).  The maximum
+absolute difference between the training and Monte Carlo joint
+proportions is $0.012$, and the mean absolute differences are between
+$0.003$ and $0.004$.}
+\label{fig:threeway_crosstabs_annex}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_energy_distance_test.png}
+\caption{Energy distance permutation test: null distribution and
+observed statistic.  The observed energy distance is $-0.022$ with a
+permutation $p$-value of $0.730$, indicating that the joint
+distributions are indistinguishable by this non-parametric criterion.}
+\label{fig:energy_distance_annex}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.70\textwidth]{Thesis/Chapter 4/Figures/fig_tsne_joint_overlay.png}
+\caption{t-SNE projection of training versus Monte Carlo joint
+distributions.  The point clouds are thoroughly intermixed across all
+identified clusters, confirming that the Monte Carlo profiles do not
+occupy novel regions of the feature space.}
+\label{fig:tsne_joint_overlay_annex}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_mc_input_distributions.png}
+\caption{Marginal distributions of all 11 raw predictor variables:
+training versus Monte Carlo.  The simulated marginals closely match the
+training-data marginals for all variables.}
+\label{fig:mc_input_distributions_annex}
+\end{figure}
+
+% -------------------------------------------------------------
+\subsection{Residual Diagnostics for Augmented Simulation}
+\label{annexure:residual_diagnostics}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_mc_residual_diagnostics.png}
+\caption{Centred training residual diagnostics for the augmented
+simulation.  (a)~Histogram of centred residuals: symmetric and
+bell-shaped.  (b)~Q-Q plot against a Gaussian reference: slight tail
+compression consistent with mild platykurtic behaviour.
+(c)~Residuals versus base predictions: random scatter centred at zero
+across the full prediction range.}
+\label{fig:mc_residual_diagnostics_annex}
+\end{figure}
+
+% -------------------------------------------------------------
+\subsection{SHAP Feature-Level Beeswarm}
+\label{annexure:shap_beeswarm}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\textwidth]{Thesis/Chapter 4/Figures/fig_shap_beeswarm.png}
+\caption{SHAP beeswarm plot for all 22 encoded features.  The binary
+\texttt{smoker} variable produces a clear bimodal separation;
+\texttt{coverage\_level\_Premium} exhibits a similar pattern of smaller
+magnitude; and the continuous variables display more diffuse
+distributions centred near zero.}
+\label{fig:shap_beeswarm_annex}
+\end{figure}
+
+% -------------------------------------------------------------
+\subsection{Training Versus Monte Carlo Attribution Invariance}
+\label{annexure:shap_invariance}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_shap_training_vs_mc_invariance.png}
+\caption{Shapley attribution invariance: training data versus Monte
+Carlo profiles.  The Spearman rank correlation between the two
+feature-importance vectors is $\rho_{\mathrm{S}} = 1.000$, and the
+scatter plot shows that the mean $|\text{SHAP}|$ values fall on the
+diagonal with no systematic deviation.}
+\label{fig:shap_training_vs_mc_invariance_annex}
+\end{figure}
+
+% -------------------------------------------------------------
+\subsection{Representative High-Cost Waterfall Decomposition}
+\label{annexure:shap_waterfall}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{Thesis/Chapter 4/Figures/fig_shap_highcost_waterfall.png}
+\caption{SHAP waterfall plot for a representative high-cost profile
+at the $\tau_{95}$ threshold (predicted cost R24\,249).  The prediction
+is driven upward from the baseline primarily by
+\texttt{medical\_history} ($+0.67$),
+\texttt{family\_medical\_history} ($+0.67$) and \texttt{smoker}
+($+0.59$), partially offset by \texttt{coverage\_level} ($-0.51$).}
+\label{fig:shap_waterfall_annex}
+\end{figure}
+

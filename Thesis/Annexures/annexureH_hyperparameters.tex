@@ -59,6 +59,61 @@ Each configuration was trained with early stopping (patience of 10 validation ch
 \end{table}
 
 % -------------------------------------------------------------
+\subsection{Phase Comparison Figures}
+\label{annexure:phase_figures}
+
+The following figures present the validation MSE loss and validation $R^2$
+trajectories for each phase of the sequential hyperparameter comparison.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_phase1_activation_comparison.png}
+\caption{Phase~1: validation MSE loss (left) and validation $R^2$
+(right) by activation function over training epochs.}
+\label{fig:phase1_activation_annex}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_phase2_lr_comparison.png}
+\caption{Phase~2: validation MSE loss (left) and validation $R^2$
+(right) by learning rate.}
+\label{fig:phase2_lr_annex}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_phase3_batchsize_comparison.png}
+\caption{Phase~3: validation MSE loss (left) and validation $R^2$
+(right) by batch size.}
+\label{fig:phase3_batchsize_annex}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_phase4_optimiser_comparison.png}
+\caption{Phase~4: validation MSE loss (left) and validation $R^2$
+(right) by optimiser.}
+\label{fig:phase4_optimiser_annex}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_phase5_momentum_comparison.png}
+\caption{Phase~5: validation MSE loss (left) and validation $R^2$
+(right) by first momentum coefficient $\beta_1$.}
+\label{fig:phase5_momentum_annex}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_validation_loss_hyperparameters.png}
+\caption{Best validation MSE loss across all hyperparameter
+configurations evaluated in Phases~1 to~5.}
+\label{fig:validation_loss_overview_annex}
+\end{figure}
+
+% -------------------------------------------------------------
 \subsection{Bayesian Optimisation: GP Surrogate}
 \label{annexure:bo_methodology}
 
@@ -90,3 +145,4 @@ Loss function   & MSE (on normalised scale) \\
 \bottomrule
 \end{tabular}
 \end{table}
+

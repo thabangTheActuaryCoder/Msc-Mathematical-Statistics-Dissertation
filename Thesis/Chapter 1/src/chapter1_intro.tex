@@ -819,105 +819,13 @@ environment.
 \subsection{Definition of Key Terms}
 \label{sec:key_terms}
 
-The following definitions establish the meaning of key terms as they are
-used throughout this dissertation.  Formal mathematical definitions are
-deferred to the relevant chapters.
-
-\begin{description}
-    \item[Deep neural network (DNN).]  A feed-forward artificial neural
-          network with multiple hidden layers, each consisting of an
-          affine transformation followed by a nonlinear activation
-          function.  In this dissertation, the DNN is used as a
-          regression model to predict continuous insurance costs from
-          policyholder attributes.
-
-    \item[Funnel architecture.]  A network architecture in which the
-          number of neurons decreases monotonically from the input layer
-          to the output layer.  The specific architecture used in this
-          study has layer widths $256 \to 128 \to 64 \to 32 \to 16$.
-
-    \item[Generalised linear model (GLM).]  A class of statistical
-          models that generalise ordinary linear regression by allowing
-          the response variable to follow any distribution in the
-          exponential family and by relating the mean of the response to
-          the linear predictor through a link function.  In this
-          dissertation, a Gamma GLM with a logarithmic link function
-          serves as the actuarial benchmark.
-
-    \item[Random forest.]  An ensemble learning method that constructs a
-          collection of decision trees, each trained on a bootstrap
-          sample of the data with a random subset of features considered
-          at each split.  The final prediction is the average of the
-          individual tree predictions.  In this dissertation, a random
-          forest regressor serves as one of three benchmark models
-          against which the DNN is compared.
-
-    \item[Gradient-boosted trees (XGBoost).]  An ensemble method that
-          builds an additive sequence of shallow decision trees, with
-          each new tree fitted to the residuals of the preceding
-          ensemble.  XGBoost \citep{chen2016xgboost} is a widely used
-          implementation that incorporates regularisation, approximate
-          histogram-based splitting and early stopping.  In this
-          dissertation, an XGBoost regressor serves as one of three
-          benchmark models.
-
-    \item[Monte Carlo simulation.]  A computational method that uses
-          repeated random sampling from a specified probability
-          distribution to estimate the properties of a quantity of
-          interest.  In this study, Monte Carlo simulation generates
-          synthetic policyholder profiles from fitted parametric
-          marginals and propagates them through the trained network to
-          obtain a predicted-cost distribution.
-
-    \item[Model-implied predicted-cost distribution.]  The distribution
-          of predicted costs obtained by evaluating the trained
-          prediction function at a large sample of input profiles drawn
-          from a specified input distribution.  This distribution
-          characterises the range, central tendency, dispersion and shape
-          of the model's output under population-level input variation.
-
-    \item[Shapley value.]  A concept from cooperative game theory that
-          assigns to each player in a coalition game a unique payoff
-          satisfying the axioms of efficiency, symmetry, linearity and
-          the null-player property.  In the context of model
-          interpretation, the ``players'' are input features and the
-          ``payoff'' is the prediction for a given observation.  The
-          Shapley value quantifies the average marginal contribution of
-          each feature across all possible feature coalitions.
-
-    \item[SHAP (SHapley Additive exPlanations).]  A framework that
-          operationalises the computation of approximate Shapley values
-          for machine-learning models.  The gradient-based variant used
-          in this dissertation exploits the differentiability of the
-          neural network to compute Shapley-value approximations
-          efficiently.
-
-    \item[Conditional Shapley analysis.]  The computation and
-          summarisation of Shapley values within a subset of predictions
-          that exceed a specified threshold.  In this dissertation,
-          conditional Shapley summaries are computed at the 90th, 95th
-          and 99th percentiles of the predicted-cost distribution.
-
-    \item[Feature-importance ranking reversal.]  The phenomenon whereby
-          the ordering of features by their mean absolute Shapley values
-          differs between the global summary and the conditional summary
-          at a specific threshold.  A ranking reversal indicates that the
-          variables driving predictions in the specified region differ
-          from those that dominate on average.
-
-    \item[Data-leakage prevention.]  The set of protocols that ensure no
-          information from the validation or test partitions contaminates
-          the training process.  In this dissertation, all preprocessing
-          parameters are computed exclusively on the training partition
-          and applied to the validation and test partitions without
-          refitting.
-
-    \item[Residual-augmented sensitivity analysis.]  A diagnostic
-          procedure that adds scaled fitted residuals to the Monte Carlo
-          predicted costs to examine whether the distributional
-          conclusions are robust to the residual structure of the fitted
-          model.
-\end{description}
+Formal definitions of the key terms used throughout this dissertation,
+including deep neural network, funnel architecture, generalised linear
+model, random forest, gradient-boosted trees, Monte Carlo simulation,
+Shapley value, SHAP, conditional Shapley analysis, feature-importance
+ranking reversal, data-leakage prevention and residual-augmented
+sensitivity analysis, are provided in
+Annexure~\ref{annexure:glossary}.
 
 % ---------------------------------------------------------
 % 1.13 DISSERTATION OUTLINE
@@ -965,3 +873,4 @@ The final chapter summarises the key findings in relation to each
 research question, states the contributions and strengths of the study,
 discusses limitations, examines implications for actuarial practice and
 statistical methodology, and identifies directions for future research.
+

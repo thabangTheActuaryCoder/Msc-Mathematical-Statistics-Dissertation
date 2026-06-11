@@ -11,13 +11,24 @@ Section~\ref{sec:hyperparameter_results} reports the sequential
 hyperparameter comparison that produced the final \gls{dnn} training
 configuration, together with the predictive performance of the retained
 model and a baseline comparison with the actuarial-standard \gls{glm};
+Section~\ref{sec:multiseed_dnn} presents the multi-seed \gls{dnn}
+training robustness analysis across five random initialisations;
+Section~\ref{sec:tuned_benchmarks} reports the tuned benchmark
+comparison, including hyperparameter-optimised \gls{rf} and
+\gls{xgboost} models;
+Section~\ref{sec:multiseed_benchmark_stability} evaluates cross-seed
+stability across all four model classes;
 Section~\ref{sec:mc_results} presents the Monte Carlo
 predicted-cost distribution, its joint-distribution input validation,
 and convergence properties;
 Section~\ref{sec:residual_augmented_results} evaluates the
 residual-augmented sensitivity analysis;
 Section~\ref{sec:shapley_results} reports the Shapley-value attribution
-results at the global and high-cost conditional levels; and
+results at the global and high-cost conditional levels;
+Section~\ref{sec:cross_seed_shap} presents the cross-seed Shapley
+attribution stability analysis;
+Section~\ref{sec:shap_interactions} reports the SHAP interaction
+analysis; and
 Section~\ref{sec:mc_shapley_integration} examines the correspondence
 between the Monte Carlo distributional findings and the Shapley
 attribution patterns.
@@ -38,22 +49,16 @@ Three candidate activation functions were compared: \gls{celu}
 (equation~\eqref{eq:celu}), GELU and Tanh, with all other
 hyperparameters fixed at learning rate $0.001$, batch size $256$ and Adam.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_phase1_activation_comparison.png}
-\caption{Phase~1: validation MSE loss (left) and validation $R^2$
-(right) by activation function over training epochs.}
-\label{fig:phase1_activation_ch4}
-\end{figure}
-
 \noindent
-Figure~\ref{fig:phase1_activation_ch4} shows that \gls{celu} achieves
-the lowest validation loss (approximately $0.00435$) and the highest
-validation $R^2$ (approximately $0.9957$) from epoch~60 onwards. GELU
-tracks \gls{celu} closely throughout training but settles at a
-marginally higher loss plateau. Tanh converges more slowly and exhibits
-greater epoch-to-epoch volatility, reaching a best validation $R^2$ of
-approximately $0.9954$. The \gls{celu} activation was therefore retained.
+The validation loss and $R^2$ trajectories for this phase are presented in
+Figure~\ref{fig:phase1_activation_annex}
+(Annexure~\ref{annexure:hyperparameters}).  \gls{celu} achieves the
+lowest validation loss (approximately $0.00435$) and the highest
+validation $R^2$ (approximately $0.9957$) from epoch~60 onwards.  GELU
+tracks \gls{celu} closely but settles at a marginally higher loss
+plateau.  Tanh converges more slowly and exhibits greater epoch-to-epoch
+volatility, reaching a best validation $R^2$ of approximately $0.9954$.
+The \gls{celu} activation was therefore retained.
 
 \subsubsection{Phase 2: Learning rate}
 
@@ -61,22 +66,16 @@ Four learning rates were evaluated:
 $\eta \in \{0.01, 0.001, 0.0005, 0.0001\}$, with \gls{celu} carried
 forward.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_phase2_lr_comparison.png}
-\caption{Phase~2: validation MSE loss (left) and validation $R^2$
-(right) by learning rate.}
-\label{fig:phase2_lr_ch4}
-\end{figure}
-
 \noindent
-Figure~\ref{fig:phase2_lr_ch4} reveals that $\eta = 0.01$ produces
-catastrophic divergence: the validation loss exceeds $1.0$ and the
-validation $R^2$ drops to near zero, indicating that the gradient
-updates overshoot the loss surface at this step size. The three
-remaining learning rates ($0.001$, $0.0005$ and $0.0001$) all converge
-to validation $R^2 \approx 1.00$ on the standardised scale, with their
-loss curves overlapping on the visible scale. Among these,
+The validation trajectories are shown in
+Figure~\ref{fig:phase2_lr_annex}
+(Annexure~\ref{annexure:hyperparameters}).
+$\eta = 0.01$ produces catastrophic divergence: the validation loss
+exceeds $1.0$ and the validation $R^2$ drops to near zero, indicating
+that the gradient updates overshoot the loss surface at this step size.
+The three remaining learning rates ($0.001$, $0.0005$ and $0.0001$) all
+converge to validation $R^2 \approx 1.00$ on the standardised scale,
+with their loss curves overlapping on the visible scale.  Among these,
 $\eta = 0.0005$ achieves the lowest best validation loss and was
 retained.
 
@@ -86,40 +85,29 @@ Four batch sizes were compared:
 $|\mathcal{B}| \in \{64, 128, 256, 512\}$, with \gls{celu} and
 $\eta = 0.0005$ fixed.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_phase3_batchsize_comparison.png}
-\caption{Phase~3: validation MSE loss (left) and validation $R^2$
-(right) by batch size.}
-\label{fig:phase3_batchsize_ch4}
-\end{figure}
-
 \noindent
-Figure~\ref{fig:phase3_batchsize_ch4} shows that all four batch sizes
-converge to similar validation performance, with best validation $R^2$
-values between $0.9956$ and $0.9957$. The batch size $|\mathcal{B}| =
-256$ was retained, as it achieves among the lowest validation loss
-values while maintaining stable convergence behaviour.
+The validation trajectories are shown in
+Figure~\ref{fig:phase3_batchsize_annex}
+(Annexure~\ref{annexure:hyperparameters}).
+All four batch sizes converge to similar validation performance, with
+best validation $R^2$ values between $0.9956$ and $0.9957$.  The batch
+size $|\mathcal{B}| = 256$ was retained, as it achieves among the lowest
+validation loss values while maintaining stable convergence behaviour.
 
 \subsubsection{Phase 4: Optimiser}
 
 Adam and NAdam were compared with all previous best choices carried
 forward.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_phase4_optimiser_comparison.png}
-\caption{Phase~4: validation MSE loss (left) and validation $R^2$
-(right) by optimiser.}
-\label{fig:phase4_optimiser_ch4}
-\end{figure}
-
 \noindent
-Figure~\ref{fig:phase4_optimiser_ch4} shows that NAdam converges faster
-than Adam in the initial epochs and exhibits smoother validation loss
-trajectories throughout training. From approximately epoch~40 onwards,
-NAdam consistently achieves lower validation loss and higher validation
-$R^2$ than Adam, with fewer loss spikes. NAdam was therefore retained.
+The validation trajectories are shown in
+Figure~\ref{fig:phase4_optimiser_annex}
+(Annexure~\ref{annexure:hyperparameters}).
+NAdam converges faster than Adam in the initial epochs and exhibits
+smoother validation loss trajectories throughout training.  From
+approximately epoch~40 onwards, NAdam consistently achieves lower
+validation loss and higher validation $R^2$ than Adam, with fewer loss
+spikes.  NAdam was therefore retained.
 
 \subsubsection{Phase 5: Momentum parameters}
 
@@ -127,38 +115,23 @@ Three momentum configurations were compared for the NAdam optimiser:
 $(\beta_1, \beta_2) \in \{(0.90, 0.999),\; (0.95, 0.999),\;
 (0.99, 0.999)\}$.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_phase5_momentum_comparison.png}
-\caption{Phase~5: validation MSE loss (left) and validation $R^2$
-(right) by first momentum coefficient $\beta_1$.}
-\label{fig:phase5_momentum_ch4}
-\end{figure}
-
 \noindent
-Figure~\ref{fig:phase5_momentum_ch4} shows that all three momentum
-configurations converge to similar final validation performance. The
-$\beta_1 = 0.95$ configuration achieves marginally lower and more
-stable validation loss from epoch~40 onwards, with the best validation
-$R^2$ reaching approximately $0.9957$. The conservative setting
-$\beta_1 = 0.99$ converges slightly faster in early epochs but exhibits
-comparable final performance. The configuration $(\beta_1, \beta_2) =
-(0.95, 0.999)$ was retained.
+The validation trajectories are shown in
+Figure~\ref{fig:phase5_momentum_annex}
+(Annexure~\ref{annexure:hyperparameters}).
+All three momentum configurations converge to similar final validation
+performance.  The $\beta_1 = 0.95$ configuration achieves marginally
+lower and more stable validation loss from epoch~40 onwards, with the
+best validation $R^2$ reaching approximately $0.9957$.  The conservative
+setting $\beta_1 = 0.99$ converges slightly faster in early epochs but
+exhibits comparable final performance.  The configuration
+$(\beta_1, \beta_2) = (0.95, 0.999)$ was retained.
 
 \subsubsection{Hyperparameter comparison overview}
 
-Figure~\ref{fig:validation_loss_overview_ch4} presents the best
-validation loss achieved by each configuration across all five phases.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_validation_loss_hyperparameters.png}
-\caption{Best validation MSE loss across all hyperparameter
-configurations evaluated in Phases~1-5.}
-\label{fig:validation_loss_overview_ch4}
-\end{figure}
-
-\noindent
+Figure~\ref{fig:validation_loss_overview_annex}
+(Annexure~\ref{annexure:hyperparameters}) presents the best validation
+loss achieved by each configuration across all five phases.
 The selected configuration (CELU, $\eta = 0.0005$,
 $|\mathcal{B}| = 256$, NAdam, $\beta_1 = 0.95$) achieves the lowest
 validation loss among all evaluated configurations.
@@ -220,7 +193,7 @@ training-set response statistics used for standardisation are
 $\overline{y}_{\mathrm{train}} = \text{R16\,744}$ and
 $s_{y,\mathrm{train}} = \text{R4\,419}$.  On the standardised scale,
 the validation MSE at the selected epoch $e^{*} = 85$ is $0.00432$
-(Figure~\ref{fig:validation_loss_overview_ch4}), and the
+(Figure~\ref{fig:validation_loss_overview_annex}), and the
 original-scale residuals range from approximately $-600$ to $+600$ as
 characterised in the residual diagnostics of
 Section~\ref{sec:model_validation_diagnostics}.
@@ -391,6 +364,238 @@ Section~\ref{sec:comparison_constrained_nn}.
 
 
 % =============================================================
+\subsection{Multi-Seed DNN Training Robustness}
+\label{sec:multiseed_dnn}
+
+The results reported above are conditional on a single trained network
+with a fixed random seed (seed~42).  To assess the sensitivity of the
+predictive performance and subsequent analyses to the stochastic
+training process, the FunnelDNN was retrained from scratch under five
+independent random seeds (42, 123, 456, 789 and 1024), each producing a
+different weight initialisation and mini-batch ordering.  All other
+training settings (architecture, learning rate, batch size, optimiser,
+momentum and early stopping criterion) were held fixed at the values in
+Table~\ref{tab:final_hyperparameters_ch4}.
+
+\subsubsection{Training convergence across seeds}
+
+The training loss, validation loss and validation $R^2$ trajectories
+across all five seeds are presented in
+Annexure~\ref{annexure:multiseed_training}
+(Figures~\ref{fig:dnn_multiseed_train_loss_annex}
+to~\ref{fig:dnn_multiseed_epoch_vs_r2_annex}).  All five seeds converge
+to the same loss plateau, with the validation $R^2$ trajectories
+virtually indistinguishable from epoch~60 onwards.  No seed is trapped
+in a materially different local minimum, confirming that the optimisation
+landscape for this architecture and dataset is well-behaved.
+
+\subsubsection{Test-set performance across seeds}
+
+Table~\ref{tab:multiseed_test_performance_ch4} reports the test-set
+predictive performance for each of the five seeds.
+
+\begin{table}[H]
+\centering
+\caption{Test-set predictive performance of the FunnelDNN across five
+random seeds (original monetary scale).}
+\label{tab:multiseed_test_performance_ch4}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Seed} & \textbf{MAE (R)} & \textbf{RMSE (R)} & $\boldsymbol{R^2}$ \\
+\midrule
+42  & 251 & 291 & 0.99566 \\
+123 & 251 & 291 & 0.99565 \\
+456 & 251 & 291 & 0.99567 \\
+789 & 252 & 291 & 0.99564 \\
+1024 & 251 & 291 & 0.99566 \\
+\addlinespace
+\textbf{Mean $\pm$ SD} & $251.2 \pm 0.4$ & $291.0 \pm 0.0$ & $0.99566 \pm 0.00001$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+The cross-seed variability is negligible: the test $R^2$ ranges from
+$0.99564$ to $0.99567$ (standard deviation $= 0.00001$), the test
+\gls{rmse} is R291 in all five seeds, and the test \gls{mae} varies
+by less than R1 across seeds.  These results confirm that the
+predictive performance reported in
+Table~\ref{tab:final_model_performance_ch4} is not an artefact of a
+fortunate random initialisation.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Thesis/Chapter 4/Figures/fig_dnn_multiseed_test_metrics.png}
+\caption{Test-set performance metrics across five random seeds.  The
+bars are virtually identical across seeds, confirming negligible
+cross-seed variability in predictive performance.}
+\label{fig:dnn_multiseed_test_metrics_ch4}
+\end{figure}
+
+\noindent
+Figure~\ref{fig:dnn_multiseed_test_metrics_ch4} visualises the
+test-set metrics across all five seeds.  The near-identical bar heights
+confirm that the FunnelDNN's predictive accuracy is robust to the
+stochastic training process, with the cross-seed standard deviation of
+$R^2$ at $1.28 \times 10^{-5}$.
+
+
+% =============================================================
+\subsection{Tuned Benchmark Comparison}
+\label{sec:tuned_benchmarks}
+
+The baseline comparison in
+Section~\ref{sec:four_model_comparison_ch4} used the \gls{rf} and
+\gls{xgboost} benchmarks with default hyperparameter settings.  To
+ensure a fair comparison, both tree-based models were subsequently tuned
+using randomised search with 5-fold cross-validation on the training
+partition.
+
+\subsubsection{Tuned Random Forest}
+
+Table~\ref{tab:tuned_rf_ch4} compares the default and tuned \gls{rf}
+performance.
+
+\begin{table}[H]
+\centering
+\caption{Random Forest performance: default versus tuned
+hyperparameters (test set, original monetary scale).}
+\label{tab:tuned_rf_ch4}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Configuration} & \textbf{MAE (R)} & \textbf{RMSE (R)} &
+$\boldsymbol{R^2}$ \\
+\midrule
+Default & 358 & 443 & 0.9899 \\
+Tuned   & 320 & 385 & 0.9924 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+Tuning improves the \gls{rf} test $R^2$ from $0.9900$ to $0.9924$,
+reducing the test \gls{rmse} from R443 to R385 ($13.1\%$ reduction) and
+the test \gls{mae} from R358 to R320 ($10.6\%$ reduction).  The tuned
+\gls{rf} substantially narrows the gap to the \gls{dnn} but remains
+below both \gls{xgboost} configurations.
+
+\subsubsection{Tuned XGBoost}
+
+Table~\ref{tab:tuned_xgb_ch4} compares the default and tuned
+\gls{xgboost} performance.
+
+\begin{table}[H]
+\centering
+\caption{XGBoost performance: default versus tuned hyperparameters
+(test set, original monetary scale).}
+\label{tab:tuned_xgb_ch4}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Configuration} & \textbf{MAE (R)} & \textbf{RMSE (R)} &
+$\boldsymbol{R^2}$ \\
+\midrule
+Default & 255 & 297 & 0.9955 \\
+Tuned   & 252 & 292 & 0.9956 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+Tuning improves the \gls{xgboost} test $R^2$ from $0.9955$ to
+$0.9956$, matching the \gls{dnn}'s test $R^2$ to four decimal places.
+The test \gls{rmse} decreases from R297 to R292 and the test \gls{mae}
+from R255 to R252, both within R2 of the \gls{dnn}'s corresponding
+metrics.
+
+\subsubsection{Updated six-model comparison}
+
+Table~\ref{tab:six_model_comparison_ch4} presents the updated
+comparison across all six model configurations.
+
+\begin{table}[H]
+\centering
+\caption{Test-set performance comparison across six model
+configurations (original monetary scale).}
+\label{tab:six_model_comparison_ch4}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Model} & \textbf{MAE (R)} & \textbf{RMSE (R)} &
+$\boldsymbol{R^2}$ \\
+\midrule
+\gls{glm} (Gamma, log-link) & 624 & 913 & 0.9571 \\
+\gls{rf} (default) & 358 & 443 & 0.9899 \\
+\gls{rf} (tuned)   & 320 & 385 & 0.9924 \\
+\gls{xgboost} (default) & 255 & 297 & 0.9955 \\
+\gls{xgboost} (tuned)   & 252 & 292 & 0.9956 \\
+\gls{dnn} (FunnelDNN) & 251 & 290 & 0.9957 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+The tuned \gls{xgboost} matches the \gls{dnn} at $R^2 = 0.9956$
+(versus $0.9957$), with a test \gls{rmse} difference of only R2.  This
+result confirms that the predictive advantage of the \gls{dnn} over
+\gls{xgboost} on this benchmark dataset is marginal once hyperparameter
+tuning is applied.  The \gls{dnn} is nevertheless retained for the
+subsequent Monte Carlo and Shapley analyses on the grounds of its
+differentiability, which enables gradient-based SHAP computation.
+Tree-based models require permutation-based or kernel-based Shapley
+approximations, which are computationally more expensive for large
+simulation sizes and do not exploit the smooth prediction surface that
+gradient-based methods leverage.
+
+
+% =============================================================
+\subsection{Multi-Seed Benchmark Stability}
+\label{sec:multiseed_benchmark_stability}
+
+To assess whether the cross-seed stability observed for the \gls{dnn}
+extends to the benchmark models, all four model classes were retrained
+under the same five random seeds.
+Table~\ref{tab:multiseed_all_models_ch4} reports the cross-seed
+variability of the test $R^2$ for each model class.
+
+\begin{table}[H]
+\centering
+\caption{Cross-seed variability of test $R^2$ across four model
+classes (five random seeds each).}
+\label{tab:multiseed_all_models_ch4}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Model class} & \textbf{Mean test $R^2$} &
+\textbf{SD of test $R^2$} \\
+\midrule
+\gls{glm} (Gamma, log-link) & 0.9571 & $< 0.0001$ \\
+\gls{rf} (tuned) & 0.9924 & $0.0001$ \\
+\gls{xgboost} (tuned) & 0.9956 & $< 0.0001$ \\
+\gls{dnn} (FunnelDNN) & 0.9957 & $0.0000$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+All four model classes exhibit negligible cross-seed variability.  The
+\gls{glm}, being a deterministic convex optimisation, produces identical
+results regardless of initialisation.  The \gls{rf}'s cross-seed
+standard deviation of $0.0001$ reflects the stochastic subsampling
+inherent in bagging.  Both \gls{xgboost} and the \gls{dnn} show
+standard deviations below $0.0001$, confirming that the model comparison
+in Table~\ref{tab:six_model_comparison_ch4} is robust to the random
+seed.
+
+
+% =============================================================
 \subsection{Monte Carlo Predicted-Cost Distribution}
 \label{sec:mc_results}
 
@@ -409,152 +614,43 @@ diagnostic protocol in Section~\ref{sec:mc_input_validation}.
 
 \subsubsection*{Joint distribution validation}
 
-Three complementary diagnostics compare the bivariate and multivariate
-dependence structure of the training data with that of the Monte Carlo
-sample.
+The bivariate and multivariate dependence structure of the training data
+was compared with that of the Monte Carlo sample using five complementary
+diagnostics (detailed figures in
+Annexure~\ref{annexure:mc_joint_validation}).  Pairwise scatter plots
+for the three continuous variables confirmed that all training-data
+Pearson correlations are negligible ($r \leq 0.012$), and the Monte
+Carlo sample shows even weaker correlations ($r \leq 0.002$), as
+expected under independence
+(Figure~\ref{fig:mc_joint_continuous_pairs_annex}).  Conditional
+cross-tabulations of six key categorical pairs show approximately
+uniform conditional proportions in both samples, confirming effective
+independence among the training-data categoricals
+(Figure~\ref{fig:mc_joint_crosstabs_annex}).  These bivariate
+diagnostics complement the correlation-matrix and Cram\'{e}r's~$V$
+comparisons reported in Section~\ref{sec:mc_input_validation}.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_mc_joint_continuous_pairs.png}
-\caption{Continuous variable pairs: training (top row, blue) versus
-Monte Carlo (bottom row, red).}
-\label{fig:mc_joint_continuous_pairs_ch4}
-\end{figure}
+Three-way joint proportions computed for the four categorical variables
+most relevant to the high-cost analysis (\texttt{smoker},
+\texttt{coverage\_level}, \texttt{medical\_history},
+\texttt{family\_medical\_history}) yielded a maximum absolute difference
+of $0.012$ and mean absolute differences between $0.003$ and $0.004$
+(Figure~\ref{fig:threeway_crosstabs_annex}), confirming that
+higher-order interactions are negligible.  A permutation-based energy
+distance test ($1\,000$ permutations) returned $p = 0.730$
+(Figure~\ref{fig:energy_distance_annex}), indicating that the joint
+distributions are indistinguishable by this non-parametric criterion.
+A t-SNE projection showed thoroughly intermixed point clouds across all
+identified clusters (Figure~\ref{fig:tsne_joint_overlay_annex}),
+providing nonlinear confirmation that the Monte Carlo profiles do not
+occupy novel regions of the feature space.
 
-\noindent
-Figure~\ref{fig:mc_joint_continuous_pairs_ch4} displays pairwise
-scatter plots for the three continuous variables (\texttt{age},
-\texttt{bmi}, \texttt{children}).  In the training data, all pairwise
-Pearson correlations are negligible ($r = 0.006$, $0.009$, $0.012$).
-The Monte Carlo sample shows even weaker correlations ($r = 0.002$,
-$0.002$, $0.002$), as expected under independence.  The near-zero
-training correlations confirm that the product-marginal simulation does
-not discard meaningful continuous dependence.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_mc_joint_crosstabs.png}
-\caption{Conditional distributions of selected categorical variable
-pairs: training (solid bars) versus Monte Carlo (hatched bars).}
-\label{fig:mc_joint_crosstabs_ch4}
-\end{figure}
-
-\noindent
-Figure~\ref{fig:mc_joint_crosstabs_ch4} compares the conditional
-distributions of six key categorical variable pairs.  In each panel,
-the conditional proportions are approximately uniform across the
-categories of the conditioning variable, both in the training data and
-in the Monte Carlo sample.  For instance, the distribution of
-\texttt{coverage\_level} given \texttt{smoker} is near-uniform in both
-regimes, and the distribution of \texttt{medical\_history} given
-\texttt{smoker} is similarly uniform.  These cross-tabulations indicate
-that the training-data categoricals are effectively independent of one
-another, and the product-marginal simulation preserves this structure.
-
-These bivariate diagnostics complement the correlation-matrix and
-Cram\'{e}r's~$V$ comparisons reported in
-Section~\ref{sec:mc_input_validation}, which showed that the Pearson
-correlation structure and categorical association structure of the
-training data are closely reproduced by the parametric Monte Carlo
-sample.
-
-\subsubsection*{Higher-order interaction check}
-
-To confirm that the negligible dependence extends beyond pairwise
-associations, three-way joint proportions were computed for the four
-categorical variables most relevant to the high-cost analysis
-(\texttt{smoker}, \texttt{coverage\_level}, \texttt{medical\_history},
-\texttt{family\_medical\_history}).
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_threeway_crosstabs.png}
-\caption{Three-way cross-tabulations of the four key categorical
-variables: training (blue) versus Monte Carlo (red).}
-\label{fig:threeway_crosstabs_ch4}
-\end{figure}
-
-\noindent
-Figure~\ref{fig:threeway_crosstabs_ch4} presents four three-way
-cross-tabulations.  Across all triplets, the maximum absolute difference
-between the training and Monte Carlo joint proportions is $0.012$
-(\texttt{coverage\_level} $\times$ \texttt{medical\_history} $\times$
-\texttt{family\_medical\_history}), and the mean absolute differences
-are between $0.003$ and $0.004$.  The near-uniform joint proportions in
-the training data confirm that higher-order interactions among the
-categorical variables are negligible, and the product-marginal
-simulation does not discard meaningful multi-way dependence.
-
-\subsubsection*{Multivariate two-sample test}
-
-As a formal test of the overall joint-distribution similarity, the
-energy distance between the training and Monte Carlo samples was
-computed.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_energy_distance_test.png}
-\caption{Energy distance permutation test: null distribution and observed statistic.}
-\label{fig:energy_distance_ch4}
-\end{figure}
-
-\noindent
-Figure~\ref{fig:energy_distance_ch4} reports the result of a
-permutation-based energy distance test with $1\,000$ permutations.  The
-observed energy distance is $-0.022$, which falls well within the
-permutation null distribution (panel~a).  The permutation $p$-value is
-$0.730$, indicating that the observed discrepancy between the training
-and Monte Carlo joint distributions is not statistically significant.
-The observed energy distance is smaller in magnitude than the null
-standard deviation ($0.042$), confirming that the joint distributions
-are indistinguishable by this non-parametric criterion.
-
-\subsubsection*{Non-linear manifold overlay}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.70\textwidth]{Thesis/Chapter 4/Figures/fig_tsne_joint_overlay.png}
-\caption{t-SNE projection of training versus Monte Carlo joint distributions.}
-\label{fig:tsne_joint_overlay_ch4}
-\end{figure}
-
-\noindent
-Figure~\ref{fig:tsne_joint_overlay_ch4} provides a nonlinear
-complement to the linear PCA overlay reported in
-Section~\ref{sec:mc_input_validation}.  The t-SNE projection maps both
-the training and Monte Carlo profiles into two dimensions, preserving
-local neighbourhood structure.  The resulting point clouds are
-thoroughly intermixed across all identified clusters.  No region of the
-manifold is dominated by one sample, confirming that the Monte Carlo
-profiles do not occupy novel regions of the feature space that are
-unrepresented in the training data.  This result, combined with the PCA
-overlay, the energy distance test ($p = 0.730$), and the three-way
-cross-tabulations, provides converging evidence that the
-product-marginal independence assumption does not materially distort the
-joint distributional structure of the training data.
-
-\subsubsection*{Marginal distributions}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_mc_input_distributions.png}
-\caption{Marginal distributions of all 11 raw predictor variables: training versus Monte Carlo.}
-\label{fig:mc_input_distributions_ch4}
-\end{figure}
-
-\noindent
-Figure~\ref{fig:mc_input_distributions_ch4} confirms that the simulated
-marginals closely match the training-data marginals for all 11
-variables.  The continuous variables (\texttt{age}, \texttt{bmi}) show
-near-uniform histograms in both samples; the discrete count variable
-(\texttt{children}) reproduces the approximately equal proportions
-across levels 0 to 5.  For all binary and categorical variables, the
-simulated category proportions closely match the training-set
-proportions estimated via
-equation~\eqref{eq:categorical_probability_estimator_ch3}.  The
-parametric simulation therefore faithfully implements the distributional
-assumptions stated in Table~\ref{tab:mc_distribution_assumptions_ch3},
-at both the joint and marginal levels.
+The marginal distributions of all 11 raw predictor variables closely
+match the training-data marginals
+(Figure~\ref{fig:mc_input_distributions_annex}).  The parametric
+simulation therefore faithfully implements the distributional assumptions
+stated in Table~\ref{tab:mc_distribution_assumptions_ch3}, at both the
+joint and marginal levels.
 
 \subsubsection{Model-implied cost distribution}
 
@@ -691,6 +787,30 @@ within $\pm 0.4\%$ of its final value from $B = 25\,000$ onwards,
 indicating that the tail percentile estimates are sufficiently precise
 for the conditional Shapley analysis that follows.
 
+\subsubsection{Cross-seed Monte Carlo stability}
+\label{sec:cross_seed_mc_ch4}
+
+To assess whether the Monte Carlo predicted-cost distribution is
+sensitive to the DNN training seed, the $B = 100\,000$ simulation was
+repeated using each of the five trained networks from
+Section~\ref{sec:multiseed_dnn}.  The cross-seed Monte Carlo
+diagnostics are presented in
+Annexure~\ref{annexure:multiseed_mc}
+(Figures~\ref{fig:mc_seed_distributions_annex}
+to~\ref{fig:mc_convergence_rate_annex}).
+
+The cross-seed mean predicted cost is R16\,649 $\pm$ R15 across the
+five seeds, representing a coefficient of variation below $0.1\%$.  The
+predicted-cost density overlays are virtually identical across seeds
+(Figure~\ref{fig:mc_seed_distributions_annex}), and the bootstrap 95\%
+confidence intervals overlap within a narrow band of approximately R15
+(Figure~\ref{fig:mc_bootstrap_ci_annex}).  The \gls{mcse} decay follows
+the canonical $\mathcal{O}(B^{-1/2})$ rate in all five seeds, dropping
+from approximately R200 at $B = 500$ to approximately R43 at
+$B = 10\,000$ (Figure~\ref{fig:mc_convergence_rate_annex}).  These
+results confirm that the model-implied predicted-cost distribution is
+invariant to the DNN training seed.
+
 \subsubsection{Comparison with observed training charges}
 
 \begin{figure}[H]
@@ -728,27 +848,16 @@ $\widehat{F}_{\varepsilon}$
 of $\pm 0.5\,\widehat{\sigma}_{\varepsilon}$ was computed following
 equation~\eqref{eq:fixed_residual_perturbation_ch3}.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_mc_residual_diagnostics.png}
-\caption{Centred training residual diagnostics for the augmented simulation.}
-\label{fig:mc_residual_diagnostics_ch4}
-\end{figure}
-
-\noindent
-Figure~\ref{fig:mc_residual_diagnostics_ch4} characterises the centred
-training residuals from which the augmented draws are sampled.  The
-histogram in panel~(a) is symmetric and bell-shaped, confirming that the
-residual distribution is well-centred and does not contain systematic
-bias.  The Q-Q plot in panel~(b) shows slight tail compression relative
-to a Gaussian reference, consistent with the mild platykurtic behaviour
-noted in the model diagnostics of
-Section~\ref{sec:model_validation_diagnostics}.  Panel~(c) plots the
-sampled residuals against the base predictions: the scatter is random
-and centred at zero across the full prediction range (R5\,000 to
-R30\,000), indicating that the residual magnitude does not depend on the
-predicted cost level.  These properties confirm that the empirical
-residual distribution is suitable for the perturbation analysis.
+The centred training residuals from which the augmented draws are sampled
+were verified as suitable for the perturbation analysis
+(Figure~\ref{fig:mc_residual_diagnostics_annex},
+Annexure~\ref{annexure:residual_diagnostics}).  The residual histogram
+is symmetric and bell-shaped with no systematic bias; the Q-Q plot shows
+slight tail compression consistent with the mild platykurtic behaviour
+noted in Section~\ref{sec:model_validation_diagnostics}; and the
+residual-versus-prediction scatter is random and centred at zero across
+the full prediction range (R5\,000 to R30\,000), confirming
+homogeneous residual magnitude.
 
 \begin{figure}[H]
 \centering
@@ -777,6 +886,20 @@ the base Monte Carlo analysis are not sensitive to the magnitude of the
 fitted model's residual error. The base predicted-cost distribution is
 therefore a stable foundation for the Shapley-value attribution analysis
 that follows.
+
+\subsubsection{Cross-seed residual-augmented sensitivity}
+\label{sec:cross_seed_residual_ch4}
+
+The residual-augmented sensitivity analysis was repeated for all five
+DNN seeds.  Figure~\ref{fig:residual_augmented_mc_annex}
+(Annexure~\ref{annexure:multiseed_residual}) compares the base and
+augmented distributions with cross-seed dispersion.  The residual
+standard deviation $\hat{\sigma}_{\varepsilon} \approx \text{R}290$ is
+consistent across all five seeds, and the augmentation adds
+approximately 2\% extra variance to the predicted-cost distribution.
+The base-to-augmented distributional shift is negligible in every seed,
+confirming that the residual-augmented conclusions of the preceding
+section are not sensitive to the training initialisation.
 
 
 % =============================================================
@@ -856,70 +979,37 @@ medical history categories.
 
 \subsubsection{Feature-level SHAP beeswarm}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.72\textwidth]{Thesis/Chapter 4/Figures/fig_shap_beeswarm.png}
-\caption{SHAP beeswarm plot for all 22 encoded features.}
-\label{fig:shap_beeswarm_ch4}
-\end{figure}
-
-\noindent
-Figure~\ref{fig:shap_beeswarm_ch4} provides a feature-level view of
-the Shapley attributions across all 22 encoded inputs. Several patterns
-are visible:
-
-\begin{enumerate}
-    \item \textbf{Smoker:} The binary \texttt{smoker} variable produces
-    a clear bimodal separation. High feature values (red, smoker $=$ yes)
-    yield large positive SHAP values (approximately $+0.5$ to $+1.0$),
-    while low feature values (blue, smoker $=$ no) yield large negative
-    SHAP values (approximately $-0.5$ to $-0.7$). This confirms that
-    smoking status is the single largest determinant of fitted predicted
-    costs.
-
-    \item \textbf{Coverage level:} The \texttt{coverage\_level\_Premium}
-    dummy exhibits a similar bimodal pattern: premium coverage pushes
-    predictions upward ($+0.3$ to $+0.7$), while its absence pulls
-    predictions downward. The \texttt{coverage\_level\_Standard} dummy
-    shows a complementary pattern of smaller magnitude.
-
-    \item \textbf{Medical and family medical history:} The Heart disease
-    dummies for both \texttt{medical\_history} and
-    \texttt{family\_medical\_history} produce the next largest
-    attributions. High feature values (Heart disease present)
-    consistently increase predicted costs by approximately $+0.3$ to
-    $+0.8$.
-
-    \item \textbf{Continuous variables:} \texttt{bmi}, \texttt{children}
-    and \texttt{age} display more diffuse SHAP distributions centred
-    near zero, consistent with their smaller global importance. The
-    \texttt{bmi} swarm shows a broad purple-to-pink gradient, reflecting
-    its continuous nature, but the individual SHAP magnitudes remain
-    small (mostly within $\pm 0.15$).
-\end{enumerate}
+The beeswarm plot of all 22 encoded features
+(Figure~\ref{fig:shap_beeswarm_annex},
+Annexure~\ref{annexure:shap_beeswarm}) reveals several patterns
+consistent with the aggregated importance ranking.  The binary
+\texttt{smoker} variable produces a clear bimodal separation, with
+smoker $=$ yes yielding SHAP values of approximately $+0.5$ to $+1.0$
+and smoker $=$ no yielding $-0.5$ to $-0.7$.  The
+\texttt{coverage\_level\_Premium} dummy exhibits a similar bimodal
+pattern of smaller magnitude ($+0.3$ to $+0.7$).  The Heart disease
+dummies for both \texttt{medical\_history} and
+\texttt{family\_medical\_history} produce the next largest attributions
+($+0.3$ to $+0.8$).  The continuous variables (\texttt{bmi},
+\texttt{children}, \texttt{age}) display more diffuse distributions
+centred near zero, with individual SHAP magnitudes mostly within
+$\pm 0.15$.
 
 \subsubsection{Training versus Monte Carlo attribution invariance}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_shap_training_vs_mc_invariance.png}
-\caption{Shapley attribution invariance: training data versus Monte Carlo profiles.}
-\label{fig:shap_training_vs_mc_invariance_ch4}
-\end{figure}
-
-\noindent
-Figure~\ref{fig:shap_training_vs_mc_invariance_ch4} compares the
-Shapley attributions computed on the training data with those computed on
-the Monte Carlo simulated profiles. The Spearman rank correlation
+The Shapley attributions computed on the training data were compared with
+those computed on the Monte Carlo simulated profiles
+(Figure~\ref{fig:shap_training_vs_mc_invariance_annex},
+Annexure~\ref{annexure:shap_invariance}).  The Spearman rank correlation
 between the two feature-importance vectors is $\rho_{\mathrm{S}} =
 1.000$: all 11 raw variables occupy the same importance rank under both
-input regimes. The scatter plot in panel~(b) shows that the mean
-$|\text{SHAP}|$ values fall on the diagonal, with no systematic
-deviation. This result extends the parametric-versus-bootstrap invariance
-finding of Section~\ref{sec:mc_input_validation} (Spearman
-$\rho = 0.991$) and confirms that the fitted \gls{dnn}'s internal
-feature-importance structure is preserved when evaluated on the Monte
-Carlo simulated input space.
+input regimes, with the mean $|\text{SHAP}|$ values falling on the
+diagonal with no systematic deviation.  This result extends the
+parametric-versus-bootstrap invariance finding of
+Section~\ref{sec:mc_input_validation} (Spearman $\rho = 0.991$) and
+confirms that the fitted \gls{dnn}'s internal feature-importance
+structure is preserved when evaluated on the Monte Carlo simulated input
+space.
 
 
 % =============================================================
@@ -1147,43 +1237,149 @@ covariates.
 
 \subsubsection{Representative high-cost waterfall decomposition}
 
+A representative high-cost profile at the $\tau_{95}$ threshold
+(predicted cost R24\,249) was decomposed using a SHAP waterfall plot
+(Figure~\ref{fig:shap_waterfall_annex},
+Annexure~\ref{annexure:shap_waterfall}).  The profile is characterised
+by age~$= 34$, \texttt{bmi}~$= 31.4$, \texttt{children}~$= 0$,
+\texttt{smoker}~$=$ yes, \texttt{family\_medical\_history}~$=$ Heart
+disease, \texttt{medical\_history}~$=$ Heart disease and
+\texttt{coverage\_level}~$=$ Basic.
+
+The prediction is driven upward from the baseline
+($E[f(X)] = -0.044$) to the final prediction ($f(x) = 1.699$)
+primarily by \texttt{medical\_history} ($+0.67$),
+\texttt{family\_medical\_history} ($+0.67$) and \texttt{smoker}
+($+0.59$), partially offset by \texttt{coverage\_level} ($-0.51$).
+The remaining variables contribute smaller amounts, with the continuous
+covariates exerting modest negative effects (\texttt{bmi}: $-0.04$;
+\texttt{age}: $-0.03$; \texttt{region}: $-0.01$).  This waterfall
+illustrates the additive decomposition guaranteed by the Shapley
+efficiency axiom: the contributions sum exactly to the difference
+between the prediction and the baseline, as required by
+equation~\eqref{eq:shapley_decomp}.
+
+
+% =============================================================
+\subsection{Cross-Seed Shapley Attribution Stability}
+\label{sec:cross_seed_shap}
+
+The Shapley-value attributions were recomputed for all $B = 100\,000$
+Monte Carlo profiles using each of the five trained networks from
+Section~\ref{sec:multiseed_dnn}.  This analysis directly addresses the
+limitation identified in
+Section~\ref{sec:limitations_conclusion}: whether the Shapley
+attributions are sensitive to the stochastic training process.
+
+\subsubsection{Global SHAP stability}
+
+The global mean $|\text{SHAP}|$ values were computed for each seed and
+compared across all ten pairwise seed combinations.  Detailed
+visualisations of the seed-level importance values and cross-seed
+dispersion are presented in
+Annexure~\ref{annexure:multiseed_shap}
+(Figures~\ref{fig:shap_seed_stability_annex}
+and~\ref{fig:shap_cross_seed_dispersion_annex}).
+
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.75\textwidth]{Thesis/Chapter 4/Figures/fig_shap_highcost_waterfall.png}
-\caption{SHAP waterfall plot for a representative high-cost profile
-at the $\tau_{95}$ threshold (predicted cost R24\,249).}
-\label{fig:shap_waterfall_ch4}
+\includegraphics[width=0.75\textwidth]{Thesis/Chapter 4/Figures/fig_shap_spearman_heatmap.png}
+\caption{Spearman rank-correlation heatmap of the global mean
+$|\text{SHAP}|$ importance vectors across all ten pairwise seed
+combinations.  Every cell equals $\rho_{\mathrm{S}} = 1.0000$.}
+\label{fig:shap_spearman_heatmap_ch4}
 \end{figure}
 
 \noindent
-Figure~\ref{fig:shap_waterfall_ch4} decomposes a representative
-high-cost profile at the $\tau_{95}$ threshold. The profile has the
-following characteristics: age~$= 34$, \texttt{bmi}~$= 31.4$,
-\texttt{children}~$= 0$, \texttt{smoker}~$=$ yes,
-\texttt{family\_medical\_history}~$=$ Heart disease,
-\texttt{exercise\_frequency}~$=$ Frequently,
-\texttt{medical\_history}~$=$ Heart disease,
-\texttt{gender}~$=$ female, \texttt{occupation}~$=$ Blue collar,
-\texttt{region}~$=$ southeast,
-\texttt{coverage\_level}~$=$ Basic.
+Figure~\ref{fig:shap_spearman_heatmap_ch4} displays the Spearman
+rank-correlation matrix across all ten pairwise seed combinations.
+Every off-diagonal cell equals $\rho_{\mathrm{S}} = 1.0000$: the global
+feature-importance ranking is perfectly preserved across all five seeds.
+The coefficient of variation of the mean $|\text{SHAP}|$ values is below
+$0.1\%$ for every variable
+(Figure~\ref{fig:shap_cross_seed_dispersion_annex}), confirming that the
+magnitude of the attributions, not merely the ranking, is stable across
+seeds.
 
-The waterfall decomposition shows that the prediction is driven upward
-from the baseline ($E[f(X)] = -0.044$) to the final prediction
-($f(x) = 1.699$) primarily by three variables:
-\texttt{medical\_history} ($+0.67$), \texttt{family\_medical\_history}
-($+0.67$) and \texttt{smoker} ($+0.59$). A negative contribution from
-\texttt{coverage\_level} ($-0.51$) partially offsets these positive
-effects, reflecting that the Basic tier carries a lower predicted cost
-than the Premium tier. The remaining variables contribute smaller
-amounts: \texttt{exercise\_frequency} ($+0.26$), \texttt{gender}
-($+0.13$), \texttt{occupation} ($+0.11$), while \texttt{children}
-($-0.11$), \texttt{bmi} ($-0.04$), \texttt{age} ($-0.03$) and
-\texttt{region} ($-0.01$) exert modest negative effects.
+\subsubsection{Conditional SHAP stability at $\tau_{99}$}
 
-This waterfall illustrates the additive decomposition guaranteed by the
-Shapley efficiency axiom: the contributions sum exactly to the
-difference between the prediction and the baseline, as required by
-equation~\eqref{eq:shapley_decomp}.
+The conditional Shapley analysis at the $\tau_{99}$ threshold was
+repeated for each seed to assess whether the ranking reversal documented
+in Section~\ref{sec:highcost_conditional_results} is reproducible.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Thesis/Chapter 4/Figures/fig_cond_shap_tail_stability.png}
+\caption{Conditional mean $|\text{SHAP}|$ values at $\tau_{99}$ across
+five DNN seeds.  The ranking reversal (family medical history and
+medical history overtaking smoker) is replicated in all five seeds.}
+\label{fig:cond_shap_tail_stability_ch4}
+\end{figure}
+
+\noindent
+Figure~\ref{fig:cond_shap_tail_stability_ch4} confirms that the
+$\tau_{99}$ ranking reversal is replicated in all five seeds:
+\texttt{family\_medical\_history} and \texttt{medical\_history}
+consistently overtake \texttt{smoker} at the extreme upper tail.  The
+pairwise Spearman correlations of the conditional importance vectors
+range from $\rho_{\mathrm{S}} = 0.9909$ to $1.0000$ across seed pairs,
+with minor rank swaps occurring only between adjacent variables with
+nearly identical importance magnitudes.  This result establishes that the
+ranking reversal is a robust structural property of the architecture and
+data, not an artefact of a single random initialisation.
+
+\subsubsection{SHAP dependence patterns}
+
+The SHAP dependence plots for the \texttt{smoker} variable and the
+\texttt{bmi}/\texttt{coverage\_level} relationship are presented in
+Annexure~\ref{annexure:multiseed_dependence}
+(Figures~\ref{fig:shap_dependence_smoker_annex}
+and~\ref{fig:shap_dependence_bmi_coverage_annex}).  The binary
+\texttt{smoker} variable produces a clear bimodal attribution pattern
+that is replicated across all five seeds.  The
+BMI-SHAP relationship is near-perfectly linear, and no smoker-BMI
+interaction is evident, consistent with the additive structure of the
+benchmark dataset.
+
+
+% =============================================================
+\subsection{SHAP Interaction Analysis}
+\label{sec:shap_interactions}
+
+To assess whether the DNN has learned meaningful pairwise interactions
+among the input variables, the SHAP interaction structure was analysed by
+computing the pairwise Pearson correlations between all
+$\binom{11}{2} = 55$ pairs of raw-variable Shapley-value vectors across
+the $B = 100\,000$ Monte Carlo profiles.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{Thesis/Chapter 4/Figures/fig_shap_interaction_heatmap.png}
+\caption{SHAP interaction heatmap: pairwise Pearson correlations between
+the Shapley-value vectors of all 11 raw variables.  All off-diagonal
+correlations fall below $|r| = 0.033$.}
+\label{fig:shap_interaction_heatmap_ch4}
+\end{figure}
+
+\noindent
+Figure~\ref{fig:shap_interaction_heatmap_ch4} displays the pairwise
+interaction heatmap.  All 55 off-diagonal correlations fall below
+$|r| = 0.033$, indicating that the Shapley contributions of different
+variables are essentially uncorrelated across profiles.  The top 15
+pairwise correlations, visualised in
+Figure~\ref{fig:shap_interaction_pairs_annex}
+(Annexure~\ref{annexure:multiseed_interactions}), confirm that no pair
+exhibits a correlation exceeding $|r| = 0.033$.
+
+This finding has two implications.  First, it confirms that the DNN has
+learned an essentially additive mapping from the input features to the
+predicted cost, consistent with the additive data-generating process of
+the benchmark dataset.  Second, it validates the use of main-effect
+Shapley summaries (global mean $|\text{SHAP}|$ and conditional mean
+$|\text{SHAP}|$) as adequate characterisations of the model's
+attribution structure: because pairwise interactions are negligible, the
+main-effect Shapley values capture the full attribution pattern without
+material loss of information.
 
 
 % =============================================================
@@ -1239,7 +1435,7 @@ a modest, stable baseline effect.
 The invariance checks reinforce the robustness of these findings. The
 Shapley attributions are stable whether computed on training data or
 Monte Carlo profiles (Spearman $\rho = 1.000$,
-Figure~\ref{fig:shap_training_vs_mc_invariance_ch4}), and the
+Figure~\ref{fig:shap_training_vs_mc_invariance_annex}), and the
 residual-augmented sensitivity analysis
 (Figure~\ref{fig:mc_residual_augmented_ch4}) confirms that the
 predicted-cost distribution is not sensitive to fitted residual
@@ -1247,5 +1443,25 @@ variability. The attribution patterns therefore reflect the fitted
 model's learned internal structure rather than artefacts of the input
 regime or residual noise.
 
+The multi-seed robustness analyses of
+Sections~\ref{sec:multiseed_dnn} to~\ref{sec:shap_interactions} provide a
+further layer of validation.  The DNN's test $R^2$ varies by only
+$1.28 \times 10^{-5}$ across five random seeds
+(Table~\ref{tab:multiseed_test_performance_ch4}); the Monte Carlo mean
+predicted cost varies by R15 (Section~\ref{sec:cross_seed_mc_ch4}); and
+the global Shapley importance ranking is perfectly preserved across all
+ten pairwise seed combinations ($\rho_{\mathrm{S}} = 1.0000$,
+Figure~\ref{fig:shap_spearman_heatmap_ch4}).  The $\tau_{99}$ ranking
+reversal is replicated in all five seeds
+(Figure~\ref{fig:cond_shap_tail_stability_ch4}), and the SHAP
+interaction analysis confirms that the DNN has learned an essentially
+additive mapping (all pairwise correlations below $|r| = 0.033$,
+Figure~\ref{fig:shap_interaction_heatmap_ch4}).  These convergent
+findings establish that the entire chain of results, from predictive
+performance through the Monte Carlo distribution to the global and
+conditional Shapley attributions, is invariant to the stochastic training
+process.
+
 These results are summarised, evaluated and situated within the broader
 context of the study in Chapter~\ref{sec:conclusion}.
+
