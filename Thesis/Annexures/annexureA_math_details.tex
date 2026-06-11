@@ -52,7 +52,7 @@ combined with dominated convergence, yields $\mu(H) = 0$ for all open half-space
 \subsection{Derivation of the Adam and NAdam Update Rules}
 \label{annexure:adam_nadam}
 
-\paragraph{Adam update rule.}
+\noindent\textbf{Adam update rule.}
 Let $g_t = \nabla_{\boldsymbol{\theta}} \mathcal{L}(\boldsymbol{\theta}_{t-1})$ denote the gradient of the loss at iteration $t$. The first and second moment estimates are
 \begin{align}
   m_t &= \beta_1 \, m_{t-1} + (1 - \beta_1) \, g_t, \label{eq:adam_m} \\
@@ -70,7 +70,7 @@ The parameter update is
 \end{equation}
 where $\eta > 0$ is the learning rate and $\epsilon > 0$ (typically $10^{-8}$) prevents division by zero.
 
-\paragraph{NAdam update rule.}
+\noindent\textbf{NAdam update rule.}
 NAdam incorporates Nesterov momentum by replacing the bias-corrected first moment $\hat{m}_t$ with a look-ahead estimate. The modification replaces~\eqref{eq:adam_update} with
 \begin{equation}
   \boldsymbol{\theta}_t = \boldsymbol{\theta}_{t-1} - \eta \, \frac{\beta_1 \hat{m}_t + \frac{(1-\beta_1)}{1-\beta_1^t} g_t}{\sqrt{\hat{v}_t} + \epsilon}.
@@ -80,18 +80,18 @@ NAdam incorporates Nesterov momentum by replacing the bias-corrected first momen
 \subsection{Shapley Value Axiom Verification}
 \label{annexure:shapley_axioms}
 
-\paragraph{Axiom 1: Efficiency.}
+\noindent\textbf{Axiom 1: Efficiency.}
 \[
   \sum_{j=1}^{p} \phi_j(v) = v(N) - v(\emptyset).
 \]
 
-\paragraph{Axiom 2: Symmetry.}
+\noindent\textbf{Axiom 2: Symmetry.}
 If two players $j$ and $k$ contribute equally to every coalition, i.e.\ $v(S \cup \{j\}) = v(S \cup \{k\})$ for all $S \subseteq N \setminus \{j,k\}$, then $\phi_j(v) = \phi_k(v)$.
 
-\paragraph{Axiom 3: Dummy player.}
+\noindent\textbf{Axiom 3: Dummy player.}
 If player $j$ adds nothing to any coalition, i.e.\ $v(S \cup \{j\}) = v(S)$ for all $S \subseteq N \setminus \{j\}$, then $\phi_j(v) = 0$.
 
-\paragraph{Axiom 4: Additivity (linearity).}
+\noindent\textbf{Axiom 4: Additivity (linearity).}
 For two games $v$ and $w$, the Shapley value of the combined game $v + w$ is $\phi_j(v + w) = \phi_j(v) + \phi_j(w)$ for all $j$.
 
 \begin{theorem}[Shapley, 1953]
@@ -125,7 +125,7 @@ The log-likelihood for observation $i$ (up to a constant not depending on $\bold
 The score equation with respect to the $k$-th coefficient is obtained by differentiating $\ell = \sum_{i=1}^{n} \ell_i$:
 \begin{equation}
   \frac{\partial \ell}{\partial \beta_k} = \alpha \sum_{i=1}^{n} \left( \frac{y_i}{\mu_i} - 1 \right) x_{ik} = 0, \quad k = 0, 1, \ldots, p.
-  \label{eq:glm_score}
+  \label{eq:glm_score_annex}
 \end{equation}
 
 Since $\alpha > 0$ cancels, the maximum-likelihood estimates $\hat{\boldsymbol{\beta}}$ do not depend on the shape parameter. The Fisher information matrix entry is
