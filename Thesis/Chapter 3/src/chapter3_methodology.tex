@@ -1050,7 +1050,7 @@ same 22 encoded features and 60/20/20 partition as the \gls{dnn} and
 
 % ----- Random Forest -----
 
-\paragraph{Random Forest.}
+\subsubsection*{Random Forest}
 A \gls{rf} regressor \citep{breiman2001random} is fitted with 500 trees,
 maximum depth unrestricted, minimum samples per leaf of 5, and
 \texttt{random\_state=42}.  \gls{rf} aggregates predictions across
@@ -1154,7 +1154,7 @@ Implementation & \texttt{scikit-learn} \texttt{RandomForestRegressor} \\
 
 % ----- XGBoost -----
 
-\paragraph{XGBoost.}
+\subsubsection*{XGBoost}
 A gradient-boosted tree regressor is fitted using the \gls{xgboost}
 implementation \citep{chen2016xgboost} with 1\,000 boosting rounds, a
 learning rate of 0.05, maximum depth of 8, and early stopping on the
@@ -1328,7 +1328,6 @@ Implementation & \texttt{xgboost} \texttt{XGBRegressor} \\
 \end{tabular}
 \end{table}
 
-\paragraph{Benchmark design rationale.}
 Hyperparameters for both tree-based models are set to commonly recommended
 defaults rather than tuned via cross-validation, paralleling the no-tuning
 treatment of the \gls{glm}.  This ensures that the comparison isolates
