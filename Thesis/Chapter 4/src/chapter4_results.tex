@@ -283,9 +283,7 @@ through piecewise-constant splits.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_full_model_comparison.png}
-\caption{Test-set performance comparison across all four model classes:
-\gls{glm} (Gamma, log-link), \gls{rf}, \gls{xgboost} and \gls{dnn}.
-(a)~Test $R^2$; (b)~test RMSE; (c)~test MAE.}
+\caption{Test-set performance comparison across four model classes.}
 \label{fig:four_model_comparison_ch4}
 \end{figure}
 
@@ -428,9 +426,7 @@ fortunate random initialisation.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{Thesis/Chapter 4/Figures/fig_dnn_multiseed_test_metrics.png}
-\caption{Test-set performance metrics across five random seeds.  The
-bars are virtually identical across seeds, confirming negligible
-cross-seed variability in predictive performance.}
+\caption{Test-set performance metrics across five random seeds.}
 \label{fig:dnn_multiseed_test_metrics_ch4}
 \end{figure}
 
@@ -657,8 +653,7 @@ joint and marginal levels.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_mc_predicted_cost_distribution.png}
-\caption{Monte Carlo predicted-cost distribution ($B = 100\,000$):
-histogram with kernel density overlay (left) and box plot (right).}
+\caption{Monte Carlo predicted-cost distribution ($B = 100\,000$).}
 \label{fig:mc_predicted_cost_distribution_ch4}
 \end{figure}
 
@@ -816,8 +811,7 @@ invariant to the DNN training seed.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.80\textwidth]{Thesis/Chapter 4/Figures/fig_mc_predicted_vs_actual.png}
-\caption{Overlay of the Monte Carlo predicted-cost distribution (red)
-and the observed training-set charge distribution (blue).}
+\caption{Monte Carlo predicted-cost distribution overlaid with observed training-set charges.}
 \label{fig:mc_predicted_vs_actual_ch4}
 \end{figure}
 
@@ -934,8 +928,7 @@ reports the numerical values.
 
 \begin{table}[H]
 \centering
-\caption{Global Shapley feature importance: mean signed and mean
-absolute values for all 11 raw variables on the normalised scale.}
+\caption{Global Shapley feature importance for all 11 raw variables.}
 \label{tab:shap_global_importance_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
@@ -1090,9 +1083,7 @@ values.
 
 \begin{table}[H]
 \centering
-\caption{Mean absolute Shapley values: global and conditional at each
-high-cost threshold (normalised scale), with 95\% bootstrap confidence
-intervals at $\tau_{99}$.}
+\caption{Mean absolute Shapley values: global and conditional at each high-cost threshold.}
 \label{tab:shap_conditional_values_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
@@ -1149,9 +1140,7 @@ fitted model's attribution surface, not a finite-sample artefact.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{Thesis/Chapter 4/Figures/fig_shap_threshold_comparison.png}
-\caption{Feature importance across thresholds: mean $|\text{SHAP}|$
-values at the global, $\tau_{90}$, $\tau_{95}$ and $\tau_{99}$ levels
-for all 11 raw variables.}
+\caption{Feature importance across thresholds for all 11 raw variables.}
 \label{fig:shap_threshold_comparison_ch4}
 \end{figure}
 
@@ -1284,9 +1273,7 @@ and~\ref{fig:shap_cross_seed_dispersion_annex}).
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.75\textwidth]{Thesis/Chapter 4/Figures/fig_shap_spearman_heatmap.png}
-\caption{Spearman rank-correlation heatmap of the global mean
-$|\text{SHAP}|$ importance vectors across all ten pairwise seed
-combinations.  Every cell equals $\rho_{\mathrm{S}} = 1.0000$.}
+\caption{Spearman rank-correlation heatmap of global mean $|\text{SHAP}|$ importance across seed pairs.}
 \label{fig:shap_spearman_heatmap_ch4}
 \end{figure}
 
@@ -1310,9 +1297,7 @@ in Section~\ref{sec:highcost_conditional_results} is reproducible.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{Thesis/Chapter 4/Figures/fig_cond_shap_tail_stability.png}
-\caption{Conditional mean $|\text{SHAP}|$ values at $\tau_{99}$ across
-five DNN seeds.  The ranking reversal (family medical history and
-medical history overtaking smoker) is replicated in all five seeds.}
+\caption{Conditional mean $|\text{SHAP}|$ values at $\tau_{99}$ across five DNN seeds.}
 \label{fig:cond_shap_tail_stability_ch4}
 \end{figure}
 
@@ -1355,9 +1340,7 @@ the $B = 100\,000$ Monte Carlo profiles.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.75\textwidth]{Thesis/Chapter 4/Figures/fig_shap_interaction_heatmap.png}
-\caption{SHAP interaction heatmap: pairwise Pearson correlations between
-the Shapley-value vectors of all 11 raw variables.  All off-diagonal
-correlations fall below $|r| = 0.033$.}
+\caption{SHAP interaction heatmap: pairwise Pearson correlations of Shapley-value vectors.}
 \label{fig:shap_interaction_heatmap_ch4}
 \end{figure}
 

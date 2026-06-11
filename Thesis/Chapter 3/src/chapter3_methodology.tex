@@ -392,8 +392,7 @@ confirms the uniformly pale off-diagonal shading.
 \begin{subfigure}[b]{\textwidth}
     \centering
     \includegraphics[width=0.95\textwidth]{Thesis/Chapter 3/Figures/fig_categorical_frequencies.png}
-    \caption{Frequency distributions of the eight categorical and binary
-    predictor variables.}
+    \caption{Frequency distributions of categorical and binary predictors.}
     \label{fig:categorical_frequencies_ch3}
 \end{subfigure}
 
@@ -402,8 +401,7 @@ confirms the uniformly pale off-diagonal shading.
 \begin{subfigure}[b]{\textwidth}
     \centering
     \includegraphics[width=0.95\textwidth]{Thesis/Chapter 3/Figures/fig_charges_by_all_categoricals.png}
-    \caption{Boxplots of \texttt{charges} conditioned on each categorical
-    predictor variable.}
+    \caption{Boxplots of \texttt{charges} by categorical predictor.}
     \label{fig:charges_by_all_categoricals_ch3}
 \end{subfigure}
 \caption{Categorical predictor diagnostics: frequency distributions and conditional boxplots.}
@@ -453,8 +451,7 @@ effect of one variable on charges depends on the level of another.
 \begin{subfigure}[b]{\textwidth}
     \centering
     \includegraphics[width=0.95\textwidth]{Thesis/Chapter 3/Figures/fig_interaction_smoker_coverage.png}
-    \caption{\texttt{smoker}~$\times$~\texttt{coverage\_level}: mean charges
-    (left) and boxplots (right).}
+    \caption{\texttt{smoker}~$\times$~\texttt{coverage\_level} interaction effects on charges.}
     \label{fig:interaction_smoker_coverage_ch3}
 \end{subfigure}
 
@@ -463,8 +460,7 @@ effect of one variable on charges depends on the level of another.
 \begin{subfigure}[b]{\textwidth}
     \centering
     \includegraphics[width=0.95\textwidth]{Thesis/Chapter 3/Figures/fig_interaction_smoker_medical.png}
-    \caption{\texttt{smoker}~$\times$~\texttt{medical\_history}: mean charges
-    (left) and boxplots (right).}
+    \caption{\texttt{smoker}~$\times$~\texttt{medical\_history} interaction effects on charges.}
     \label{fig:interaction_smoker_medical_ch3}
 \end{subfigure}
 
@@ -473,8 +469,7 @@ effect of one variable on charges depends on the level of another.
 \begin{subfigure}[b]{0.65\textwidth}
     \centering
     \includegraphics[width=\textwidth]{Thesis/Chapter 3/Figures/fig_interaction_coverage_gender.png}
-    \caption{\texttt{coverage\_level}~$\times$~\texttt{gender}: boxplots of
-    charges.}
+    \caption{\texttt{coverage\_level}~$\times$~\texttt{gender} interaction effects on charges.}
     \label{fig:interaction_coverage_gender_ch3}
 \end{subfigure}
 \caption{Two-way interaction effects on \texttt{charges}.}
@@ -516,16 +511,14 @@ linear associations are \texttt{smoker} ($r = 0.567$),
 \begin{subfigure}[b]{0.48\textwidth}
     \centering
     \includegraphics[width=\textwidth]{Thesis/Chapter 3/Figures/fig_encoded_correlations.png}
-    \caption{Pearson correlations of the 22 encoded predictors with
-    \texttt{charges}, sorted by magnitude.}
+    \caption{Pearson correlations of encoded predictors with \texttt{charges}.}
     \label{fig:encoded_correlations_ch3}
 \end{subfigure}
 \hfill
 \begin{subfigure}[b]{0.48\textwidth}
     \centering
     \includegraphics[width=\textwidth]{Thesis/Chapter 3/Figures/fig_full_encoded_correlation_heatmap.png}
-    \caption{Full $22 \times 22$ Pearson correlation matrix of the encoded
-    predictors.}
+    \caption{Full $22 \times 22$ Pearson correlation matrix of encoded predictors.}
     \label{fig:full_encoded_correlation_heatmap_ch3}
 \end{subfigure}
 \caption{Encoded predictor correlation analysis on the training partition.}
@@ -1376,8 +1369,7 @@ partition.
 \begin{subfigure}[b]{\textwidth}
     \centering
     \includegraphics[width=0.90\textwidth]{Thesis/Chapter 3/Figures/fig_training_validation_curves.png}
-    \caption{Training loss (every epoch) and validation loss and $R^2$
-    (every 5 epochs).}
+    \caption{Training and validation loss with $R^2$ over epochs.}
     \label{fig:learning_curves_ch3}
 \end{subfigure}
 
@@ -1438,8 +1430,7 @@ high-cost regions.
     \caption{Test set ($R^2 = 0.9956$).}
     \label{fig:actual_vs_predicted_test_ch3}
 \end{subfigure}
-\caption{Sorted actual versus predicted insurance charges on the training
-and test sets.}
+\caption{Sorted actual versus predicted charges on training and test sets.}
 \label{fig:actual_vs_predicted_ch3}
 \end{figure}
 
@@ -1460,8 +1451,7 @@ without meaningful performance degradation.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.90\textwidth]{Thesis/Chapter 3/Figures/fig_violin_actual_vs_predicted.png}
-\caption{Violin plots comparing the distribution of actual and predicted
-charges on the training and test sets.}
+\caption{Violin plots of actual versus predicted charges on training and test sets.}
 \label{fig:violin_actual_vs_predicted_ch3}
 \end{figure}
 
@@ -2113,8 +2103,7 @@ single direction dominates the 22-dimensional input space.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 3/Figures/fig_mc_joint_pca_comparison.png}
-\caption{PCA projection of the joint input structure: (a) training data,
-(b) parametric MC sample, and (c) overlay of both sets.}
+\caption{PCA projection of joint input structure: training, MC sample and overlay.}
 \label{fig:pca_joint_overlay_ch3}
 \end{figure}
 
