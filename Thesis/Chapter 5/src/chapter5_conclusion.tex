@@ -326,19 +326,36 @@ policyholders reaches approximately $90\%$, and the proportion of
 profiles reporting Heart disease reaches approximately $85\%$.  When
 smoking status is near-universal, it contributes a near-constant positive
 attribution with reduced variability and therefore ceases to
-differentiate among high-cost profiles.  The residual variation is
-explained by coverage tier, medical history and family medical history.
+differentiate among high-cost profiles.  It is important to distinguish
+two components of this effect.  The first is mechanical: a binary
+feature that is near-constant within a conditioning set necessarily
+produces near-constant Shapley values, regardless of any deeper
+structural relationship.  This variance-collapse component is a
+statistical artefact of the conditioning and would arise for any
+near-degenerate binary variable.  The second component is substantive:
+the monotonic increase in the conditional importance of coverage level,
+medical history and family medical history across successive thresholds
+is not explained by variance collapse alone, because these variables
+retain meaningful variation within the $\tau_{99}$ set.  Their rising
+importance reflects genuine structure in the fitted model's attribution
+surface.  The residual variation in predicted costs within the
+$\tau_{99}$ set is therefore attributable to coverage tier, medical
+history and family medical history.
 To illustrate this with a concrete example: consider two profiles in the
 $\tau_{99}$ set, both smokers with high BMI.  One holds Premium coverage
 with a family history of Heart disease; the other holds Standard coverage
 with no family medical history.  Despite their identical smoking status,
 the first profile receives substantially higher predicted costs, and the
 Shapley decomposition attributes this difference to the coverage and
-family history variables rather than to smoking.  This is analogous to a
-well-known principle in epidemiological statistics: a risk factor that is
-ubiquitous in a population loses its discriminating power within that
-population, even though it may be the strongest predictor in the general
-population.
+family history variables rather than to smoking.  The decline of
+smoking status in the conditional ranking thus reflects both the
+mechanical variance collapse of a near-constant feature and the
+genuine explanatory role of the remaining variables.  Separating
+these two components is essential before drawing broader
+conclusions: the mechanical component is an inherent property of
+conditional analysis on any near-degenerate variable, while the
+substantive component provides information about the model's
+attribution structure in the upper tail.
 
 % ---------------------------------------------------------
 % 5.3 CONTRIBUTIONS
@@ -349,16 +366,21 @@ population.
 
 The dissertation makes several contributions to the intersection of
 statistical learning, simulation-based inference and explainable
-modelling.  The nature of these contributions is one of
-application and integration: each of the three methodological
-components, namely deep neural network regression, parametric Monte Carlo
-simulation and Shapley-value attribution, is individually well
-established in the statistical literature
+modelling.  Each of the three methodological components, namely deep
+neural network regression, parametric Monte Carlo simulation and
+Shapley-value attribution, is individually well established in the
+statistical literature
 \citep{vapnik1998statistical, robert2004monte, kroese2011handbook,
-lundberg2017unified, molnar2022interpretable}.  The contribution lies in
-combining them within a single, reproducible framework and demonstrating
-the empirical value of that combination for health insurance cost
-prediction.
+lundberg2017unified, molnar2022interpretable}.  The central
+methodological contribution is that the conditional Shapley analysis
+computed within Monte-Carlo-simulated high-cost regions produces a
+form of threshold-conditional feature attribution that none of these
+components can deliver in isolation.  The Monte Carlo distribution
+defines the regions of interest, the Shapley decomposition reveals
+the attribution structure within those regions, and the integration
+creates a connected analytical framework that extends conventional
+global Shapley summaries into actuarially targeted subsets of the
+predicted-cost distribution.
 
 The primary contribution is the integrated workflow itself.  In the
 existing literature, these three components are typically applied in

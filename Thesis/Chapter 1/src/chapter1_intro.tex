@@ -551,14 +551,21 @@ the health insurance context.
 Each of these three components is individually well established in the
 statistical and machine-learning literatures
 \citep{vapnik1998statistical, robert2004monte, lundberg2017unified}.
-The contribution of this dissertation is therefore one of
-application and integration: combining a fitted neural network,
-Monte Carlo simulation under an explicit input distribution, and
-conditional Shapley summaries in high-cost regions within a single,
-reproducible workflow applied to health insurance cost prediction.  This
-integrated workflow has not been presented in the health insurance
-literature, and the combination produces empirical insight that none of
-the individual components could provide in isolation.  The gap is
+The contribution of this dissertation is methodological: the
+conditional Shapley analysis computed within Monte-Carlo-simulated
+high-cost regions constitutes a new analytical capability that none of
+the individual components can provide in isolation.  While deep neural
+network regression, parametric Monte Carlo simulation and
+Shapley-value attribution are each mature tools, their integration
+within a single, reproducible workflow produces a form of
+threshold-conditional feature attribution that has not been presented
+in the health insurance literature.  Specifically, the Monte Carlo
+distribution defines the high-cost regions of interest, and the
+Shapley decomposition within those regions reveals how the
+feature-importance structure changes across the predicted-cost
+distribution.  This integrated methodology extends conventional
+global Shapley summaries by conditioning attributions on actuarially
+relevant subsets of the model-implied distribution.  The gap is
 developed through the reviewed studies in
 Section~\ref{sec:literature_review} and stated formally in
 Section~\ref{sec:research_gap}.

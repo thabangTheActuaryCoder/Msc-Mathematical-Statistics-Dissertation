@@ -2982,7 +2982,7 @@ Deep neural networks are flexible nonlinear prediction models, but their flexibi
 Shapley values originate in cooperative game theory and provide a principled axiomatic method for allocating a total payoff among players \citep{shapley1953value}. In machine learning, the players are the input variables and the payoff is the model prediction. The Shapley value of feature \(j\) measures the average marginal contribution of that feature across all possible subsets of features, as formalised in equation~\eqref{eq:shapley_exact}. The Shapley value is the unique solution satisfying four axioms: efficiency (contributions sum to the total prediction shift), symmetry (identically contributing features receive identical values), dummy (a feature that never changes the value receives zero), and additivity \citep{shapley1953value}.
 
 \noindent
-The \gls{shap} framework connects Shapley values to machine learning model interpretation \cite{lundberg2017unified}. The additive decomposition in equation~\eqref{eq:shapley_decomp} provides a local explanation of an individual prediction. \citet{lundberg2017unified} proved that this is the only additive feature attribution method satisfying efficiency, dummy and symmetry simultaneously, which is why it constitutes the theoretical foundation for the \gls{shap} computational framework.  \citet{covert2021explaining} provide a unifying removal-based framework that relates SHAP to other explanation methods, \citet{sundararajan2020many} examine the many distinct Shapley value formulations that arise under different baseline and feature-dependence assumptions, and \citet{lundberg2020local} extend Shapley-based explanations from local to global understanding for tree models.
+The \gls{shap} framework connects Shapley values to machine learning model interpretation \citet{lundberg2017unified}. The additive decomposition in equation~\eqref{eq:shapley_decomp} provides a local explanation of an individual prediction. \citet{lundberg2017unified} proved that this is the only additive feature attribution method satisfying efficiency, dummy and symmetry simultaneously, which is why it constitutes the theoretical foundation for the \gls{shap} computational framework.  \citet{covert2021explaining} provide a unifying removal-based framework that relates SHAP to other explanation methods, \citet{sundararajan2020many} examine the many distinct Shapley value formulations that arise under different baseline and feature-dependence assumptions, and \citet{lundberg2020local} extend Shapley-based explanations from local to global understanding for tree models.
 
 \noindent
 Shapley-based explanations can be interpreted locally or globally. A local explanation focuses on a single policyholder profile and explains why the model assigned a particular predicted cost. A global explanation summarises feature contributions across many observations. A common global importance measure is the mean absolute Shapley value:
@@ -3030,10 +3030,13 @@ components is individually well established in the statistical and
 machine-learning literatures
 \citep{vapnik1998statistical, friedman2001greedy, robert2004monte,
 lundberg2017unified, molnar2022interpretable}.
-The contribution of this dissertation is therefore one of
-application and integration rather than methodological novelty:
-combining these individually mature tools within a single, reproducible
-workflow and applying them jointly to health insurance cost prediction.
+The contribution of this dissertation is methodological: the
+conditional Shapley analysis computed within Monte-Carlo-simulated
+high-cost regions produces a form of threshold-conditional feature
+attribution that none of these individually mature tools can deliver
+in isolation.  While each component is well known, their integration
+within a single, reproducible workflow creates a new analytical
+capability applied here to health insurance cost prediction.
 
 \noindent
 Monte Carlo simulation has a long history in actuarial science and quantitative
