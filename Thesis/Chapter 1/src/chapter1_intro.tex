@@ -240,10 +240,18 @@ network's output under the specified input law.  Formally, if
 $\mathbf{X} \sim F_{\mathbf{X}}$ denotes the input distribution and
 $\hat{Y} = \hat{f}(\mathbf{X})$ denotes the predicted cost, then the
 distribution of $\hat{Y}$ under $F_{\mathbf{X}}$ is the object of
-inferential interest.  This construction connects the neural network to
-the simulation-based inference tradition within mathematical statistics,
-where the behaviour of estimators, test statistics and predictive
-quantities is routinely studied through Monte Carlo experiments.
+inferential interest.  This construction draws on the simulation-based
+inference tradition within mathematical statistics, where the behaviour
+of estimators, test statistics and predictive quantities is routinely
+studied through Monte Carlo experiments.  A caveat is warranted: because
+the marginals are fitted to the same data on which the network was
+trained, and because the network achieves near-perfect fit on this
+benchmark dataset, the model-implied predicted-cost distribution
+necessarily recovers the empirical charge distribution almost by
+construction.  The primary role of the Monte Carlo stage in this
+application is therefore not to reveal unexpected distributional
+properties, but to define the high-cost conditioning regions on which
+the Shapley analysis operates.
 
 \subsubsection{Shapley values and cooperative game theory}
 \label{sec:shapley_intro}

@@ -43,132 +43,58 @@ interpretation formed the conceptual basis of the dissertation.
 
 The literature review in Chapter~\ref{sec:literature_review} established
 the theoretical and empirical foundations for each component of the
-framework.  The review traced the development of supervised regression
-from linear models through kernel methods and tree-based ensembles to
-deep neural networks, noting the universal approximation properties that
-allow feed-forward networks to approximate continuous functions on compact
-sets to arbitrary accuracy \citep{hornik1989multilayer}.  The review also
-surveyed the health insurance pricing literature, where several studies
-have demonstrated that neural networks and gradient-boosted trees
-outperform classical actuarial models on insurance cost prediction tasks
-\citep{dreweboss2022deep, samiuddin2023health, kaushik2022machine},
-although the evidence is not universal across all tabular insurance
-datasets \citep{richman2021ai}.  The Monte Carlo and Shapley-value
-components were reviewed in the context of their respective theoretical
-traditions: simulation-based inference
-\citep{glasserman2004monte, rubinstein2016simulation} and cooperative
-game theory \citep{shapley1953value}, with the SHAP framework
-\citep{lundberg2017unified} providing the operational bridge between
-game-theoretic attribution and machine-learning interpretation.  The
-review concluded with a formal identification of the research gap: the
-existing literature applies deep learning and Shapley-value methods in
-isolation, without connecting the distributional analysis of a
-model-implied predicted-cost landscape to conditional feature-importance
-attribution within specific regions of that landscape.
+framework, surveying supervised regression, health insurance pricing,
+Monte Carlo simulation and Shapley-value attribution in their respective
+traditions.  The review identified the research gap: the existing
+literature applies deep learning and Shapley-value methods in isolation,
+without connecting the distributional analysis of a model-implied
+predicted-cost landscape to conditional feature-importance attribution
+within specific regions of that landscape.
 
 Chapter~\ref{chap:methods_and_data} translated the conceptual framework
-into a concrete empirical workflow.  The analysis was based on the Kaggle
-Insurance Data for Machine Learning benchmark dataset
-\citep{kaggleInsuranceDataML}, containing one million policyholder records
-with eleven raw predictors and a continuous monetary response.  The
-chapter specified the data preprocessing procedure, including the
-training, validation and test partition ($524\,288 / 237\,856 / 237\,856$)
-and the data-leakage prevention protocols that ensured all preprocessing
-parameters were computed exclusively on the training partition.  The
-funnel architecture (Table~\ref{tab:dnn_architecture_training_ch3})
-was specified, together with the five-phase sequential hyperparameter
-comparison that evaluated activation functions, learning rates, batch
-sizes, optimisers and momentum parameters.  The Gamma GLM with a
-logarithmic link served as the classical actuarial benchmark, and a
-random forest and an XGBoost gradient-boosted tree regressor were fitted
-as additional benchmarks spanning the model-class spectrum from linear
-to piecewise-constant to smooth nonlinear.  The Monte
-Carlo simulation design specified the parametric marginal distributions,
-the independence assumption and the convergence monitoring procedure.
-The joint-distribution validation, residual-augmented sensitivity analysis
-and Shapley-value implementation were documented in full, and a
-consolidated table of modelling assumptions
-(Table~\ref{tab:modelling_assumptions_ch3}) provided a formal statement
-of the interpretive boundaries.
+into a concrete empirical workflow applied to the Kaggle Insurance Data
+for Machine Learning benchmark dataset \citep{kaggleInsuranceDataML},
+containing one million policyholder records.  The chapter specified the
+data preprocessing, the DNN architecture and five-phase hyperparameter
+comparison, the three benchmark models (Gamma GLM, random forest,
+XGBoost), the Monte Carlo simulation design and the validation
+diagnostics (see Table~\ref{tab:modelling_assumptions_ch3} for the
+consolidated modelling assumptions).
 
 The empirical results in Chapter~\ref{sec:results} demonstrated the
-value of the integrated framework.  The five-phase hyperparameter
-comparison identified CELU activation, learning rate $\eta = 0.0005$,
-batch size $256$, NAdam optimiser and momentum $\beta_1 = 0.90$ as the
-selected configuration.  The systematic, sequential nature of this
-comparison is worth emphasising: by fixing all previously selected
-hyperparameters at each phase and varying only one candidate, the
-comparison provides a transparent selection rationale that can be
-replicated by other researchers.  This approach stands in contrast to grid
-search or random search procedures that explore the hyperparameter space
-simultaneously and produce configurations whose selection rationale is
-less interpretable.  The fitted DNN achieved test-set performance of
-$R^2 = 0.9957$, MAE $= \text{R}251$ and RMSE $= \text{R}290$, with
-near-identical training and test metrics ruling out overfitting.  The
-baseline comparison established that the DNN outperforms the Gamma GLM
-(log-link) by a substantial margin, reducing the test RMSE by $68.2\%$
-and the test MAE by $59.8\%$.  The GLM's inferior fit was attributable to
-the log-link's multiplicative structure, which does not match the
+value of the integrated framework.  The five-phase sequential
+hyperparameter comparison selected the final DNN configuration, which
+achieved test-set $R^2 = 0.9957$ with near-identical training and test
+metrics ruling out overfitting.  The DNN substantially outperformed the
+Gamma GLM, whose log-link multiplicative structure does not match the
 approximately additive data-generating process of the benchmark data.
-The tree-based benchmarks confirmed that a random forest ($R^2 = 0.9899$)
-and XGBoost ($R^2 = 0.9955$) also achieve strong performance, with
-XGBoost approaching the DNN's accuracy.  When both tree-based benchmarks
-were subsequently tuned via randomised search with cross-validation, the
-tuned random forest improved to $R^2 = 0.9924$ and the tuned XGBoost
-reached $R^2 = 0.9956$, matching the DNN to four decimal places.  The
-DNN was nevertheless retained for the subsequent analyses on the grounds
-of its differentiability for gradient-based SHAP computation, rather than
-on the basis of a meaningful predictive advantage.  These comparisons
-serve to contextualise the DNN within a broader model-class landscape,
-but the central purpose of the dissertation remains the Monte Carlo and
-Shapley-value framework applied to the fitted DNN rather than the model
-comparison itself.
+The tree-based benchmarks (random forest and XGBoost) also achieved
+strong performance; after tuning, XGBoost matched the DNN to four
+decimal places.  The DNN was retained for the subsequent analyses on the
+grounds of its differentiability for gradient-based SHAP computation.
+Full performance comparisons are reported in
+Chapter~\ref{sec:results}.
 
-The Monte Carlo simulation produced a predicted-cost distribution centred
-at R16\,752 with a standard deviation of R4\,417 and near-zero skewness.
-The beauty of this construction lies in the fact that it transforms the
-fitted network from a point-prediction device into a distributional
-object: the network is no longer evaluated at specific observed covariate
-combinations, but across a simulated population drawn from a formally
-stated input law.  The joint-distribution validation, including a
-multivariate energy distance permutation test ($p = 0.730$), confirmed
-that the product-marginal input does not introduce material distributional
-distortion, and the residual-augmented sensitivity analysis established
-that the distributional conclusions are robust to fitted residual
-perturbation.
+The Monte Carlo simulation produced a predicted-cost distribution whose
+summary statistics closely match the empirical charge distribution, as
+expected given the near-perfect fit and the use of training-data
+marginals (see the circularity caveat in
+Section~\ref{sec:mc_intro}).  The joint-distribution validation
+confirmed that the product-marginal input does not introduce material
+distributional distortion, and the residual-augmented sensitivity
+analysis established robustness to fitted residual perturbation.
 
-The Shapley-value analysis revealed the expected global hierarchy:
-smoking status dominates ($I_g = 0.578$), followed by coverage level
-($0.401$), medical history ($0.367$) and family medical history
-($0.351$).  The training versus Monte Carlo attribution invariance check
-yielded a perfect Spearman rank correlation ($\rho_{\mathrm{S}} =
-1.000$), confirming that the DNN's internal feature-importance structure
-is preserved across input regimes.  The most striking finding, however,
-emerged from the conditional Shapley analysis.  At $\tau_{99}$, the
-feature-importance ranking reverses: family medical history
-($I_{g,0.99} = 0.649$), medical history ($0.615$) and coverage level
-($0.595$) overtake smoking status ($0.563$).  The profile-level analysis
-explained this reversal through a simple but powerful observation: at the
-99th percentile, virtually all high-cost profiles are smokers ($99\%$),
-so smoking status no longer differentiates among them.  The residual
-variation is explained by the variables that still vary within the tail.
-This finding demonstrates that global importance rankings, while useful as
-summary measures, can be misleading when the interest lies in specific
-regions of the output distribution.
-
-The multi-seed robustness analysis established that the entire chain of
-results is invariant to the stochastic training process.  The DNN was
-retrained under five independent random seeds, yielding a cross-seed
-test $R^2$ of $0.99566 \pm 0.00001$.  The Monte Carlo mean predicted
-cost varied by only R15 across seeds, and the global Shapley importance
-ranking was perfectly preserved across all ten pairwise seed combinations
-(Spearman $\rho_{\mathrm{S}} = 1.0000$).  The $\tau_{99}$ ranking
-reversal was replicated in every seed, with conditional Spearman
-correlations ranging from $0.9909$ to $1.0000$.  The SHAP interaction
-analysis further confirmed that the DNN learned an essentially additive
-mapping, with all 55 pairwise Shapley-value correlations below
-$|r| = 0.033$.  These cross-seed findings resolve the open question
-identified as a limitation in the original single-seed analysis.
+The conditional Shapley analysis produced the most distinctive finding.
+At $\tau_{99}$, the global feature-importance ranking reverses: family
+medical history, medical history and coverage level overtake smoking
+status.  This reversal is explained by the compositional structure of
+the extreme upper tail, where virtually all profiles are smokers and
+smoking status therefore loses discriminating power (the mechanical and
+substantive components of this reversal are discussed in
+Section~\ref{sec:addressing_rqs}).  The multi-seed robustness analysis
+confirmed that the entire chain of results, including the $\tau_{99}$
+ranking reversal, is invariant to the stochastic training process across
+five independent seeds (details in Chapter~\ref{sec:results}).
 
 % ---------------------------------------------------------
 % 5.2 ADDRESSING THE RESEARCH QUESTIONS
@@ -226,64 +152,44 @@ What is the shape and distributional behaviour of the
 model-implied predicted-cost distribution obtained by propagating
 parametric Monte Carlo input profiles through the trained network?
 
-The distribution is approximately symmetric (skewness $= 0.132$) and
-slightly platykurtic (kurtosis $= -0.337$), with a mean of R16\,752 and
-a standard deviation of R4\,417.  It is unimodal, with the interquartile
-range spanning R13\,621 to R19\,792 and the upper tail extending to a
-maximum predicted cost of R31\,781.  The close agreement between the mean
-and median (R16\,752 versus R16\,632) confirms the absence of
-heavy-tailed distortion.  The comparison with the observed training
-charges (Figure~\ref{fig:mc_predicted_vs_actual_ch4}) established that the
-model-implied distribution is consistent with the distributional
-characteristics of the observed data.  The convergence diagnostics
-confirmed that the Monte Carlo standard error at $B = 100\,000$ is R14.0,
-representing $0.08\%$ of the mean predicted cost, and that the running
-summaries have stabilised.  The multi-seed replication confirmed that
-the Monte Carlo mean predicted cost varies by only R15 across five DNN
-training seeds (Section~\ref{sec:cross_seed_mc_ch4}), establishing that
-the distributional characterisation is invariant to the network's
-random initialisation.
+The distribution is approximately symmetric, unimodal, and centred near
+the mean of the observed training charges
+(Figure~\ref{fig:mc_predicted_vs_actual_ch4}).  As noted in
+Section~\ref{sec:mc_intro}, this close agreement is expected given the
+near-perfect DNN fit and the use of training-data marginals; the Monte
+Carlo stage therefore functions primarily to define the conditioning
+regions for the Shapley analysis.  Convergence diagnostics confirmed
+adequate simulation size, and the multi-seed replication established
+that the distributional characterisation is invariant to the network's
+random initialisation (Section~\ref{sec:cross_seed_mc_ch4}).  Full
+distributional summaries are reported in Chapter~\ref{sec:results}.
 
 \subsubsection*{Research Question~\ref{rq:3}}
 Is the product-marginal Monte Carlo input distribution a
 defensible approximation of the training-data joint distribution for the
 purpose of generating simulated profiles?
 
-Five complementary diagnostics support an affirmative answer.  The
-correlation matrix difference showed small absolute pairwise differences.
-The Cram\'{e}r's $V$ associations for the categorical variables showed
-negligible association in both samples.  The PCA overlay showed
-substantial overlap without systematic displacement.  The higher-order
-interaction check confirmed the absence of spurious interaction
-structures.  The multivariate energy distance permutation test yielded
-$p = 0.730$, providing no evidence against the null hypothesis that the
-two samples share a common joint distribution.  The bootstrap Monte Carlo
-resampling check (Spearman $\rho = 0.991$) and the Shapley attribution
-invariance assessment (Spearman $\rho_{\mathrm{S}} = 1.000$) further
-confirmed that the independence assumption does not compromise the
-validity of the simulation for this benchmark dataset.  It should be
-noted, however, that the independence assumption broadens the simulated
-input space and can generate implausible covariate combinations.  This
-limitation is discussed further in Section~\ref{sec:limitations_conclusion}.
+Five complementary diagnostics support an affirmative answer, including a
+multivariate energy distance permutation test ($p = 0.730$) and a
+Shapley attribution invariance assessment (Spearman
+$\rho_{\mathrm{S}} = 1.000$).  The individual diagnostic results are
+reported in Chapter~\ref{sec:results}.  It should be noted that the
+independence assumption broadens the simulated input space and can
+generate implausible covariate combinations; this limitation is discussed
+in Section~\ref{sec:limitations_conclusion}.
 
 \subsubsection*{Research Question~\ref{rq:4}}
 How sensitive is the predicted-cost distribution to residual
 perturbation from the fitted model?
 
-The predicted-cost distribution is robust to residual perturbation.  The
-centred training residuals are symmetric, bell-shaped and homoscedastic.
-When residuals drawn from the empirical residual distribution were added
-to the base Monte Carlo predictions, the augmented distribution retained
-the same location, spread and shape.  The fixed perturbation band of
-$\pm 0.5\,\widehat{\sigma}_{\varepsilon}$ produced a smooth widening
-without asymmetry or heavy-tailed distortion.  The DNN's residuals on
-this benchmark dataset are sufficiently small and well-behaved that their
-addition does not alter the distributional conclusions.  The cross-seed
-residual-augmented analysis (Section~\ref{sec:cross_seed_residual_ch4})
-confirmed that the residual standard deviation
-$\hat{\sigma}_{\varepsilon} \approx \text{R}290$ is consistent across
-all five training seeds, and the augmentation adds approximately 2\%
-extra variance in every case.
+The predicted-cost distribution is robust to residual perturbation.
+Both empirical-residual augmentation and fixed perturbation bands
+retained the same location, spread and shape.  The DNN's residuals on
+this benchmark dataset are sufficiently small
+($\hat{\sigma}_{\varepsilon} \approx \text{R}290$) that their addition
+does not alter the distributional conclusions; this finding is consistent
+across all five training seeds
+(Section~\ref{sec:cross_seed_residual_ch4}).
 
 \subsubsection*{Research Question~\ref{rq:5}}
 Which input variables receive the largest Shapley-value
@@ -469,58 +375,24 @@ artefacts of the benchmark data.
 \label{sec:strengths}
 
 The study has several methodological strengths that enhance the
-reliability and reproducibility of its findings.  The analysis is based on
-one million policyholder records, providing a substantial sample for
-training, validation and testing.  The training partition alone contains
-$524\,288$ observations, reducing sampling variability in model fitting,
-hyperparameter selection and Shapley-value estimation.  The large sample
-size ensures that the five-phase hyperparameter comparison is not
-confounded by high sampling variance, and that the Shapley attributions
-are computed over a sufficiently large and representative background.
-
-The five-phase sequential hyperparameter comparison provides a
-transparent, reproducible selection method.  Each phase is documented with
-validation-loss curves and selection criteria, allowing the choices to be
-scrutinised and replicated.  This systematic approach avoids the opacity
-of automated search methods (such as random search or Bayesian
-optimisation) that do not provide interpretable selection rationales,
-while remaining computationally feasible for the architecture under
-consideration.  The full results are presented in
-Annexure~\ref{annexure:hyperparameters}.
-
-The data-leakage prevention protocols
-(Section~\ref{sec:data_leakage_prevention}) ensure that all preprocessing
-parameters are computed exclusively on the training partition and applied
-without refitting to the validation and test partitions.  This strict
-separation, combined with the joint-distribution input validation, the
-convergence diagnostics, the residual-augmented sensitivity analysis and
-the Shapley attribution invariance checks, collectively establish that the
-Monte Carlo and Shapley results are not artefacts of data contamination,
-distributional mismatch, residual instability or input-regime dependence.
-
-The multi-seed replication across five random initialisations provides a
-layer of robustness verification that is uncommon in the applied
-machine-learning interpretability literature.  The cross-seed standard
-deviation of the test $R^2$ ($1.28 \times 10^{-5}$), the cross-seed
-Monte Carlo mean variation (R15), and the perfect Spearman preservation
-of the global Shapley ranking ($\rho_{\mathrm{S}} = 1.0000$ across all
-ten seed pairs) collectively demonstrate that neither the predictive
-performance nor the attribution structure depends on the specific weight
-initialisation.  The replication of the $\tau_{99}$ ranking reversal in
-all five seeds is particularly noteworthy, as it transforms what could
-have been a single-seed observation into a reproducible structural
-property of the fitted model class.
-
-The Shapley-value analysis at both the global and conditional levels, with
-three upper-tail thresholds providing a graded view, reveals patterns that
-would be invisible in a global-only analysis, most notably the ranking
-reversal at $\tau_{99}$.  The attribution invariance check further
-validates the stability of the results across input regimes, and all
-conclusions are explicitly qualified as internal to the fitted model and
-benchmark data.  No causal claims are made, and the modelling assumptions
-are stated formally in Table~\ref{tab:modelling_assumptions_ch3}.  This
-transparency ensures that the findings are not over-interpreted and that
-the scope of their applicability is clearly defined.
+reliability and reproducibility of its findings.  First, the analysis
+is based on one million policyholder records, reducing sampling
+variability in model fitting, hyperparameter selection and Shapley-value
+estimation.  Second, the five-phase sequential hyperparameter comparison
+provides a transparent, reproducible selection method documented with
+validation-loss curves and selection criteria
+(Annexure~\ref{annexure:hyperparameters}), avoiding the opacity of
+automated search methods.  Third, strict data-leakage prevention
+protocols (Section~\ref{sec:data_leakage_prevention}) ensure that all
+preprocessing parameters are computed exclusively on the training
+partition.  Fourth, the multi-seed replication across five random
+initialisations demonstrates that neither the predictive performance nor
+the attribution structure depends on the specific weight initialisation,
+transforming the $\tau_{99}$ ranking reversal from a single-seed
+observation into a reproducible structural property of the fitted model
+class.  Finally, all conclusions are explicitly qualified as internal to
+the fitted model and benchmark data, with modelling assumptions stated
+formally in Table~\ref{tab:modelling_assumptions_ch3}.
 
 % ---------------------------------------------------------
 % 5.5 LIMITATIONS
@@ -707,22 +579,30 @@ specific performance figures are not.
 
 \subsubsection*{Implications for statistical methodology}
 From a statistical-methodological perspective, the dissertation
-demonstrates that the tools of simulation-based inference can be applied
-productively to the outputs of fitted machine-learning models.  The
-construction of a model-implied predicted-cost distribution by
-propagating Monte Carlo inputs through a trained network is conceptually
-analogous to studying a sampling distribution through Monte Carlo
-experiments.  In both cases, the objective is to characterise the
-distributional behaviour of a quantity of interest by repeated evaluation
-under a specified input law.  The conditional Shapley analysis extends the
-standard global summary by partitioning the predicted-cost distribution
-into regions of interest and examining how the attribution structure
-changes within those regions.  This approach is applicable to any
-regression model where the analyst is interested in the drivers of
-predictions within specific output ranges, not only in insurance pricing
-but also in credit scoring, healthcare resource allocation, environmental
-risk assessment and other domains where the upper tail of the predicted
-distribution is of particular importance.
+illustrates how the tools of simulation-based inference can be applied
+to the outputs of fitted machine-learning models.  The construction of
+a model-implied predicted-cost distribution by propagating Monte Carlo
+inputs through a trained network is conceptually analogous to studying a
+sampling distribution through Monte Carlo experiments.  An important
+qualification applies to this particular dataset: because the input
+marginals are fitted to the same data on which the network was trained,
+and because the network achieves near-perfect predictive accuracy, the
+model-implied distribution recovers the empirical charge distribution
+almost by construction.  The Monte Carlo stage therefore serves
+primarily to define the high-cost conditioning regions for the Shapley
+analysis, rather than to reveal novel distributional properties.  On
+datasets with more complex dependence structures, residual model error
+or distribution shift between training and deployment populations, the
+simulation stage would carry greater independent inferential value.
+The conditional Shapley analysis extends the standard global summary by
+partitioning the predicted-cost distribution into regions of interest
+and examining how the attribution structure changes within those
+regions.  This approach is applicable to any regression model where the
+analyst is interested in the drivers of predictions within specific
+output ranges, not only in insurance pricing but also in credit scoring,
+healthcare resource allocation, environmental risk assessment and other
+domains where the upper tail of the predicted distribution is of
+particular importance.
 
 The validation protocol provides a template for validating Monte Carlo and
 Shapley analyses in other applied settings.  Joint-distribution
