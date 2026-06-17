@@ -529,97 +529,7 @@ questions:
 \end{enumerate}
 
 % ---------------------------------------------------------
-% 1.7 METHODOLOGICAL OVERVIEW
-% ---------------------------------------------------------
-
-\subsection{Methodological Overview}
-\label{sec:methodological_overview}
-
-The empirical analysis follows a three-stage workflow, each stage
-building on the outputs of the preceding one.  The stages, and their
-principal components, are described below.
-
-\subsubsection{Prediction stage}
-\label{sec:prediction_stage_overview}
-
-A feed-forward \gls{dnn} with a funnel architecture
-(see Table~\ref{tab:dnn_architecture_training_ch3}) is trained on a
-publicly available health insurance benchmark dataset.  The network uses
-CELU activation, no bias terms and NAdam optimisation.  A five-phase
-sequential hyperparameter comparison identifies the best configuration
-from among 16 candidate settings, evaluating activation functions,
-learning rates, batch sizes, optimiser algorithms and momentum
-parameters in turn.  Each phase fixes the winner from the preceding
-phase and varies the next hyperparameter, so that the search space is
-explored sequentially rather than through a full grid.
-
-Three benchmark models are fitted to contextualise the network's
-predictive performance: a Gamma \gls{glm} with a
-logarithmic link function, a \gls{rf} regressor with 500 trees, and
-an XGBoost gradient-boosted tree regressor with 1\,000 boosting rounds
-and early stopping.  The \gls{glm} serves as the actuarial-standard baseline,
-while the two tree-based models occupy an intermediate position between
-the linear \gls{glm} and the fully flexible \gls{dnn}.  Hyperparameters for the \gls{glm}
-and tree-based models are set to standard defaults rather than tuned, so
-that the comparison isolates model-class differences.  All four models
-are evaluated on a held-out test set that is never used during training
-or hyperparameter selection, and data-leakage prevention protocols
-ensure the integrity of all reported metrics.
-
-\subsubsection{Simulation stage}
-\label{sec:simulation_stage_overview}
-
-Parametric distributions are fitted to each input variable in the
-training partition.  Continuous variables are modelled with appropriate
-distributions (e.g.\ truncated normal for age, log-normal for BMI),
-while categorical variables are sampled from their observed relative
-frequencies.  A \gls{mc} sample of $B = 100\,000$ synthetic
-policyholder profiles is drawn from the product of these independent
-marginals.  Each profile is encoded using the same preprocessing procedure
-applied to the training data and passed through the trained network,
-yielding a sample of predicted costs.
-
-The resulting model-implied predicted-cost distribution is characterised
-through summary statistics, density estimation, convergence diagnostics
-and tail-behaviour analysis.  Joint-distribution validation, including
-pairwise correlation comparisons, categorical cross-tabulation
-comparisons, PCA projection overlays and a formal energy distance
-permutation test, establishes whether the independent-marginal assumption
-introduces material distributional distortion.  A residual-augmented
-sensitivity analysis examines the robustness of the predicted-cost
-distribution to fitted residual perturbation.
-
-\subsubsection{Explanation stage}
-\label{sec:explanation_stage_overview}
-
-Gradient-based Shapley values are computed for each of the $B$ simulated
-profiles using a background sample of $m_0 = 200$ training observations.
-The Shapley values decompose each predicted cost into additive
-contributions from the $p = 22$ encoded input features.  Global feature
-importance is summarised through mean absolute Shapley values, beeswarm
-plots and bar charts.  Conditional Shapley summaries are computed at
-three upper-tail thresholds: $\tau_{90}$, $\tau_{95}$ and $\tau_{99}$.
-The conditional analysis identifies the variables that drive extreme
-predicted costs and examines whether and how the feature-importance
-ranking differs from the global ranking.  A Shapley attribution
-invariance check compares the rankings obtained from training-data and
-\gls{mc} input regimes to confirm consistency.
-
-\subsubsection{The benchmark dataset}
-\label{sec:dataset_overview}
-
-The dataset used is the Kaggle Insurance Data for Machine
-Learning benchmark, containing one million policyholder records with
-eleven predictor variables and a continuous monetary response.  The
-dataset is partitioned into training ($60\%$, $n = 524\,288$),
-validation ($n = 237\,856$) and test ($n = 237\,856$)
-subsets using a fixed random seed for reproducibility.  The dataset is
-treated as a methodological benchmark rather than a representative
-underwriting portfolio from a specific insurer.  All conclusions are
-internal to the modelling workflow and the benchmark data.
-
-% ---------------------------------------------------------
-% 1.8 VALIDATION AND ROBUSTNESS STRATEGY
+% 1.7 VALIDATION AND ROBUSTNESS STRATEGY
 % ---------------------------------------------------------
 
 \subsection{Validation and Robustness Strategy}
@@ -673,7 +583,7 @@ chapter (Chapter~\ref{chap:methods_and_data}), and the corresponding
 results are reported in Chapter~\ref{sec:results}.
 
 % ---------------------------------------------------------
-% 1.9 SCOPE AND DELIMITATIONS
+% 1.8 SCOPE AND DELIMITATIONS
 % ---------------------------------------------------------
 
 \subsection{Scope and Delimitations}
@@ -744,7 +654,7 @@ The following delimitations define the boundaries of the study:
 \end{itemize}
 
 % ---------------------------------------------------------
-% 1.10 ETHICAL CONSIDERATIONS
+% 1.9 ETHICAL CONSIDERATIONS
 % ---------------------------------------------------------
 
 \subsection{Ethical Considerations}
@@ -778,7 +688,7 @@ independent researchers with access to the same dataset and software
 environment.
 
 % ---------------------------------------------------------
-% 1.11 DEFINITION OF KEY TERMS
+% 1.10 DEFINITION OF KEY TERMS
 % ---------------------------------------------------------
 
 \subsection{Definition of Key Terms}
@@ -792,7 +702,7 @@ sensitivity analysis, are provided in
 Annexure~\ref{annexure:glossary}.
 
 % ---------------------------------------------------------
-% 1.12 DISSERTATION OUTLINE
+% 1.11 DISSERTATION OUTLINE
 % ---------------------------------------------------------
 
 \subsection{Dissertation Outline}
