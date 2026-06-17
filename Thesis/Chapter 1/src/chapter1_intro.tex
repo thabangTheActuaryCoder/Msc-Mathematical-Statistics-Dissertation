@@ -284,10 +284,14 @@ In the machine-learning interpretability literature, this decomposition
 has been operationalised through the SHAP framework
 \citep{lundberg2017unified}, which interprets each prediction as a
 cooperative game in which the ``players'' are input features and the
-``payoff'' is the predicted value.  The gradient-based implementation
-used in this dissertation exploits the differentiability of the neural
-network to obtain Shapley-value approximations efficiently for large
-samples.
+``payoff'' is the predicted value.  Among the available approximation strategies, a gradient-based
+implementation is adopted in this dissertation because it exploits the
+differentiability of the neural network to compute Shapley-value
+estimates without repeated model re-evaluation, making it
+computationally tractable for the large simulated samples considered
+here.  Permutation-based alternatives, while model-agnostic, require
+a combinatorial number of forward passes that would be prohibitive at
+the sample sizes used in this analysis.
 
 \subsubsection{The integration as the statistical contribution}
 \label{sec:integration_contribution}

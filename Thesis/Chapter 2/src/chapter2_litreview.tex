@@ -1375,7 +1375,12 @@ their theoretical definitions alone.
 
 \noindent
 The \gls{dnn} is trained by minimising a loss function. For continuous cost
-prediction, \gls{mse} is a natural objective:
+prediction, \gls{mse} is a natural objective because it penalises large
+deviations more heavily than small ones, directing the optimiser towards
+predictions that are accurate across the full range of observed costs.
+Its squared-error form also yields smooth, differentiable gradients that
+are well suited to gradient-based optimisation.  The \gls{mse} loss is
+defined by
 \begin{equation}
 \label{eq:mse_loss}
     \mathcal{L}(\theta)

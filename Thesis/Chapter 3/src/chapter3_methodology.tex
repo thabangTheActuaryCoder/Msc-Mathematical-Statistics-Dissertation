@@ -729,8 +729,14 @@ The network adopts the contracting funnel topology
 with the layer-wise recursion given by
 equation~\eqref{eq:pre_activation}.  All hidden layers use the
 \gls{celu} activation function
-(equation~\eqref{eq:celu}); the output layer uses an identity mapping, as
-required for continuous regression.  The full five-hidden-layer depth,
+(equation~\eqref{eq:celu}).  \gls{celu} was selected from among the
+candidate activations reviewed in
+Section~\ref{sec:activation_functions} because it combines the
+computational efficiency of a rectifier with continuous
+differentiability across its entire domain, avoiding the dead-unit
+problem associated with \gls{relu} while maintaining a linear positive
+branch that preserves gradient flow in deep architectures.  The output
+layer uses an identity mapping, as required for continuous regression.  The full five-hidden-layer depth,
 including the final 16-unit layer, is retained because the validation
 diagnostics (Section~\ref{sec:model_validation_diagnostics}) showed no
 evidence that removing it would improve out-of-sample performance.
@@ -940,7 +946,11 @@ shrinks parameters towards zero without necessarily setting them exactly equal
 to zero.}.
 
 The training procedure consists of: (1)~random weight initialisation
-using Kaiming uniform initialisation \citep{he2015delving};
+using Kaiming uniform initialisation \citep{he2015delving}, which
+scales the initial weights according to the fan-in of each layer so
+that activations neither vanish nor explode during the early forward
+passes, a property that is particularly important in deeper
+architectures such as the five-hidden-layer network used here;
 (2)~mini-batch gradient descent with the NAdam optimiser;
 (3)~validation evaluation every 5 epochs using the dot-product \gls{r2};
 (4)~early stopping when the validation \gls{r2} has not improved for 10
