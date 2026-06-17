@@ -10,7 +10,7 @@ The FunnelDNN model uses a feed-forward architecture with monotonically decreasi
 \subsection{Training Procedure}
 \label{annexure:train_model}
 
-Training minimises the mean squared error loss on normalised data using the NAdam optimiser. Validation-based early stopping monitors the dot-product $R^2$ on the validation set every 5 epochs, with a patience of 10 checks.
+Training minimises the \gls{mse} loss on normalised data using the NAdam optimiser. Validation-based early stopping monitors the dot-product $R^2$ on the validation set every 5 epochs, with a patience of 10 checks.
 
 \begin{algorithm}[htbp]
 \caption{FunnelDNN training with early stopping.}
@@ -180,18 +180,18 @@ $\widehat{\phi}$. \\[3pt]
 \end{table}
 
 % -------------------------------------------------------------
-\subsection{Random Forest Training Algorithm}
+\subsection{\Gls{rf} Training Algorithm}
 \label{annexure:rf_algorithm}
 
 \begin{table}[H]
 \centering
-\caption{Random Forest regression training algorithm.}
+\caption{\Gls{rf} regression training algorithm.}
 \label{tab:rf_algorithm_annex}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{p{0.92\textwidth}}
 \toprule
-\textbf{Algorithm C.3: Random Forest regression} \\
+\textbf{Algorithm C.3: \Gls{rf} regression} \\
 \midrule
 \textbf{Input:} model-ready training data
 $\{(\mathbf{z}_i, y_i)\}_{i \in \mathcal{D}_{\mathrm{train}}}$,

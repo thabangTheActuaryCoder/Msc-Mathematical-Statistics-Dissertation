@@ -15,14 +15,13 @@
 Health insurance cost prediction is, at its core, a regression problem:
 the analyst seeks to estimate a continuous monetary outcome from a vector
 of policyholder characteristics.  In the actuarial profession, this
-estimation has traditionally been performed using generalised linear
-models, and in particular the Gamma distribution with a logarithmic link,
+estimation has traditionally been performed using \glspl{glm}, and in particular the Gamma distribution with a logarithmic link,
 which imposes a multiplicative mean structure on the relationship between
 covariates and costs.  The appeal of this classical framework lies in its
 interpretability: each coefficient describes the proportional change in
 the conditional mean cost associated with a unit change in a predictor,
 holding all other predictors fixed.  This dissertation began by asking
-whether a more flexible model class, specifically deep neural networks,
+whether a more flexible model class, specifically \glspl{dnn},
 could improve upon this classical baseline, and whether the improved
 predictions could be analysed through methods that go beyond
 point-prediction accuracy.
@@ -31,7 +30,7 @@ The motivation for moving beyond point prediction was developed in
 Chapter~\ref{sec:introduction}, which argued that a fitted prediction
 model is a statistical object whose properties merit systematic
 investigation.  Just as the sampling distribution of an estimator is
-studied through Monte Carlo experiments to understand its variability and
+studied through \gls{mc} experiments to understand its variability and
 tail behaviour, the distribution of a prediction function's outputs under
 a specified input law can be studied to understand the range, shape and
 extreme-value behaviour of its predictions.  And just as the contribution
@@ -44,7 +43,7 @@ interpretation formed the conceptual basis of the dissertation.
 The literature review in Chapter~\ref{sec:literature_review} established
 the theoretical and empirical foundations for each component of the
 framework, surveying supervised regression, health insurance pricing,
-Monte Carlo simulation and Shapley-value attribution in their respective
+\gls{mc} simulation and Shapley-value attribution in their respective
 traditions.  The review identified the research gap: the existing
 literature applies deep learning and Shapley-value methods in isolation,
 without connecting the distributional analysis of a model-implied
@@ -56,8 +55,8 @@ into a concrete empirical workflow applied to the Kaggle Insurance Data
 for Machine Learning benchmark dataset \citep{kaggleInsuranceDataML},
 containing one million policyholder records.  The chapter specified the
 data preprocessing, the DNN architecture and five-phase hyperparameter
-comparison, the three benchmark models (Gamma GLM, random forest,
-XGBoost), the Monte Carlo simulation design and the validation
+comparison, the three benchmark models (Gamma GLM, \gls{rf},
+XGBoost), the \gls{mc} simulation design and the validation
 diagnostics (see Table~\ref{tab:modelling_assumptions_ch3} for the
 consolidated modelling assumptions).
 
@@ -68,14 +67,14 @@ achieved test-set $R^2 = 0.9957$ with near-identical training and test
 metrics ruling out overfitting.  The DNN substantially outperformed the
 Gamma GLM, whose log-link multiplicative structure does not match the
 approximately additive data-generating process of the benchmark data.
-The tree-based benchmarks (random forest and XGBoost) also achieved
+The tree-based benchmarks (\gls{rf} and XGBoost) also achieved
 strong performance; after tuning, XGBoost matched the DNN to four
 decimal places.  The DNN was retained for the subsequent analyses on the
 grounds of its differentiability for gradient-based SHAP computation.
 Full performance comparisons are reported in
 Chapter~\ref{sec:results}.
 
-The Monte Carlo simulation produced a predicted-cost distribution whose
+The \gls{mc} simulation produced a predicted-cost distribution whose
 summary statistics closely match the empirical charge distribution, as
 expected given the near-perfect fit and the use of training-data
 marginals (see the circularity caveat in
@@ -108,8 +107,8 @@ span the predictive, simulation and explanation stages of the framework.
 Each question is now addressed in light of the empirical results.
 
 \subsubsection*{Research Question~\ref{rq:1}}
-How does a deep neural network regression model compare with a
-classical generalised linear model, a random forest and an XGBoost
+How does a \gls{dnn} regression model compare with a
+classical \gls{glm}, a \gls{rf} and an XGBoost
 gradient-boosted tree in predicting health insurance costs on a benchmark
 dataset?
 
@@ -118,7 +117,7 @@ test RMSE of R290.  The Gamma GLM (log-link) achieves a test-set $R^2$ of
 $0.9571$, a test MAE of R624 and a test RMSE of R913.  The DNN therefore
 outperforms the GLM on every metric, reducing the test RMSE by $68.2\%$
 and the test MAE by $59.8\%$.  The two tree-based benchmarks narrow the
-gap: the random forest achieves $R^2 = 0.9899$ and XGBoost reaches
+gap: the \gls{rf} achieves $R^2 = 0.9899$ and XGBoost reaches
 $R^2 = 0.9955$, approaching the DNN's accuracy.  All four models show
 near-identical training and test performance, ruling out overfitting.
 The GLM's performance gap is attributable to the log-link's
@@ -132,7 +131,7 @@ The five-phase sequential hyperparameter comparison selected the final
 DNN configuration from among 16 candidate settings, documented in full
 in Annexure~\ref{annexure:hyperparameters}.  When the tree-based
 benchmarks were subsequently tuned via randomised search with
-cross-validation, the tuned random forest reached $R^2 = 0.9924$ and
+cross-validation, the tuned \gls{rf} reached $R^2 = 0.9924$ and
 the tuned XGBoost matched the DNN at $R^2 = 0.9956$.  The DNN retains
 a marginal advantage ($R^2 = 0.9957$), but the practical gap is
 negligible; the DNN was retained for its differentiability rather than
@@ -150,7 +149,7 @@ insurance portfolios.
 \subsubsection*{Research Question~\ref{rq:2}}
 What is the shape and distributional behaviour of the
 model-implied predicted-cost distribution obtained by propagating
-parametric Monte Carlo input profiles through the trained network?
+parametric \gls{mc} input profiles through the trained network?
 
 The distribution is approximately symmetric, unimodal, and centred near
 the mean of the observed training charges
@@ -165,7 +164,7 @@ random initialisation (Section~\ref{sec:cross_seed_mc_ch4}).  Full
 distributional summaries are reported in Chapter~\ref{sec:results}.
 
 \subsubsection*{Research Question~\ref{rq:3}}
-Is the product-marginal Monte Carlo input distribution a
+Is the product-marginal \gls{mc} input distribution a
 defensible approximation of the training-data joint distribution for the
 purpose of generating simulated profiles?
 
@@ -273,7 +272,7 @@ attribution structure in the upper tail.
 The dissertation makes several contributions to the intersection of
 statistical learning, simulation-based inference and explainable
 modelling.  Each of the three methodological components, namely deep
-neural network regression, parametric Monte Carlo simulation and
+neural network regression, parametric \gls{mc} simulation and
 Shapley-value attribution, is individually well established in the
 statistical literature
 \citep{vapnik1998statistical, robert2004monte, kroese2011handbook,
@@ -281,7 +280,7 @@ lundberg2017unified, molnar2022interpretable}.  The central
 methodological contribution is that the conditional Shapley analysis
 computed within Monte-Carlo-simulated high-cost regions produces a
 form of threshold-conditional feature attribution that none of these
-components can deliver in isolation.  The Monte Carlo distribution
+components can deliver in isolation.  The \gls{mc} distribution
 defines the regions of interest, the Shapley decomposition reveals
 the attribution structure within those regions, and the integration
 creates a connected analytical framework that extends conventional
@@ -292,7 +291,7 @@ The primary contribution is the integrated workflow itself.  In the
 existing literature, these three components are typically applied in
 isolation: prediction studies report out-of-sample performance metrics
 without distributional analysis
-\citep{samiuddin2023health, dreweboss2022deep}; Monte Carlo studies
+\citep{samiuddin2023health, dreweboss2022deep}; \gls{mc} studies
 simulate quantities of interest without connecting the results to
 feature-level attribution \citep{glasserman2004monte}; and Shapley-value
 studies decompose predictions on observed data without examining how the
@@ -303,7 +302,7 @@ for long-term life insurance valuations, while the present study extends
 the deep-learning approach to health insurance cost prediction with an
 added simulation and attribution layer.  This dissertation demonstrates
 that the integration produces insight that none of the three components
-could provide in isolation.  The Monte Carlo distribution defines the regions of
+could provide in isolation.  The \gls{mc} distribution defines the regions of
 interest for the Shapley analysis, and the conditional Shapley analysis
 decomposes the model behaviour within those regions.  Each component
 produces outputs that serve as inputs to the next, creating a connected
@@ -325,14 +324,14 @@ growing literature on conditional and local interpretability methods
 be supplemented with threshold-specific conditional summaries to provide a
 more complete picture of a model's attribution structure.
 
-The Monte Carlo component constructs a model-implied predicted-cost
+The \gls{mc} component constructs a model-implied predicted-cost
 distribution from a formally stated input distribution, rather than
 reporting predictions only at observed data points.  This connects the
 neural network to the simulation-based inference tradition within
 mathematical statistics \citep{glasserman2004monte,
 rubinstein2016simulation, robert2004monte}, where the behaviour of
 estimators and
-predictive quantities is routinely studied through Monte Carlo
+predictive quantities is routinely studied through \gls{mc}
 experiments.  The distinction is methodologically significant: evaluating a
 model on observed data provides point predictions at covariate
 combinations that happen to appear in the dataset; evaluating it on a
@@ -343,7 +342,7 @@ predictions as statistical quantities in their own right.
 
 The multi-seed robustness analysis represents a further contribution.
 By retraining the DNN under five independent random seeds and
-replicating the entire Monte Carlo and Shapley pipeline for each seed,
+replicating the entire \gls{mc} and Shapley pipeline for each seed,
 the dissertation demonstrates that the predictive performance, the
 model-implied cost distribution, the global Shapley ranking, and the
 $\tau_{99}$ ranking reversal are all invariant to the stochastic
@@ -356,12 +355,12 @@ The multi-layered validation protocol, comprising joint-distribution
 diagnostics, convergence monitoring, residual-augmented sensitivity
 analysis \citep{saltelli2002making}, Shapley attribution invariance
 checks and cross-seed replication, provides a template for validating
-Monte Carlo and Shapley analyses in other applied settings.
+\gls{mc} and Shapley analyses in other applied settings.
 These diagnostics address specific threats to validity that are not
 routinely checked in the machine-learning interpretability literature,
 where Shapley values are often reported without assessing their
 sensitivity to the input distribution or the residual structure of the
-fitted model.  Finally, the three benchmark models (Gamma GLM, random forest and
+fitted model.  Finally, the three benchmark models (Gamma GLM, \gls{rf} and
 XGBoost) contextualise the DNN's performance across the model-class
 spectrum, establishing that the predictive superiority reflects genuine
 advantages of smooth nonlinear function approximation rather than
@@ -422,7 +421,7 @@ serves the purpose of demonstrating the methodology on a controlled,
 reproducible dataset, but the specific numerical results are properties of
 this dataset and not of health insurance cost prediction in general.
 
-The study compares the DNN against a Gamma/log-link GLM, a random forest
+The study compares the DNN against a Gamma/log-link GLM, a \gls{rf}
 and an XGBoost gradient-boosted tree regressor.  While these benchmarks
 span three major model classes (parametric, bagging and boosting), ensemble
 methods such as stacking, Bayesian neural networks and other advanced
@@ -433,13 +432,13 @@ achieves near-DNN accuracy on this dataset.  A broader model-selection
 study including additional architectures and datasets would further
 strengthen the conclusions.
 
-The Monte Carlo and Shapley analyses were initially conditional on a
+The \gls{mc} and Shapley analyses were initially conditional on a
 single trained network with a fixed random seed.  The multi-seed
 robustness analysis (Section~\ref{sec:multiseed_dnn}) subsequently
 addressed this limitation by retraining the DNN under five independent
 seeds and replicating the full simulation and attribution pipeline.  The
 cross-seed variability proved negligible across all stages: the test
-$R^2$ standard deviation is $1.28 \times 10^{-5}$, the Monte Carlo mean
+$R^2$ standard deviation is $1.28 \times 10^{-5}$, the \gls{mc} mean
 varies by R15, and the global Shapley ranking is perfectly preserved
 ($\rho_{\mathrm{S}} = 1.0000$).  While five seeds do not constitute an
 exhaustive exploration of the initialisation space, the convergent
@@ -455,7 +454,7 @@ differentiability is not required, XGBoost may be a more parsimonious
 alternative that achieves equivalent accuracy with less computational
 cost.
 
-The Monte Carlo input distribution is constructed as a product of
+The \gls{mc} input distribution is constructed as a product of
 independent marginals.  While the joint-distribution validation confirmed
 that the training-data dependence structure is weak ($p = 0.730$), the
 independence assumption broadens the simulated input space beyond what
@@ -509,7 +508,7 @@ network weights and propagate the resulting weight uncertainty through the
 Shapley computation, yielding posterior distributions of the
 feature-importance values.  Such an approach would complement the Monte
 Carlo simulation by adding a second layer of distributional analysis:
-the Monte Carlo component characterises the distribution of predicted
+the \gls{mc} component characterises the distribution of predicted
 costs under input variability, while the Bayesian component would
 characterise the distribution of Shapley attributions under parameter
 uncertainty.  This extension is noted as a direction for future research
@@ -540,7 +539,7 @@ this benchmark dataset illustrates the potential of flexible
 machine-learning models to improve upon the classical pricing framework,
 at least on datasets where the data-generating process does not conform to
 the log-link's multiplicative structure.  The tree-based benchmarks
-reinforce this conclusion: both the random forest and XGBoost
+reinforce this conclusion: both the \gls{rf} and XGBoost
 substantially outperform the GLM, with XGBoost approaching the DNN's
 accuracy, confirming that the GLM's limitation on this dataset is
 structural rather than a general feature of simpler models.  For
@@ -564,7 +563,7 @@ within the extreme upper tail, the differentiating variables are coverage
 tier, medical history and family medical history, which may require
 different management strategies.
 
-The Monte Carlo simulation component demonstrates a method for
+The \gls{mc} simulation component demonstrates a method for
 constructing model-implied predicted-cost distributions from specified
 input laws.  In actuarial applications, such distributions are relevant to
 reserve adequacy assessment, risk capital calculations and scenario
@@ -581,14 +580,14 @@ specific performance figures are not.
 From a statistical-methodological perspective, the dissertation
 illustrates how the tools of simulation-based inference can be applied
 to the outputs of fitted machine-learning models.  The construction of
-a model-implied predicted-cost distribution by propagating Monte Carlo
+a model-implied predicted-cost distribution by propagating \gls{mc}
 inputs through a trained network is conceptually analogous to studying a
-sampling distribution through Monte Carlo experiments.  An important
+sampling distribution through \gls{mc} experiments.  An important
 qualification applies to this particular dataset: because the input
 marginals are fitted to the same data on which the network was trained,
 and because the network achieves near-perfect predictive accuracy, the
 model-implied distribution recovers the empirical charge distribution
-almost by construction.  The Monte Carlo stage therefore serves
+almost by construction.  The \gls{mc} stage therefore serves
 primarily to define the high-cost conditioning regions for the Shapley
 analysis, rather than to reveal novel distributional properties.  On
 datasets with more complex dependence structures, residual model error
@@ -604,7 +603,7 @@ healthcare resource allocation, environmental risk assessment and other
 domains where the upper tail of the predicted distribution is of
 particular importance.
 
-The validation protocol provides a template for validating Monte Carlo and
+The validation protocol provides a template for validating \gls{mc} and
 Shapley analyses in other applied settings.  Joint-distribution
 diagnostics check whether the input distribution introduces distributional
 distortion; convergence monitoring checks whether the simulation size is
@@ -641,8 +640,7 @@ A recent line of actuarial research imposes explicit shape constraints
 on neural networks during training.  The ICEnet of
 \citep{richman2024icenet}, presented in Chapter~7 of
 \citep{richman2025phd}, adds smoothness and monotonicity penalty terms
-to the loss function so that the network's Individual Conditional
-Expectation (ICE) outputs vary smoothly and monotonically with respect
+to the loss function so that the network's \Gls{ice} (ICE) outputs vary smoothly and monotonically with respect
 to selected covariates.  Because the two studies differ in their
 response variables, evaluation metrics and datasets, a direct numerical
 comparison of predictive performance is not appropriate.
@@ -666,7 +664,7 @@ Response distribution
     & Continuous
     & Poisson \\
 Models compared
-    & GLM, Random Forest, XGBoost, DNN
+    & GLM, \Gls{rf}, XGBoost, DNN
     & FCN, ICEnet \\
 Best test-set result
     & DNN $R^2 = 0.9957$; GLM $0.9571$;
@@ -703,7 +701,7 @@ Because the response variables differ (count data versus continuous
 monetary charges) and the evaluation metrics differ (Poisson deviance
 versus $R^2$), these figures are not directly comparable and no
 cross-study ranking of accuracy is claimed.  Both studies, however,
-demonstrate that deep neural networks improve upon GLM baselines within
+demonstrate that \glspl{dnn} improve upon GLM baselines within
 their respective insurance domains.
 
 \noindent
@@ -771,7 +769,7 @@ the attribution and interpretation components.
           values, temporal trends, policy-level effects and non-trivial
           dependence structures among covariates.
 
-    \item Coupling the Monte Carlo simulation with Bayesian posterior
+    \item Coupling the \gls{mc} simulation with Bayesian posterior
           predictive distributions or conformal prediction intervals would
           add formal uncertainty quantification to the predicted-cost
           distribution, transforming it from a point-prediction landscape
@@ -781,7 +779,7 @@ the attribution and interpretation components.
     \item Quantile regression offers a complementary perspective on the
           conditional cost distribution that warrants investigation.
           Rather than modelling the conditional mean and subsequently
-          examining quantiles of the Monte Carlo output, a quantile
+          examining quantiles of the \gls{mc} output, a quantile
           regression neural network could directly estimate conditional
           quantiles of the cost distribution at specified probability
           levels.  This approach would provide a natural alternative to
@@ -789,7 +787,7 @@ the attribution and interpretation components.
           analysis and would allow the analyst to study how the
           feature-importance structure varies across quantile levels
           within the fitted model itself, without the need for a separate
-          Monte Carlo simulation stage.
+          \gls{mc} simulation stage.
 
     \item As discussed in
           Section~\ref{sec:comparison_constrained_nn}, integrating
@@ -876,7 +874,7 @@ studying estimators through their distributional properties, and the
 modern machine-learning tradition of training flexible prediction models
 and explaining their outputs.  The bridge is built from three components,
 each with a well-established theoretical basis in mathematical statistics:
-supervised regression provides the prediction function, Monte Carlo
+supervised regression provides the prediction function, \gls{mc}
 simulation provides the distributional characterisation, and Shapley-value
 decomposition provides the feature-level attribution.
 
@@ -903,7 +901,7 @@ prediction, simulation and conditional explanation is applicable to any
 regression problem where the analyst seeks to understand the distributional
 behaviour of a model's predictions and to decompose those predictions into
 feature-level contributions within specific regions of the output space.
-The validation diagnostics developed for the Monte Carlo and Shapley
+The validation diagnostics developed for the \gls{mc} and Shapley
 components provide a reusable template for assessing the reliability of
 such analyses in other applied settings, from credit scoring and
 healthcare resource allocation to environmental risk assessment and
@@ -914,7 +912,7 @@ mathematical statistics remain essential for understanding and interpreting
 the outputs of modern machine-learning models.  Neural networks are
 powerful prediction devices, but their value to the applied statistician
 extends beyond the point predictions they produce.  By treating the trained
-network as a deterministic transformation to be studied through Monte Carlo
+network as a deterministic transformation to be studied through \gls{mc}
 experiments and decomposed through Shapley values, this dissertation
 connects the machine-learning prediction paradigm to the classical
 statistical tradition of studying estimators through their distributional

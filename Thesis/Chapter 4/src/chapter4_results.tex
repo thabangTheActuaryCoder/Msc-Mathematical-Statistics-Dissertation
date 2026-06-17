@@ -18,7 +18,7 @@ comparison, including hyperparameter-optimised \gls{rf} and
 \gls{xgboost} models;
 Section~\ref{sec:multiseed_benchmark_stability} evaluates cross-seed
 stability across all four model classes;
-Section~\ref{sec:mc_results} presents the Monte Carlo
+Section~\ref{sec:mc_results} presents the \gls{mc}
 predicted-cost distribution, its joint-distribution input validation,
 and convergence properties;
 Section~\ref{sec:residual_augmented_results} evaluates the
@@ -30,7 +30,7 @@ attribution stability analysis;
 Section~\ref{sec:shap_interactions} reports the SHAP interaction
 analysis; and
 Section~\ref{sec:mc_shapley_integration} examines the correspondence
-between the Monte Carlo distributional findings and the Shapley
+between the \gls{mc} distributional findings and the Shapley
 attribution patterns.
 
 
@@ -338,7 +338,7 @@ therefore retained for the subsequent analyses on the grounds of its
 superior accuracy and its differentiability for gradient-based
 attribution.
 
-The finding that a deep neural network outperforms a classical \gls{glm}
+The finding that a \gls{dnn} outperforms a classical \gls{glm}
 on this benchmark is consistent with the broader health-cost prediction
 literature.  \citep{dreweboss2022deep} report that deep-learning models
 achieve lower prediction error than standard actuarial models on claims
@@ -353,7 +353,7 @@ benchmark dataset with a strong synthetic structure.
 A related line of actuarial research applies explicit shape constraints
 to neural networks during training.  \citep{richman2024icenet} develop
 the ICEnet, which adds smoothness and monotonicity penalties to the loss
-function so that Individual Conditional Expectation outputs remain
+function so that \Gls{ice} outputs remain
 actuarially reasonable.  Because that study targets claims frequency
 under a Poisson deviance criterion rather than continuous monetary costs,
 a direct numerical comparison with the present results is not possible;
@@ -449,14 +449,14 @@ ensure a fair comparison, both tree-based models were subsequently tuned
 using randomised search with 5-fold cross-validation on the training
 partition.
 
-\subsubsection{Tuned Random Forest}
+\subsubsection{Tuned \Gls{rf}}
 
 Table~\ref{tab:tuned_rf_ch4} compares the default and tuned \gls{rf}
 performance.
 
 \begin{table}[H]
 \centering
-\caption{Random Forest performance: default versus tuned
+\caption{\Gls{rf} performance: default versus tuned
 hyperparameters (test set, original monetary scale).}
 \label{tab:tuned_rf_ch4}
 \small
@@ -542,7 +542,7 @@ The tuned \gls{xgboost} matches the \gls{dnn} at $R^2 = 0.9956$
 result confirms that the predictive advantage of the \gls{dnn} over
 \gls{xgboost} on this benchmark dataset is marginal once hyperparameter
 tuning is applied.  The \gls{dnn} is nevertheless retained for the
-subsequent Monte Carlo and Shapley analyses on the grounds of its
+subsequent \gls{mc} and Shapley analyses on the grounds of its
 differentiability, which enables gradient-based SHAP computation.
 Tree-based models require permutation-based or kernel-based Shapley
 approximations, which are computationally more expensive for large
@@ -592,10 +592,10 @@ seed.
 
 
 % =============================================================
-\subsection{Monte Carlo Predicted-Cost Distribution}
+\subsection{\gls{mc} Predicted-Cost Distribution}
 \label{sec:mc_results}
 
-The base parametric Monte Carlo simulation (Algorithm~3.1) was executed
+The base parametric \gls{mc} simulation (Algorithm~3.1) was executed
 with $B = 100\,000$ synthetic policyholder profiles drawn from the
 product-marginal input distribution specified in
 equation~\eqref{eq:raw_product_mc_distribution_ch3}. Each simulated
@@ -611,7 +611,7 @@ diagnostic protocol in Section~\ref{sec:mc_input_validation}.
 \subsubsection*{Joint distribution validation}
 
 The bivariate and multivariate dependence structure of the training data
-was compared with that of the Monte Carlo sample using five complementary
+was compared with that of the \gls{mc} sample using five complementary
 diagnostics (detailed figures in
 Annexure~\ref{annexure:mc_joint_validation}).  Pairwise scatter plots
 for the three continuous variables confirmed that all training-data
@@ -638,7 +638,7 @@ distance test ($1\,000$ permutations) returned $p = 0.730$
 distributions are indistinguishable by this non-parametric criterion.
 A t-SNE projection showed thoroughly intermixed point clouds across all
 identified clusters (Figure~\ref{fig:tsne_joint_overlay_annex}),
-providing nonlinear confirmation that the Monte Carlo profiles do not
+providing nonlinear confirmation that the \gls{mc} profiles do not
 occupy novel regions of the feature space.
 
 The marginal distributions of all 11 raw predictor variables closely
@@ -653,7 +653,7 @@ joint and marginal levels.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_mc_predicted_cost_distribution.png}
-\caption{Monte Carlo predicted-cost distribution ($B = 100\,000$).}
+\caption{\gls{mc} predicted-cost distribution ($B = 100\,000$).}
 \label{fig:mc_predicted_cost_distribution_ch4}
 \end{figure}
 
@@ -665,7 +665,7 @@ summary statistics.
 
 \begin{table}[H]
 \centering
-\caption{Distributional summary of the Monte Carlo predicted costs
+\caption{Distributional summary of the \gls{mc} predicted costs
 ($B = 100\,000$).}
 \label{tab:mc_distribution_summary_ch4}
 \small
@@ -702,7 +702,7 @@ distortion.
 
 \subsubsection{Convergence diagnostics}
 
-The Monte Carlo standard error and running distributional summaries were
+The \gls{mcse} and running distributional summaries were
 recorded at increasing simulation sizes
 $B \in \{1\,000,\; 2\,500,\; 5\,000,\; 10\,000,\; 25\,000,\; 50\,000,\; 100\,000\}$
 following the convergence monitoring procedure in
@@ -711,7 +711,7 @@ Section~\ref{sec:mc_simulation_design}.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_mc_convergence.png}
-\caption{Monte Carlo convergence diagnostics by simulation size $B$.}
+\caption{\gls{mc} convergence diagnostics by simulation size $B$.}
 \label{fig:mc_convergence_ch4}
 \end{figure}
 
@@ -727,7 +727,7 @@ simulation size.
 
 \begin{table}[H]
 \centering
-\caption{Monte Carlo convergence: running summaries and MCSE by
+\caption{\gls{mc} convergence: running summaries and MCSE by
 simulation size.}
 \label{tab:mc_convergence_ch4}
 \small
@@ -765,7 +765,7 @@ $\mathrm{MCSE}(B{=}1\,000) \,/\, \mathrm{MCSE}(B{=}10\,000)
 $\sqrt{10\,000 / 1\,000} = \sqrt{10} \approx 3.16$, and
 $\mathrm{MCSE}(B{=}1\,000) \,/\, \mathrm{MCSE}(B{=}100\,000)
 = 136.8 / 14.0 = 9.77$ matches $\sqrt{100} = 10.0$.  The
-simulation therefore exhibits the canonical Monte Carlo convergence
+simulation therefore exhibits the canonical \gls{mc} convergence
 behaviour, confirming that no pathological variance inflation or serial
 dependence is present in the simulated profiles.
 
@@ -782,13 +782,13 @@ within $\pm 0.4\%$ of its final value from $B = 25\,000$ onwards,
 indicating that the tail percentile estimates are sufficiently precise
 for the conditional Shapley analysis that follows.
 
-\subsubsection{Cross-seed Monte Carlo stability}
+\subsubsection{Cross-seed \gls{mc} stability}
 \label{sec:cross_seed_mc_ch4}
 
-To assess whether the Monte Carlo predicted-cost distribution is
+To assess whether the \gls{mc} predicted-cost distribution is
 sensitive to the DNN training seed, the $B = 100\,000$ simulation was
 repeated using each of the five trained networks from
-Section~\ref{sec:multiseed_dnn}.  The cross-seed Monte Carlo
+Section~\ref{sec:multiseed_dnn}.  The cross-seed \gls{mc}
 diagnostics are presented in
 Annexure~\ref{annexure:multiseed_mc}
 (Figures~\ref{fig:mc_seed_distributions_annex}
@@ -811,12 +811,12 @@ invariant to the DNN training seed.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.80\textwidth]{Thesis/Chapter 4/Figures/fig_mc_predicted_vs_actual.png}
-\caption{Monte Carlo predicted-cost distribution overlaid with observed training-set charges.}
+\caption{\gls{mc} predicted-cost distribution overlaid with observed training-set charges.}
 \label{fig:mc_predicted_vs_actual_ch4}
 \end{figure}
 
 \noindent
-Figure~\ref{fig:mc_predicted_vs_actual_ch4} overlays the Monte Carlo
+Figure~\ref{fig:mc_predicted_vs_actual_ch4} overlays the \gls{mc}
 predicted-cost histogram with the observed training-set charge
 distribution. The two distributions share similar location, spread and
 shape: both are unimodal, roughly symmetric, and span the range from
@@ -830,12 +830,12 @@ product-marginal simulation law and the empirical joint distribution.
 
 
 % =============================================================
-\subsection{Residual-Augmented Monte Carlo Sensitivity}
+\subsection{Residual-Augmented \gls{mc} Sensitivity}
 \label{sec:residual_augmented_results}
 
 The residual-augmented sensitivity analysis
 (Section~\ref{sec:residual_augmented_mc}) was applied to the
-$B = 100\,000$ base Monte Carlo predictions.  Centred fitted residuals
+$B = 100\,000$ base \gls{mc} predictions.  Centred fitted residuals
 were drawn from the empirical residual distribution
 $\widehat{F}_{\varepsilon}$
 (equation~\eqref{eq:residual_draw_ch3}), and a fixed perturbation band
@@ -856,13 +856,13 @@ homogeneous residual magnitude.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_mc_residual_augmented.png}
-\caption{Residual-augmented Monte Carlo sensitivity analysis.}
+\caption{Residual-augmented \gls{mc} sensitivity analysis.}
 \label{fig:mc_residual_augmented_ch4}
 \end{figure}
 
 \noindent
 Figure~\ref{fig:mc_residual_augmented_ch4} (left panel) shows that the
-residual-augmented distribution closely overlaps the base Monte Carlo
+residual-augmented distribution closely overlaps the base \gls{mc}
 distribution. The residual perturbation does not shift the central
 tendency or materially alter the distributional shape: the mode, spread
 and tail behaviour of all three distributions remain aligned. The right
@@ -876,7 +876,7 @@ the fitted residual variability is small and homogeneous across the
 predicted-cost range.
 
 These results indicate that the distributional conclusions drawn from
-the base Monte Carlo analysis are not sensitive to the magnitude of the
+the base \gls{mc} analysis are not sensitive to the magnitude of the
 fitted model's residual error. The base predicted-cost distribution is
 therefore a stable foundation for the Shapley-value attribution analysis
 that follows.
@@ -988,10 +988,10 @@ dummies for both \texttt{medical\_history} and
 centred near zero, with individual SHAP magnitudes mostly within
 $\pm 0.15$.
 
-\subsubsection{Training versus Monte Carlo attribution invariance}
+\subsubsection{Training versus \gls{mc} attribution invariance}
 
 The Shapley attributions computed on the training data were compared with
-those computed on the Monte Carlo simulated profiles
+those computed on the \gls{mc} simulated profiles
 (Figure~\ref{fig:shap_training_vs_mc_invariance_annex},
 Annexure~\ref{annexure:shap_invariance}).  The Spearman rank correlation
 between the two feature-importance vectors is $\rho_{\mathrm{S}} =
@@ -1001,7 +1001,7 @@ diagonal with no systematic deviation.  This result extends the
 parametric-versus-bootstrap invariance finding of
 Section~\ref{sec:mc_input_validation} (Spearman $\rho = 0.991$) and
 confirms that the fitted \gls{dnn}'s internal feature-importance
-structure is preserved when evaluated on the Monte Carlo simulated input
+structure is preserved when evaluated on the \gls{mc} simulated input
 space.
 
 
@@ -1011,13 +1011,13 @@ space.
 
 The high-cost region was defined using the quantile-based thresholds
 $u_{\tau}$ (equation~\eqref{eq:high_cost_threshold}) applied to the
-Monte Carlo predicted-cost distribution.
+\gls{mc} predicted-cost distribution.
 Table~\ref{tab:highcost_thresholds_ch4} reports the three threshold
 values and the corresponding high-cost set sizes.
 
 \begin{table}[H]
 \centering
-\caption{High-cost thresholds from the Monte Carlo predicted-cost
+\caption{High-cost thresholds from the \gls{mc} predicted-cost
 distribution.}
 \label{tab:highcost_thresholds_ch4}
 \small
@@ -1187,7 +1187,7 @@ Chapter~\ref{sec:literature_review}.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_highcost_profile_comparison.png}
-\caption{Distributional profiles of the high-cost sets compared with the full Monte Carlo sample.}
+\caption{Distributional profiles of the high-cost sets compared with the full \gls{mc} sample.}
 \label{fig:highcost_profiles_ch4}
 \end{figure}
 
@@ -1198,7 +1198,7 @@ progressive concentration:
 
 \begin{itemize}
     \item \textbf{Smoker:} The proportion of smokers increases from
-    approximately $50\%$ in the full Monte Carlo sample to approximately
+    approximately $50\%$ in the full \gls{mc} sample to approximately
     $93\%$ at $\tau_{90}$, $96\%$ at $\tau_{95}$ and $99\%$ at
     $\tau_{99}$. At the most extreme threshold, virtually all high-cost
     profiles are smokers.
@@ -1254,7 +1254,7 @@ equation~\eqref{eq:shapley_decomp}.
 \label{sec:cross_seed_shap}
 
 The Shapley-value attributions were recomputed for all $B = 100\,000$
-Monte Carlo profiles using each of the five trained networks from
+\gls{mc} profiles using each of the five trained networks from
 Section~\ref{sec:multiseed_dnn}.  This analysis directly addresses the
 limitation identified in
 Section~\ref{sec:limitations_conclusion}: whether the Shapley
@@ -1335,7 +1335,7 @@ To assess whether the DNN has learned meaningful pairwise interactions
 among the input variables, the SHAP interaction structure was analysed by
 computing the pairwise Pearson correlations between all
 $\binom{11}{2} = 55$ pairs of raw-variable Shapley-value vectors across
-the $B = 100\,000$ Monte Carlo profiles.
+the $B = 100\,000$ \gls{mc} profiles.
 
 \begin{figure}[H]
 \centering
@@ -1366,16 +1366,16 @@ material loss of information.
 
 
 % =============================================================
-\subsection{Integration of Monte Carlo and Shapley Results}
+\subsection{Integration of \gls{mc} and Shapley Results}
 \label{sec:mc_shapley_integration}
 
-The Monte Carlo and Shapley analyses provide complementary perspectives
-on the fitted \gls{dnn}'s behaviour. The Monte Carlo simulation
+The \gls{mc} and Shapley analyses provide complementary perspectives
+on the fitted \gls{dnn}'s behaviour. The \gls{mc} simulation
 identifies the distributional regions of interest within the
 predicted-cost landscape, while the Shapley-value decomposition reveals
 which input variables are associated with those regions.
 
-The Monte Carlo predicted-cost distribution
+The \gls{mc} predicted-cost distribution
 (Figure~\ref{fig:mc_predicted_cost_distribution_ch4}) is approximately
 symmetric with a mean of R16\,752 and an upper tail extending to
 R31\,781. Within this landscape, three quantile-based thresholds
@@ -1410,14 +1410,14 @@ The continuous covariates (\texttt{age}, \texttt{bmi},
 \texttt{children}) play a limited role at all threshold levels. Their
 conditional importance values remain close to their global values, and
 their distributional shapes within the high-cost sets are not
-meaningfully different from those in the full Monte Carlo sample. The
+meaningfully different from those in the full \gls{mc} sample. The
 fitted \gls{dnn} therefore assigns the dominant cost-driving role to
 the categorical risk factors, with the continuous variables contributing
 a modest, stable baseline effect.
 
 The invariance checks reinforce the robustness of these findings. The
 Shapley attributions are stable whether computed on training data or
-Monte Carlo profiles (Spearman $\rho = 1.000$,
+\gls{mc} profiles (Spearman $\rho = 1.000$,
 Figure~\ref{fig:shap_training_vs_mc_invariance_annex}), and the
 residual-augmented sensitivity analysis
 (Figure~\ref{fig:mc_residual_augmented_ch4}) confirms that the
@@ -1430,7 +1430,7 @@ The multi-seed robustness analyses of
 Sections~\ref{sec:multiseed_dnn} to~\ref{sec:shap_interactions} provide a
 further layer of validation.  The DNN's test $R^2$ varies by only
 $1.28 \times 10^{-5}$ across five random seeds
-(Table~\ref{tab:multiseed_test_performance_ch4}); the Monte Carlo mean
+(Table~\ref{tab:multiseed_test_performance_ch4}); the \gls{mc} mean
 predicted cost varies by R15 (Section~\ref{sec:cross_seed_mc_ch4}); and
 the global Shapley importance ranking is perfectly preserved across all
 ten pairwise seed combinations ($\rho_{\mathrm{S}} = 1.0000$,
@@ -1441,7 +1441,7 @@ interaction analysis confirms that the DNN has learned an essentially
 additive mapping (all pairwise correlations below $|r| = 0.033$,
 Figure~\ref{fig:shap_interaction_heatmap_ch4}).  These convergent
 findings establish that the entire chain of results, from predictive
-performance through the Monte Carlo distribution to the global and
+performance through the \gls{mc} distribution to the global and
 conditional Shapley attributions, is invariant to the stochastic training
 process.
 

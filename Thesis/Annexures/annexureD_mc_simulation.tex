@@ -1,10 +1,10 @@
 % =============================================================
-% Annexure D: Monte Carlo Simulation Procedure
+% Annexure D: \gls{mc} Simulation Procedure
 % =============================================================
-\section{Monte Carlo Simulation Procedure}
+\section{\gls{mc} Simulation Procedure}
 \label{annexure:mc_simulation}
 
-The parametric Monte Carlo simulation generates $B = 100\,000$ synthetic policyholder profiles from marginal distributions estimated on the full dataset. Each profile is encoded, standardised and scored through the trained FunnelDNN to produce a model-implied predicted-cost distribution.
+The parametric \gls{mc} simulation generates $B = 100\,000$ synthetic policyholder profiles from marginal distributions estimated on the full dataset. Each profile is encoded, standardised and scored through the trained FunnelDNN to produce a model-implied predicted-cost distribution.
 
 % -------------------------------------------------------------
 \subsection{Marginal Distributions}
@@ -14,7 +14,7 @@ Table~\ref{tab:mc_marginals} summarises the marginal distribution assumed for ea
 
 \begin{table}[htbp]
 \centering
-\caption{Marginal distributions used for Monte Carlo profile generation.}
+\caption{Marginal distributions used for \gls{mc} profile generation.}
 \label{tab:mc_marginals}
 \begin{tabular}{lll}
 \toprule
@@ -40,7 +40,7 @@ coverage\_level         & Multinomial & 3 levels, estimated proportions \\
 \label{annexure:mc_generate}
 
 \begin{algorithm}[htbp]
-\caption{Parametric Monte Carlo simulation.}
+\caption{Parametric \gls{mc} simulation.}
 \label{alg:mc_simulation}
 \begin{algorithmic}[1]
 \Require Fitted marginals, trained DNN $f_{\boldsymbol{\theta}^*}$, standardisation parameters, sample size $B = 100\,000$
@@ -60,7 +60,7 @@ coverage\_level         & Multinomial & 3 levels, estimated proportions \\
 \subsection{Convergence Diagnostics}
 \label{annexure:mc_convergence}
 
-Monte Carlo convergence was assessed by computing summary statistics (mean, standard deviation, quantiles and Monte Carlo standard error) at pilot sizes $B \in \{1\,000;\allowbreak\; 2\,500;\allowbreak\; 5\,000;\allowbreak\; 10\,000;\allowbreak\; 25\,000;\allowbreak\; 50\,000;\allowbreak\; 100\,000\}$. Stabilisation of the mean and tail quantiles confirmed that $B = 100\,000$ provides adequate precision.
+\gls{mc} convergence was assessed by computing summary statistics (mean, standard deviation, quantiles and \gls{mcse}) at pilot sizes $B \in \{1\,000;\allowbreak\; 2\,500;\allowbreak\; 5\,000;\allowbreak\; 10\,000;\allowbreak\; 25\,000;\allowbreak\; 50\,000;\allowbreak\; 100\,000\}$. Stabilisation of the mean and tail quantiles confirmed that $B = 100\,000$ provides adequate precision.
 
 % -------------------------------------------------------------
 \subsection{Residual-Augmented Sensitivity}
@@ -76,7 +76,7 @@ where $\varepsilon_i$ is drawn with replacement from the centred residual vector
 \subsection{Encoding for MC Profiles}
 \label{annexure:mc_encode}
 
-The same reference-category encoding scheme described in Annexure~\ref{annexure:encoding} was applied to the Monte Carlo profiles, producing an $B \times 22$ feature matrix that matches the trained model's input specification.
+The same reference-category encoding scheme described in Annexure~\ref{annexure:encoding} was applied to the \gls{mc} profiles, producing an $B \times 22$ feature matrix that matches the trained model's input specification.
 
 % -------------------------------------------------------------
 \subsection{DNN Scoring}

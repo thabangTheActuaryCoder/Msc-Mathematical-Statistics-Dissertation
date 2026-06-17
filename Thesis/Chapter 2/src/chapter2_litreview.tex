@@ -15,20 +15,20 @@
 \noindent
 Chapter~\ref{sec:introduction} introduced the tension between predictive
 flexibility and interpretability in health insurance cost prediction and
-outlined a three-stage framework that combines deep neural network regression,
-Monte Carlo simulation and Shapley-value attribution.  This chapter develops
+outlined a three-stage framework that combines \gls{dnn} regression,
+\gls{mc} simulation and Shapley-value attribution.  This chapter develops
 the conceptual and theoretical basis for that framework by reviewing the
 relevant literature in a sequence that mirrors the framework itself: from
 prediction to simulation and then to explanation.
 
 \noindent
-The review begins with the integrated DNN, Monte Carlo and Shapley framework
+The review begins with the integrated DNN, \gls{mc} and Shapley framework
 (Section~\ref{sec:integrating_dnn_mc_shapley}), establishing why prediction
 accuracy alone provides only a partial account of model behaviour and why
 distributional analysis and feature-level attribution are needed as
 complementary tools.  Subsequent sections develop each component in detail:
 supervised regression and neural-network approximation theory supply the
-predictive formulation; Monte Carlo methods extend the fitted prediction
+predictive formulation; \gls{mc} methods extend the fitted prediction
 function from individual point estimates to a model-implied cost distribution;
 and Shapley-value decomposition attributes individual predictions to input
 variables, with particular attention to profiles in the upper tail of the
@@ -42,14 +42,14 @@ Section~\ref{sec:integrating_dnn_mc_shapley} and stated formally in
 Section~\ref{sec:research_gap}.
 
 % =============================================================
-% 2.2  DNN-Monte Carlo-Shapley Framework
+% 2.2  DNN-\gls{mc}-Shapley Framework
 % =============================================================
 
-\subsection{DNN-Monte Carlo-Shapley Framework}
+\subsection{DNN-\gls{mc}-Shapley Framework}
 \label{sec:integrating_dnn_mc_shapley}
 
 \noindent
-Monte Carlo simulation is a long-established framework for analysing the
+\gls{mc} simulation is a long-established framework for analysing the
 behaviour of complex functions by generating samples from a specified input
 distribution and evaluating the function at each sampled point
 \citep{glasserman2004monte, rubinstein2016simulation, owen2013monte}. Its
@@ -60,7 +60,7 @@ outputs form an empirical distribution that can be summarised using
 descriptive quantities such as the mean, variance, quantiles and upper-tail
 probabilities. This approach is particularly useful when the function of
 interest has no convenient closed-form representation, as is often the case
-for nonlinear fitted models such as deep neural networks
+for nonlinear fitted models such as \glspl{dnn}
 \citep{goodfellow2016deep, hornik1989multilayer}. Although such models define
 an explicit computational mapping from inputs to outputs, their fitted response
 surfaces are typically too complex to be examined using closed-form analytical
@@ -83,7 +83,7 @@ difficulty by providing a model-agnostic attribution that satisfies formal
 fairness axioms\footnote{The four axioms are efficiency, symmetry, dummy and
 additivity \citep{shapley1953value, lundberg2017unified}.} regardless of the
 internal structure of the fitted function
-\citep{lundberg2017unified, rozemberczki2022shapley}. Monte Carlo simulation
+\citep{lundberg2017unified, rozemberczki2022shapley}. \gls{mc} simulation
 therefore describes the distributional behaviour of the fitted function, while
 Shapley values describe the variables associated with particular fitted
 predictions. Used jointly, the two methods allow both the output distribution
@@ -106,7 +106,7 @@ activation functions can approximate broad classes of continuous functions
 relationship between policyholder attributes and cost does not need to be
 specified in advance by the researcher. The formal statement of this property
 and its conditions is presented in Chapter~\ref{chap:methods_and_data}. After
-the network has been fitted, Monte Carlo simulation is used to generate a
+the network has been fitted, \gls{mc} simulation is used to generate a
 large synthetic sample of policyholder profiles from parametric distributions
 fitted to the observed training attributes. The fitted network is then
 evaluated at each simulated profile to obtain a model-implied distribution of
@@ -116,7 +116,7 @@ region of that distribution, namely profiles whose fitted predictions exceed
 a chosen upper-tail threshold, as formalised in Section~\ref{high-cost}. The
 precise distributional choices and simulation procedure are specified in
 Chapter~\ref{chap:methods_and_data}. The three components are hierarchically
-justified: the \gls{dnn} provides the fitted prediction surface, Monte Carlo
+justified: the \gls{dnn} provides the fitted prediction surface, \gls{mc}
 simulation examines its behaviour empirically where closed-form analysis is
 unavailable, and Shapley values attribute predictions to input features where
 the network's parameters cannot be interpreted directly.
@@ -135,7 +135,7 @@ developments in artificial intelligence and deep learning in actuarial
 science and concludes that neural-network methods are increasingly being
 adopted across pricing, reserving and risk-classification tasks, typically
 supplementing rather than replacing the established generalised linear
-modelling tradition. The review supports the choice of a deep neural network
+modelling tradition. The review supports the choice of a \gls{dnn}
 as the prediction function in the framework adopted here, but it is positioned
 at the level of a methodological survey and does not prescribe how a fitted
 network should be examined once it has been trained. In particular, it does
@@ -158,7 +158,7 @@ over which attribution is performed. Their analysis is conducted on the
 observed training and test data alone, so the resulting attributions describe
 the fitted model's behaviour on profiles that actually appear in the data. The
 framework adopted here retains \gls{shap} for attribution but applies it to a
-larger synthetic policyholder population generated by Monte Carlo simulation,
+larger synthetic policyholder population generated by \gls{mc} simulation,
 which allows attribution to be examined at policyholder configurations that
 are not individually present in the training data, and in particular within
 the high-cost region of the simulated predicted-cost distribution.
@@ -187,14 +187,14 @@ Taken together, these studies establish that \gls{dnn}-based prediction and
 insurance cost-prediction literature, and that the choice of a \gls{dnn} for
 the prediction layer is justified by recent evidence. What is not yet
 standard, however, is the integrated treatment of a fitted neural network,
-Monte Carlo simulation over a synthetic policyholder population and Shapley
+\gls{mc} simulation over a synthetic policyholder population and Shapley
 attribution at the level of high-cost simulated profiles within a single
 workflow, and it is this combination that the proposed framework places at
 the centre of the analysis.
 
 
 \noindent
-A related three-stage structure combining Monte Carlo simulation, machine-learning prediction and Shapley-based attribution has been proposed in other applied domains. \citep{santos2023explainable} implement such a sequence in an earned-value project-control setting: Monte Carlo simulation is used to generate a large synthetic sample of input configurations representing plausible project states, a machine-learning model is fitted to approximate the relationship between those inputs and a continuous project-performance outcome, and Shapley-based explanations attribute the resulting predictions to individual input variables. Although their empirical context is project management rather than insurance pricing, the workflow is methodologically similar: simulation over a synthetic input space, nonlinear prediction, and post-hoc feature-level attribution. The framework adopted here applies the same three-stage logic to health insurance cost prediction: Monte Carlo simulation generates synthetic policyholder profiles from parametric distributions fitted to the observed training attributes, the fitted \gls{dnn} maps each profile to a predicted cost, and Shapley values decompose those predictions into feature-level contributions, with particular attention given to the high-cost region of the simulated predicted-cost distribution. This adaptation remains subject to the benchmark-data limitations stated above, namely that the conclusions are internal to the modelling workflow and are not direct evidence of real-world pricing practice.
+A related three-stage structure combining \gls{mc} simulation, machine-learning prediction and Shapley-based attribution has been proposed in other applied domains. \citep{santos2023explainable} implement such a sequence in an earned-value project-control setting: \gls{mc} simulation is used to generate a large synthetic sample of input configurations representing plausible project states, a machine-learning model is fitted to approximate the relationship between those inputs and a continuous project-performance outcome, and Shapley-based explanations attribute the resulting predictions to individual input variables. Although their empirical context is project management rather than insurance pricing, the workflow is methodologically similar: simulation over a synthetic input space, nonlinear prediction, and post-hoc feature-level attribution. The framework adopted here applies the same three-stage logic to health insurance cost prediction: \gls{mc} simulation generates synthetic policyholder profiles from parametric distributions fitted to the observed training attributes, the fitted \gls{dnn} maps each profile to a predicted cost, and Shapley values decompose those predictions into feature-level contributions, with particular attention given to the high-cost region of the simulated predicted-cost distribution. This adaptation remains subject to the benchmark-data limitations stated above, namely that the conclusions are internal to the modelling workflow and are not direct evidence of real-world pricing practice.
 
 \noindent
 Figure~\ref{fig:integrated_framework} summarises the framework. The predictive
@@ -342,7 +342,7 @@ conditional Shapley summaries.
             {Input distribution $\widehat{F}_{X}$};
 
         \node[process] (mcsim) at (\colB, \rowTwo)
-            {Monte Carlo simulation\\[2pt]
+            {\gls{mc} simulation\\[2pt]
              $\mathbf{X}^{(1)},\ldots,\mathbf{X}^{(M)}
              \stackrel{\mathrm{iid}}{\sim}\widehat{F}_{X}$};
 
@@ -528,25 +528,25 @@ preprocessed benchmark data, not as a causal model of healthcare expenditure and
 not as evidence of real-world insurer pricing rules. A \gls{dnn} is useful
 in this setting because it can represent nonlinearities and interactions among
 policyholder attributes without requiring all interaction terms to be specified
-manually, as would be necessary in a generalised linear model or polynomial
+manually, as would be necessary in a \gls{glm} or polynomial
 regression \citep{goodfellow2016deep, hastie2009elements}. Such flexibility is
 relevant where predicted costs depend on combinations of demographic,
 behavioural and health-related variables rather than on isolated predictors
 alone \citep{orji2024explainable, samiuddin2023health}. However, the use of a
 \gls{dnn} does not imply that neural networks are automatically superior to
-generalised linear models, tree-based models or other actuarial models for
+\glspl{glm}, tree-based models or other actuarial models for
 tabular insurance data \citep{richman2021ai}. Its role is to provide a nonlinear
 fitted prediction surface that can be evaluated, simulated and interpreted
 within the proposed framework.
 
 % --------------------------------------------------------
-% 2.2.2 Monte Carlo Simulation
+% 2.2.2 \gls{mc} Simulation
 % --------------------------------------------------------
-\subsubsection{Monte Carlo Simulation}
+\subsubsection{\gls{mc} Simulation}
 \label{montecarlo_propagation}
 
 \noindent
-The Monte Carlo stage studies how the fitted prediction surface
+The \gls{mc} stage studies how the fitted prediction surface
 \(\widehat{m}(\mathbf{x})\) defined in equation~\eqref{eq:fitted_model} responds
 to variation in the input attributes. Let \(\mathcal{D}_{\mathrm{train}}\)
 denote the training partition of the preprocessed benchmark data and define
@@ -593,7 +593,7 @@ profiles,
     \stackrel{\mathrm{iid}}{\sim}
     \widehat{F}_{X},
 \end{equation}
-\equationlistentry{Monte Carlo sample from input distribution}
+\equationlistentry{\gls{mc} sample from input distribution}
 and evaluates the fitted network at each profile to obtain the corresponding
 predicted costs,
 \begin{equation}
@@ -603,7 +603,7 @@ predicted costs,
     \widehat{m}\!\left(\mathbf{X}^{(\ell)}\right),
     \qquad \ell = 1, \ldots, M.
 \end{equation}
-\equationlistentry{Fitted predictions for Monte Carlo samples}
+\equationlistentry{Fitted predictions for \gls{mc} samples}
 The collection \(\{\widehat{Y}^{(\ell)}\}_{\ell=1}^{M}\) is the
 model-implied predicted-cost distribution under \(\widehat{F}_{X}\)
 \citep{glasserman2004monte, rubinstein2016simulation, owen2013monte}.
@@ -622,7 +622,7 @@ surface or parameter uncertainty in \(\widehat{\theta}\). Second, because
 equation~\eqref{eq:input_law}, the simulated profiles populate the input space
 more broadly than the training data, so \(\mathcal{X}_{\mathrm{sim}}\) will
 contain attribute combinations that \(\widehat{m}\) did not encounter during
-training. Residual-augmented Monte Carlo and predictive-uncertainty analyses
+training. Residual-augmented \gls{mc} and predictive-uncertainty analyses
 that extend beyond the fitted surface are developed in
 Chapter~\ref{chap:methods_and_data}.
 
@@ -632,7 +632,7 @@ Chapter~\ref{chap:methods_and_data}.
 
 \subsubsection{Shapley attribution}
 \label{shapley_attribution}
-Monte Carlo input simulation must be distinguished from Monte Carlo
+\gls{mc} input simulation must be distinguished from \gls{mc}
 Shapley estimation. Whereas input simulation studies the predicted-cost
 distribution under \(\widehat{F}_{X}\), Shapley estimation is a computational
 device for approximating exact Shapley values when the required summation over
@@ -668,7 +668,7 @@ model-prediction setting, \(v_{\mathbf{x}}(S)\) represents the fitted prediction
 \end{equation}
 \equationlistentry{Shapley value function}
 
-This notation separates the input distribution used for Monte Carlo simulation,
+This notation separates the input distribution used for \gls{mc} simulation,
 \(\widehat{F}_{X}\), from the background distribution used for Shapley
 evaluation, \(\widehat{F}_{B}\). These distributions may coincide, but they
 need not be identical. The empirical implementation therefore reports the
@@ -708,7 +708,7 @@ distribution, commonly corresponding to \(v_{\mathbf{x}}(\varnothing)\), and
 profile.
 
   \noindent
-  When exact Shapley values are not computed, a permutation-based Monte Carlo
+  When exact Shapley values are not computed, a permutation-based \gls{mc}
   approximation may be used. Let
   \(\pi^{(1)},\ldots,\pi^{(R)}\) be sampled permutations of \(\mathcal{P}\), and
   let \(S_j(\pi^{(r)})\) denote the set of features appearing before feature \(j\)
@@ -843,7 +843,7 @@ profile.
 \label{sec:statistical_learning_supervised_regression}
 
   \noindent
-  The predictive component of the DNN-Monte Carlo-Shapley workflow is a
+  The predictive component of the DNN-\gls{mc}-Shapley workflow is a
   supervised statistical-learning problem. Statistical learning concerns the
   estimation of relationships between observed variables for purposes such as
   prediction, interpretation and model assessment
@@ -880,8 +880,8 @@ Regression methods are evaluated on a continuous scale using prediction-error me
           y_i - \widehat{m}(\mathbf{x}_i)
       \right)^{2}.
   \end{equation}
-  \equationlistentry{Mean squared error}
-  The root mean squared error is the square root of the mean squared error,
+  \equationlistentry{\Gls{mse}}
+  The \gls{rmse} is the square root of the \gls{mse},
   \begin{equation}
   \label{eq:rmse}
       \mathrm{RMSE}
@@ -896,10 +896,10 @@ Regression methods are evaluated on a continuous scale using prediction-error me
       =
       \sqrt{\mathrm{MSE}}.
   \end{equation}
-  \equationlistentry{Root mean squared error}
+  \equationlistentry{\Gls{rmse}}
   Thus, \gls{rmse} measures the typical size of the prediction error after
   squaring errors, averaging them and returning the result to the original scale
-  of the response variable. The mean absolute error is
+  of the response variable. The \gls{mae} is
   \begin{equation}
   \label{eq:mae}
       \mathrm{MAE}
@@ -910,8 +910,8 @@ Regression methods are evaluated on a continuous scale using prediction-error me
           y_i - \widehat{m}(\mathbf{x}_i)
       \right|.
   \end{equation}
-  \equationlistentry{Mean absolute error}
-  The coefficient of determination is
+  \equationlistentry{\Gls{mae}}
+  The \gls{r2} is
   \begin{equation}
   \label{eq:r_squared}
       R^{2}
@@ -931,7 +931,7 @@ Regression methods are evaluated on a continuous scale using prediction-error me
       \frac{1}{n_{\mathrm{eval}}}
       \sum_{i\in\mathcal{I}_{\mathrm{eval}}} y_i .
   \end{equation}
-  \equationlistentry{Coefficient of determination}
+  \equationlistentry{\Gls{r2}}
   The \(R^{2}\) statistic measures the relative reduction in squared prediction
   error compared with the mean-only baseline \(\bar{y}_{\mathrm{eval}}\) on the
   same evaluation sample. On held-out data, \(R^{2}\) may be negative if the
@@ -961,7 +961,7 @@ Regression methods are evaluated on a continuous scale using prediction-error me
       \widehat{\beta}_{j}\,x_{ij}.
   \end{equation}
   \equationlistentry{Linear predictor}
-  Generalised linear models extend this formulation by specifying a distributional
+  \Glspl{glm} extend this formulation by specifying a distributional
   family for the response and linking the conditional mean
   \begin{equation}
   \label{eq:conditional_mean}
@@ -980,10 +980,10 @@ Regression methods are evaluated on a continuous scale using prediction-error me
       \sum_{j=1}^{p}
       \beta_{j}\,x_{ij}.
   \end{equation}
-  \equationlistentry{Generalised linear model link function}
+  \equationlistentry{\Gls{glm} link function}
   These models remain attractive in actuarial work because their assumptions,
   coefficients and diagnostics are relatively transparent, and because
-  generalised linear modelling has a long history in insurance pricing and risk modelling \citep{dobson2008introduction,denuit2007actuarial}. A purely linear predictor, however, cannot represent nonlinear predictor effects without explicitly specifying transformations or basis expansions in advance.
+  \gls{glm} modelling has a long history in insurance pricing and risk modelling \citep{dobson2008introduction,denuit2007actuarial}. A purely linear predictor, however, cannot represent nonlinear predictor effects without explicitly specifying transformations or basis expansions in advance.
 
   \noindent
   Because \glspl{glm} remain the industry-standard framework for health
@@ -1022,7 +1022,7 @@ functions \citep{goodfellow2016deep}. Secondly, neural networks have been used
 in actuarial science as efficient surrogate models for computationally demanding
 valuation and prediction problems \citep{hejazi2016neural}. These properties
 make a \gls{dnn} suitable for estimating a fitted prediction function
-\(\widehat{m}\) that can be evaluated repeatedly in the Monte Carlo and
+\(\widehat{m}\) that can be evaluated repeatedly in the \gls{mc} and
 Shapley-value stages. Under smooth activation choices, the fitted function is
 differentiable; under common piecewise-linear activations, it is piecewise
 differentiable. In either case, it provides a flexible parametric prediction
@@ -1035,7 +1035,7 @@ tabular-data methods. Tree-based models and ensemble methods such as
 interactions, and empirical work on structured datasets shows that they are
 often strong competitors \citep{grinsztajn2022why,orji2024explainable}. The
 \gls{dnn} is used because it provides a fitted nonlinear prediction
-function that can be repeatedly evaluated and then connected to Monte Carlo
+function that can be repeatedly evaluated and then connected to \gls{mc}
 input simulation and Shapley-value explanation. Tree-based models remain useful
 benchmarks for contextualising empirical performance.
 
@@ -1043,7 +1043,7 @@ benchmarks for contextualising empirical performance.
 The supervised regression formulation also clarifies the roles of the Monte
 Carlo and Shapley stages. The learning task is to estimate \(m(\cdot)\) from
 labelled observations in \(\mathcal{D}\), producing the fitted prediction
-function \(\widehat{m}(\cdot)\). Monte Carlo simulation subsequently studies the
+function \(\widehat{m}(\cdot)\). \gls{mc} simulation subsequently studies the
 distribution of fitted predictions under input variation. Shapley values then
 attribute fitted predictions to input variables. Predictive accuracy,
 distributional behaviour and attributional interpretation therefore address
@@ -1115,18 +1115,18 @@ regression is therefore the appropriate learning formulation, with the fitted
 interpreted.
 \newpage
 % =============================================================
-% 2.4  Deep Neural Networks for Regression
+% 2.4  \Glspl{dnn} for Regression
 % =============================================================
 
-\subsection{Deep Neural Networks for Regression}
+\subsection{\Glspl{dnn} for Regression}
 \label{sec:dnn_regression}
 
 \noindent
-A deep neural network is a composition of layers that maps an input vector to an
+A \gls{dnn} is a composition of layers that maps an input vector to an
 output prediction. In regression problems, the aim is to approximate an unknown
 function that maps explanatory variables to a continuous response
 \citep{goodfellow2016deep, bishop2006pattern}.  Recent studies have examined the
-conditions under which deep neural networks are competitive with tree-based
+conditions under which \glspl{dnn} are competitive with tree-based
 models on tabular data, finding that well-tuned simple networks can match
 complex architectures \citep{kadra2021welltuned} and that the relative advantage
 of deep learning over gradient boosting depends on dataset characteristics such
@@ -1283,8 +1283,7 @@ optimisation dynamics of the network. Activation functions introduce
 nonlinearity into the layer recursion; without them, a composition of affine
 layers would reduce to a single affine transformation. Several activation
 functions may be considered for the hidden layers, including the hyperbolic
-tangent function, the rectified linear unit, the continuously differentiable
-exponential linear unit and the Gaussian error linear unit
+tangent function, the \gls{relu}, the \gls{celu} and the \gls{gelu}
 \citep{goodfellow2016deep,lee2023gelu}.
 
 \noindent
@@ -1304,14 +1303,14 @@ large positive or negative inputs can lead to small gradients in deeper
 networks.
 
 \noindent
-The rectified linear unit is defined by
+The \gls{relu} is defined by
 \begin{equation}
 \label{eq:relu}
     \operatorname{ReLU}(z)
     =
     \max\{0,z\}.
 \end{equation}
-\equationlistentry{Rectified linear unit}
+\equationlistentry{\Gls{relu}}
 The \gls{relu} is widely used in feed-forward neural networks because it is
 simple, computationally efficient and less prone to the saturation behaviour
 associated with some bounded activation functions
@@ -1319,7 +1318,7 @@ associated with some bounded activation functions
 inputs are mapped to zero, so some units may become inactive during training.
 
 \noindent
-The continuously differentiable exponential linear unit with parameter
+The \gls{celu} with parameter
 \(\alpha>0\) is defined by
 \begin{equation}
 \label{eq:celu}
@@ -1336,7 +1335,7 @@ branch of \gls{relu} while assigning a smooth nonzero transformation to negative
 inputs \citep{barron2017celu}.
 
 \noindent
-The Gaussian error linear unit is defined by
+The \gls{gelu} is defined by
 \begin{equation}
 \label{eq:gelu}
     \operatorname{GELU}(z)
@@ -1376,7 +1375,7 @@ their theoretical definitions alone.
 
 \noindent
 The \gls{dnn} is trained by minimising a loss function. For continuous cost
-prediction, mean squared error is a natural objective:
+prediction, \gls{mse} is a natural objective:
 \begin{equation}
 \label{eq:mse_loss}
     \mathcal{L}(\theta)
@@ -1389,7 +1388,7 @@ prediction, mean squared error is a natural objective:
         f_{\theta}(\mathbf{x}_i)
     \right)^2,
 \end{equation}
-\equationlistentry{Mean squared error loss}
+\equationlistentry{\Gls{mse} loss}
 where \(\mathcal{I}_{\mathrm{train}}\) is the training index set and
 \(n_{\mathrm{train}}=|\mathcal{I}_{\mathrm{train}}|\). The fitted parameters are
 obtained by solving
@@ -1577,7 +1576,7 @@ results.
 \noindent
 The optimiser is not a distributional assumption about insurance costs. It is
 the numerical mechanism used to estimate \(\widehat{\theta}\). This distinction
-is important because the subsequent Monte Carlo and Shapley analyses are applied
+is important because the subsequent \gls{mc} and Shapley analyses are applied
 to the fitted function \(f_{\widehat{\theta}}\). The stability and predictive
 quality of the fitted \gls{dnn} therefore affect not only point prediction, but
 also the model-implied predicted-cost distribution and the feature-attribution
@@ -2007,7 +2006,7 @@ insurance populations with different risk profiles, benefit structures or
 underlying demographics. Internal predictive validity on the available dataset
 must therefore be distinguished from external validity for real insurance
 settings. The analysis is therefore framed as a methodological study of
-\gls{dnn} prediction, Monte Carlo input simulation and Shapley-value
+\gls{dnn} prediction, \gls{mc} input simulation and Shapley-value
 interpretation on a structured health insurance benchmark, with any claims about
 real-world insurance populations requiring further validation.
 
@@ -2028,7 +2027,7 @@ The health-insurance setting gives this regression problem its actuarial
 meaning. A predicted monetary outcome is not merely an abstract response
 variable; it is connected to premium rating, claim-cost estimation and risk
 segmentation. Classical actuarial pricing often relies on transparent
-regression-based models, especially generalised linear models, while the
+regression-based models, especially \glspl{glm}, while the
 \gls{dnn} considered here plays the related role of a flexible nonlinear
 estimator of the cost surface rather than a replacement for actuarial reasoning.
 
@@ -2057,7 +2056,7 @@ neural networks for claim frequency and gamma neural networks for claim
 severity within a classical frequency-severity structure. Their empirical
 results on real-world health insurance data show that neural-network models
 achieve lower out-of-sample deviance and better risk diversification than
-established regression methods such as generalised linear models, as measured
+established regression methods such as \glspl{glm}, as measured
 by the ABC lift metric. The relevance of this work is that neural networks need
 not be treated as generic black-box alternatives; they can be incorporated
 within actuarial pricing logic to improve both accuracy and risk segmentation.
@@ -2066,7 +2065,7 @@ within actuarial pricing logic to improve both accuracy and risk segmentation.
 A complementary approach to neural-network pricing is to impose explicit shape
 constraints during training.  \citep{richman2024icenet} develop the ICEnet,
 which adds smoothness and monotonicity penalty terms to the loss function so
-that the network's Individual Conditional Expectation outputs vary in a manner
+that the network's \Gls{ice} outputs vary in a manner
 consistent with actuarial domain knowledge.  Applied to claims frequency
 prediction on the French motor third-party liability dataset, the ICEnet
 achieves a test-set Poisson deviance within $0.0001$ of the unconstrained
@@ -2080,13 +2079,13 @@ Section~\ref{sec:comparison_constrained_nn}.
 \noindent
 Alongside neural-network approaches, tree-based ensemble methods have become
 widely used for insurance cost prediction on structured tabular data.
-\citep{orji2024explainable} apply random forests and gradient-boosted trees to
+\citep{orji2024explainable} apply \glspl{rf} and gradient-boosted trees to
 health insurance cost data and report predictive performance comparable to, and
 in some configurations exceeding, that of neural networks.  More broadly,
 \citep{grinsztajn2022why} provide systematic evidence that tree-based models,
 particularly gradient-boosted implementations such as \gls{xgboost}
 \citep{chen2016xgboost}, building on the gradient boosting framework of
-\citep{friedman2001greedy}, frequently match or outperform deep neural networks
+\citep{friedman2001greedy}, frequently match or outperform \glspl{dnn}
 on
 medium-sized tabular datasets of the kind encountered in actuarial practice.
 Because insurance cost prediction is fundamentally an actuarial problem defined
@@ -2094,7 +2093,7 @@ on structured policyholder attributes rather than on unstructured data such as
 images or text, tree-based methods represent a credible alternative to the
 \gls{dnn} and may in some settings be the preferred model class.  The present
 dissertation nonetheless selects the \gls{dnn} as the primary model for the
-Monte Carlo and Shapley workflow because its smooth, differentiable prediction
+\gls{mc} and Shapley workflow because its smooth, differentiable prediction
 surface is directly compatible with gradient-based Shapley computation and
 continuous forward-pass evaluation over large simulated input samples.  A \gls{rf}
 and an \gls{xgboost} regressor are fitted as benchmarks to contextualise the
@@ -2146,7 +2145,7 @@ dynamics in an insurer's full portfolio.
 
 \noindent
 Ordinary cost prediction is therefore extended in two ways. First, after fitting
-the \gls{dnn}, Monte Carlo input simulation is used to generate many
+the \gls{dnn}, \gls{mc} input simulation is used to generate many
 possible policyholder profiles and examine the distribution of model-implied
 predicted costs. Second, Shapley-value interpretation is used to identify the
 variables that drive individual predictions and high-cost simulated profiles.
@@ -2157,7 +2156,7 @@ vary across simulated profiles and which variables the model attributes to the
 upper tail of the predicted-cost distribution.
 
 \noindent
-The interpretation remains model-based. The Monte Carlo distribution describes
+The interpretation remains model-based. The \gls{mc} distribution describes
 variation in fitted predictions under the selected input distribution, not the
 full population distribution of realised healthcare expenditure. Similarly,
 Shapley values explain the fitted \gls{dnn}'s predictions relative to the
@@ -2179,7 +2178,7 @@ empirical claims within the limits of the data.
 
 \noindent
 Validation analysis addresses whether the fitted \gls{dnn} generalises within the supplied
-training, validation and test structure, but Monte Carlo input simulation requires an
+training, validation and test structure, but \gls{mc} input simulation requires an
 additional diagnostic step. Even when a fitted prediction function
 \(f_{\widehat{\theta}}\) has acceptable validation and test performance, the
 simulation results may be misleading if the input profiles are generated from an
@@ -2194,7 +2193,7 @@ random input vector \(\mathbf{X}\). The distribution of simulated predictions
 depends not only on the fitted \gls{dnn}, but also on the assumed or estimated
 distribution of policyholder attributes. Input distribution diagnostics therefore
 provide the empirical basis for specifying the input distribution
-\(\widehat{F}_{X}\) used later in the Monte Carlo component of the framework.
+\(\widehat{F}_{X}\) used later in the \gls{mc} component of the framework.
 
 \noindent
 Let
@@ -2273,7 +2272,7 @@ assumptions.
 
 \noindent
 The response variable \text{charges} is also subject to diagnostic analysis,
-even though Monte Carlo input simulation focuses primarily on the predictors.
+even though \gls{mc} input simulation focuses primarily on the predictors.
 Insurance cost variables often display right-skewness, heterogeneity and
 upper-tail behaviour \citep{denuit2007actuarial}. If the response is strongly
 skewed, a log transformation of the form
@@ -2316,7 +2315,7 @@ and its implementation are detailed in Chapter~\ref{chap:methods_and_data}.
 Validation analysis assesses whether
 \(f_{\widehat{\theta}}\) performs adequately on held-out observations from the
 available data distribution. Input distribution diagnostics assess whether the
-profiles generated for Monte Carlo simulation remain compatible with that same
+profiles generated for \gls{mc} simulation remain compatible with that same
 empirical domain. Without both checks, the subsequent predicted-cost
 distribution and high-cost Shapley summaries could reflect unrealistic simulated
 profiles rather than meaningful behaviour of the fitted model.
@@ -2551,15 +2550,15 @@ vectors are drawn to form the simulation design matrix
 \(\mathcal{X}_{\mathrm{sim}} \in \mathbb{R}^{M \times p}\).
 
 % =============================================================
-% 2.8  Foundations of Monte Carlo
+% 2.8  Foundations of \gls{mc}
 % =============================================================
 
-\subsection{Foundations of Monte Carlo}
+\subsection{Foundations of \gls{mc}}
 \label{sec:monte_carlo_foundations}
 
 \noindent
-Monte Carlo simulation rests on a small number of foundational results
-concerning the crude Monte Carlo estimator, its convergence
+\gls{mc} simulation rests on a small number of foundational results
+concerning the crude \gls{mc} estimator, its convergence
 properties and the precision measures that underpin the analysis
 \citep{glasserman2004monte, rubinstein2016simulation, robert2004monte,
 kroese2011handbook}.
@@ -2582,7 +2581,7 @@ If
     F,
 \end{equation}
 \equationlistentry{IID sample from distribution $F$}
-then the crude Monte Carlo estimator of \(\theta\) is
+then the crude \gls{mc} estimator of \(\theta\) is
 \begin{equation}
 \label{eq:mc_estimator}
     \widehat{\theta}_{M}
@@ -2594,7 +2593,7 @@ then the crude Monte Carlo estimator of \(\theta\) is
         X^{(\ell)}
     \right).
 \end{equation}
-\equationlistentry{Crude Monte Carlo estimator}
+\equationlistentry{Crude \gls{mc} estimator}
 Under standard regularity conditions, the law of large numbers implies
 \begin{equation}
 \label{eq:mc_lln}
@@ -2606,7 +2605,7 @@ Under standard regularity conditions, the law of large numbers implies
     \qquad
     M\longrightarrow\infty.
 \end{equation}
-\equationlistentry{Law of large numbers for Monte Carlo}
+\equationlistentry{Law of large numbers for \gls{mc}}
 If
 \begin{equation}
 \label{eq:mc_variance_condition}
@@ -2627,12 +2626,12 @@ then
     =
     \frac{\sigma_g^2}{M},
 \end{equation}
-\equationlistentry{Variance of Monte Carlo estimator}
-which yields the familiar \(M^{-1/2}\) convergence rate of ordinary Monte Carlo
+\equationlistentry{Variance of \gls{mc} estimator}
+which yields the familiar \(M^{-1/2}\) convergence rate of ordinary \gls{mc}
 simulation \citep{caflisch1998monte,glasserman2004monte}.
 
 \noindent
-The Monte Carlo standard error quantifies the simulation error associated with
+The \gls{mcse} quantifies the simulation error associated with
 using a finite number of random draws. It is estimated by
 \begin{equation}
 \label{eq:mcse}
@@ -2643,7 +2642,7 @@ using a finite number of random draws. It is estimated by
     =
     \frac{s_M}{\sqrt{M}},
 \end{equation}
-\equationlistentry{Monte Carlo standard error}
+\equationlistentry{\gls{mcse}}
 where
 \begin{equation}
 \label{eq:mc_sample_variance}
@@ -2676,8 +2675,8 @@ By the central limit theorem,
     \;
     N(0,1),
 \end{equation}
-\equationlistentry{Central limit theorem for Monte Carlo}
-giving the approximate \(100(1-\alpha)\%\) Monte Carlo confidence interval
+\equationlistentry{Central limit theorem for \gls{mc}}
+giving the approximate \(100(1-\alpha)\%\) \gls{mc} confidence interval
 \begin{equation}
 \label{eq:mc_ci}
     \widehat{\theta}_{M}
@@ -2685,8 +2684,8 @@ giving the approximate \(100(1-\alpha)\%\) Monte Carlo confidence interval
     z_{1-\alpha/2}
     \frac{s_M}{\sqrt{M}}.
 \end{equation}
-\equationlistentry{Monte Carlo confidence interval}
-This interval describes uncertainty due to the finite number of Monte Carlo
+\equationlistentry{\gls{mc} confidence interval}
+This interval describes uncertainty due to the finite number of \gls{mc}
 draws. It does not, by itself, represent all sources of statistical uncertainty
 in the fitted \gls{dnn}, the input distribution or the realised insurance cost.
 
@@ -2707,10 +2706,10 @@ directly to those summaries.
 \label{sec:variance_reduction_tail_simulation}
 
 \noindent
-For many quantities, ordinary Monte Carlo simulation is sufficient when the
-simulation budget is large and the Monte Carlo standard error is reported.
+For many quantities, ordinary \gls{mc} simulation is sufficient when the
+simulation budget is large and the \gls{mcse} is reported.
 However, when the quantity of interest is a tail probability, a high quantile or
-a rare high-cost event, crude Monte Carlo can become inefficient because few
+a rare high-cost event, crude \gls{mc} can become inefficient because few
 simulated draws fall in the region of interest. This issue is directly relevant
 to insurance because high-cost events may be financially important even when
 they are relatively rare \citep{glasserman2004monte}.  The statistical
@@ -2741,7 +2740,7 @@ where
     \widehat{F}_{X}.
 \]
 Given simulated predictions
-\(\widehat{Y}^{(1)},\ldots,\widehat{Y}^{(M)}\), the crude Monte Carlo estimator
+\(\widehat{Y}^{(1)},\ldots,\widehat{Y}^{(M)}\), the crude \gls{mc} estimator
 of \(p_u\) is
 \[
     \widehat{p}_u
@@ -2792,7 +2791,7 @@ The relative standard error is approximately
 \]
 When \(p_u\) is small, the expected number of exceedances,
 \(Mp_u\), may remain small unless \(M\) is large. This explains why rare-event
-estimation can be difficult under crude Monte Carlo sampling.
+estimation can be difficult under crude \gls{mc} sampling.
 
 \noindent
 Importance sampling is one classical variance-reduction method. Suppose that
@@ -2888,7 +2887,7 @@ level. Stratification is useful when these groups are expected to contribute
 differently to the predicted-cost distribution \citep{rubinstein2016simulation}.
 
 \noindent
-Quasi-Monte Carlo methods replace independent random points with
+Quasi-\gls{mc} methods replace independent random points with
 low-discrepancy sequences designed to cover the unit cube more evenly. If
 \[
     \mathbf{u}^{(1)},\ldots,\mathbf{u}^{(M)}
@@ -2896,7 +2895,7 @@ low-discrepancy sequences designed to cover the unit cube more evenly. If
     [0,1]^p
 \]
 are low-discrepancy points and \(T\) maps uniform vectors to input profiles, the
-quasi-Monte Carlo estimator is
+quasi-\gls{mc} estimator is
 \[
     \widehat{\theta}_{\mathrm{QMC}}
     =
@@ -2911,7 +2910,7 @@ quasi-Monte Carlo estimator is
     \right).
 \]
 For sufficiently smooth integrands and moderate effective dimension,
-quasi-Monte Carlo methods can improve convergence relative to ordinary Monte
+quasi-\gls{mc} methods can improve convergence relative to ordinary Monte
 Carlo, with rates closer to
 \[
     O
@@ -2927,12 +2926,12 @@ than the usual
         M^{-1/2}
     \right)
 \]
-Monte Carlo rate \citep{caflisch1998monte,lemieux2009monte,owen2013monte}.
+\gls{mc} rate \citep{caflisch1998monte,lemieux2009monte,owen2013monte}.
 
 \noindent
 In the present framework, variance-reduction methods are primarily relevant for
 interpreting high-cost simulated profiles. The main simulation exercise may use
-crude Monte Carlo or empirical resampling, but the variance-reduction literature
+crude \gls{mc} or empirical resampling, but the variance-reduction literature
 clarifies why tail quantities require care when reporting precision. If
 high-cost probabilities, upper quantiles or conditional Shapley summaries for
 extreme predicted costs are estimated, the simulation size and precision of
@@ -2955,7 +2954,7 @@ confidence interval, then a rough simulation-size requirement is
     \right)^2.
 \]
 This expression connects the simulation budget to the desired numerical
-precision of the reported Monte Carlo summaries.
+precision of the reported \gls{mc} summaries.
 
 \noindent
 Tail simulation also connects to Shapley-value
@@ -2976,7 +2975,7 @@ profiles on which the high-cost interpretability analysis is based.
 \label{sec:explainability_shapley_shap}
 
 \noindent
-Deep neural networks are flexible nonlinear prediction models, but their flexibility often comes at the cost of interpretability. In insurance applications, this is a serious practical and regulatory concern. A model may produce accurate predictions, but insurers, regulators and policyholders may still require an explanation of why a particular profile receives a high predicted cost. This motivates the use of explainable artificial intelligence methods \citep{lundberg2017unified, molnar2022interpretable}.
+\Glspl{dnn} are flexible nonlinear prediction models, but their flexibility often comes at the cost of interpretability. In insurance applications, this is a serious practical and regulatory concern. A model may produce accurate predictions, but insurers, regulators and policyholders may still require an explanation of why a particular profile receives a high predicted cost. This motivates the use of explainable artificial intelligence methods \citep{lundberg2017unified, molnar2022interpretable}.
 
 \noindent
 Shapley values originate in cooperative game theory and provide a principled axiomatic method for allocating a total payoff among players \citep{shapley1953value}. In machine learning, the players are the input variables and the payoff is the model prediction. The Shapley value of feature \(j\) measures the average marginal contribution of that feature across all possible subsets of features, as formalised in equation~\eqref{eq:shapley_exact}. The Shapley value is the unique solution satisfying four axioms: efficiency (contributions sum to the total prediction shift), symmetry (identically contributing features receive identical values), dummy (a feature that never changes the value receives zero), and additivity \citep{shapley1953value}.
@@ -2999,7 +2998,7 @@ Large values of \(I_j\) indicate that feature \(j\) tends to contribute strongly
 In health insurance cost prediction, Shapley values can help identify whether variables such as smoking status, age, \gls{bmi}, medical history, occupation, region or coverage level are driving predicted charges. The model-based interpretation caveat stated in Section~\ref{high-cost} applies equally here: Shapley contributions reflect the fitted model's attributions, not causal effects. This distinction is particularly important when working with generated or synthetic health insurance data, where Shapley values explain the relationships learned from the dataset's generating structure rather than from real-world pricing processes.
 
 \noindent
-The dissertation extends ordinary Shapley analysis by connecting it to Monte Carlo simulation. Instead of computing Shapley values only on the observed test set, the dissertation also examines Shapley values for simulated policyholder profiles, concentrating on the high-cost region of the model-implied prediction distribution. Let \(\widehat{Y} = \widehat{m}(\mathbf{X})\) denote the predicted cost for a simulated input profile and let \(\phi_j(\mathbf{X})\) denote the Shapley contribution of feature \(j\). For a high-cost threshold \(u\), the conditional Shapley contribution of feature \(j\) is
+The dissertation extends ordinary Shapley analysis by connecting it to \gls{mc} simulation. Instead of computing Shapley values only on the observed test set, the dissertation also examines Shapley values for simulated policyholder profiles, concentrating on the high-cost region of the model-implied prediction distribution. Let \(\widehat{Y} = \widehat{m}(\mathbf{X})\) denote the predicted cost for a simulated input profile and let \(\phi_j(\mathbf{X})\) denote the Shapley contribution of feature \(j\). For a high-cost threshold \(u\), the conditional Shapley contribution of feature \(j\) is
 \[
 \mathbb{E}
 \!\left[
@@ -3011,7 +3010,7 @@ The dissertation extends ordinary Shapley analysis by connecting it to Monte Car
 This quantity answers a targeted actuarial question: among the profiles that the model regards as high-cost, which variables contribute most strongly to those predictions?
 
 \noindent
-Using Monte Carlo samples \(\mathbf{X}^{(1)}, \ldots, \mathbf{X}^{(M)}\), the conditional Shapley contribution is estimated by the signed average \(\widehat{\Phi}_{j,u}\) and the magnitude-based version \(\widehat{A}_{j,u}\) defined in equations~\eqref{eq:signed_shapley_high} and~\eqref{eq:abs_shapley_high}. This conditional interpretation moves beyond ordinary global feature ranking by focusing on the part of the prediction distribution that is most relevant for insurance risk analysis.
+Using \gls{mc} samples \(\mathbf{X}^{(1)}, \ldots, \mathbf{X}^{(M)}\), the conditional Shapley contribution is estimated by the signed average \(\widehat{\Phi}_{j,u}\) and the magnitude-based version \(\widehat{A}_{j,u}\) defined in equations~\eqref{eq:signed_shapley_high} and~\eqref{eq:abs_shapley_high}. This conditional interpretation moves beyond ordinary global feature ranking by focusing on the part of the prediction distribution that is most relevant for insurance risk analysis.
 
 
 % =============================================================
@@ -3023,7 +3022,7 @@ Using Monte Carlo samples \(\mathbf{X}^{(1)}, \ldots, \mathbf{X}^{(M)}\), the co
 
 \noindent
 Supervised regression provides the predictive formulation,
-the \gls{dnn} supplies a fitted nonlinear prediction surface, Monte Carlo
+the \gls{dnn} supplies a fitted nonlinear prediction surface, \gls{mc}
 simulation propagates variation in the input profiles, and Shapley values
 provide feature-level attribution for fitted predictions. Each of these
 components is individually well established in the statistical and
@@ -3039,13 +3038,13 @@ within a single, reproducible workflow creates a new analytical
 capability applied here to health insurance cost prediction.
 
 \noindent
-Monte Carlo simulation has a long history in actuarial science and quantitative
+\gls{mc} simulation has a long history in actuarial science and quantitative
 finance, where it is used primarily for loss reserving, aggregate loss
 distributions, solvency capital estimation and derivative pricing
 \citep{glasserman2004monte}. In these applications the simulation target is
 typically a financial or insurance outcome variable, and the objective is to
 estimate a distributional quantity such as a quantile or expected shortfall. The
-use of Monte Carlo simulation to generate a synthetic input space and propagate
+use of \gls{mc} simulation to generate a synthetic input space and propagate
 it through a fitted prediction function, so that the model-implied
 predicted-cost distribution can be examined, is less standard in the
 health-insurance cost-prediction literature.
@@ -3062,7 +3061,7 @@ wide range of Shapley-value applications in machine learning but does not
 discuss conditioning Shapley attribution on simulated prediction regions.
 
 \noindent
-At the prediction stage, several studies fit deep neural networks or comparable
+At the prediction stage, several studies fit \glspl{dnn} or comparable
 machine-learning models to health-insurance cost data and evaluate predictive
 performance using standard regression metrics
 \citep{samiuddin2023health, dreweboss2022deep, kaushik2022machine}. These
@@ -3098,5 +3097,5 @@ The conceptual framework, theoretical foundations and research gap developed
 in this chapter provide the basis for the empirical methodology that follows.
 Chapter~\ref{chap:methods_and_data} translates these components into a
 concrete methodological workflow, specifying the benchmark dataset, preprocessing
-protocol, network architecture, Monte Carlo simulation design and
+protocol, network architecture, \gls{mc} simulation design and
 Shapley-value implementation.

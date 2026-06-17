@@ -6,16 +6,16 @@
 \label{chap:methods_and_data}
 
 \noindent
-This chapter translates the conceptual DNN, Monte Carlo and Shapley framework
+This chapter translates the conceptual DNN, \gls{mc} and Shapley framework
 of Chapter~\ref{sec:literature_review} into a concrete empirical workflow.  The analysis uses a publicly available health insurance benchmark dataset containing one
 million policyholder records, eleven raw predictors, and a continuous
 response variable, \texttt{charges}.  The chapter proceeds sequentially:
 it first describes the data and the exploratory diagnostics that motivate
 the main modelling choices; it then specifies the architecture and
-training protocol of the feed-forward deep neural network that serves as
+training protocol of the feed-forward \gls{dnn} that serves as
 the prediction function; and it presents the predictive and structural
-checks that must be satisfied before the network is used in the Monte Carlo
-and Shapley-value analyses.  The Monte Carlo simulation design, a
+checks that must be satisfied before the network is used in the \gls{mc}
+and Shapley-value analyses.  The \gls{mc} simulation design, a
 validation of the resulting input distribution that diagnoses its
 joint-distribution difference from the training data, a
 residual-augmented sensitivity analysis, and the Shapley-value
@@ -62,7 +62,7 @@ levels are well represented; none require merging.
 \midrule
 \texttt{charges} & Response, continuous & Insurance charge; positive monetary outcome & Standardised during training; de-normalised for evaluation \\
 \texttt{age} & Predictor, numerical & Age (years), $18$ to $65$ & One numerical input, standardised \\
-\texttt{bmi} & Predictor, numerical & Body mass index, $18.00$ to $50.00$ & One numerical input, standardised \\
+\texttt{bmi} & Predictor, numerical & \Gls{bmi}, $18.00$ to $50.00$ & One numerical input, standardised \\
 \texttt{children} & Predictor, count & Number of dependants, $0$ to $5$ & One numerical input, standardised \\
 \texttt{gender} & Predictor, binary & Policyholder gender & One binary indicator (reference: female) \\
 \texttt{smoker} & Predictor, binary & Smoking status (yes/no) & One binary indicator (reference: no) \\
@@ -183,8 +183,8 @@ mapped back to the original monetary scale by
 \equationlistentry{Response de-normalisation to monetary scale}
 Every preprocessing parameter is estimated from the training partition
 only and applied unchanged to the validation set, the test set, and the
-Monte Carlo simulated profiles.  We denote this complete preprocessing
-procedure by $T(\cdot)$.  The treatment of categorical variables during Monte Carlo simulation,
+\gls{mc} simulated profiles.  We denote this complete preprocessing
+procedure by $T(\cdot)$.  The treatment of categorical variables during \gls{mc} simulation,
 including the requirement to simulate at the raw level before encoding,
 is described in Section~\ref{sec:mc_simulation_design}.
 
@@ -210,7 +210,7 @@ safeguards are enforced throughout the analysis to prevent leakage:
     \item \textbf{Training-only standardisation.}  The validation and test
           sets are transformed using the training-set means and standard
           deviations (equations~\eqref{eq:input_standardisation}
-          and~\eqref{eq:response_standardisation_ch3}).  Monte Carlo
+          and~\eqref{eq:response_standardisation_ch3}).  \gls{mc}
           simulated profiles are likewise preprocessed through the same
           training-derived transformation $T(\cdot)$.
 
@@ -285,7 +285,7 @@ values close to zero and negative excess kurtosis.  This platykurtic
 behaviour is consistent with bounded, uniform-type distributions: the
 observations are spread relatively evenly across their supports rather than
 concentrated around their means.  This directly motivates the use of
-uniform marginal distributions in the Monte Carlo simulation design.  The
+uniform marginal distributions in the \gls{mc} simulation design.  The
 empirical bounds \texttt{age} $\in [18,65]$, \texttt{bmi} $\in [18,50]$,
 and \texttt{children} $\in \{0,\dots,5\}$ also provide the support
 restrictions that will be enforced when synthetic profiles are generated.
@@ -317,7 +317,7 @@ Selected percentiles of \texttt{charges} are reported in
 Table~\ref{tab:charges_percentiles}.  The interquartile range is
 approximately $6\,181$, and the 90th, 95th, and 99th percentiles are
 $22\,591$, $24\,224$, and $27\,016$, respectively.  These values serve as
-empirical scale references; in the later Monte Carlo and Shapley stages,
+empirical scale references; in the later \gls{mc} and Shapley stages,
 high-cost profiles are defined using upper-tail quantiles of the
 simulated predicted-cost distribution, not directly from these observed
 percentiles.
@@ -370,7 +370,7 @@ Pairwise correlations among the predictors are negligible
 weak.  This does not imply that the predictors are unimportant, the deep
 network can learn complex nonlinear interactions invisible to a linear
 correlation matrix, but it does provide empirical support for the
-product-marginal independence assumption used in the Monte Carlo
+product-marginal independence assumption used in the \gls{mc}
 simulation.  The correlation heatmap in Figure~\ref{fig:correlation_heatmap}
 confirms the uniformly pale off-diagonal shading.
 
@@ -419,7 +419,7 @@ four-level variables (\texttt{region}, \texttt{medical\_history},
 level, and the three-level \texttt{coverage\_level} variable has
 approximately 333\,000 observations per tier. These balanced frequencies
 ensure that no category is underrepresented in the training data and that
-the fitted category proportions used in the Monte Carlo simulation are
+the fitted category proportions used in the \gls{mc} simulation are
 estimated with high precision.
 
 Figure~\ref{fig:charges_by_all_categoricals_ch3} displays the conditional
@@ -587,7 +587,7 @@ Four implementation decisions follow directly from the EDA:
           and only afterwards encoded.
     \item The weak linear correlations among the numerical predictors,
           together with their uniform-like marginal shapes, support the
-          product-marginal independence assumption in the Monte Carlo
+          product-marginal independence assumption in the \gls{mc}
           design as a faithful reflection of the benchmark's
           data-generating structure.
     \item The response is standardised during training and de-normalised
@@ -722,7 +722,7 @@ The network adopts the contracting funnel topology
       \draw[connection] (\src) -- (o1); }
 
   \end{tikzpicture}
-  \caption{Funnel architecture of the deep neural network.}
+  \caption{Funnel architecture of the \gls{dnn}.}
   \label{fig:dnn_architecture_ch3}
   \end{figure}
 
@@ -772,7 +772,7 @@ bias vectors (Section~\ref{sec:dnn_specification_training}), the bias term
 is not used; the forward pass simplifies to
 equation~\eqref{eq:bias_free_recursion}.
 
-The network is trained by minimising the mean squared error loss
+The network is trained by minimising the \gls{mse} loss
 $\mathcal{L} = \frac{1}{2}(y - \hat{y})^{2}$.  Defining the gradient of the
 loss with respect to the output pre-activation as
 \begin{equation}
@@ -818,7 +818,7 @@ optimisation.
 \subsubsection{Training configuration}
 \label{sec:training_configuration}
 
-The network is trained by minimising the mean squared error on the
+The network is trained by minimising the \gls{mse} on the
 standardised response scale (equation~\eqref{eq:mse_loss}).  Weights are
 updated with the NAdam optimiser \citep{dozat2016incorporating}, described
 in Section~\ref{sec:loss_optimisation}.  Validation performance is
@@ -866,7 +866,7 @@ Hidden activation & CELU (equation~\eqref{eq:celu}) \\
 Output activation & Identity mapping \\
 Training response & Standardised \texttt{charges} \\
 Prediction scale & De-normalised to the original monetary scale \\
-Training objective & Mean squared error on the standardised response scale \\
+Training objective & \Gls{mse} on the standardised response scale \\
 Secondary evaluation metrics & MAE, RMSE and \gls{r2} on the original response scale \\
 Optimiser & NAdam \citep{dozat2016incorporating} \\
 Momentum parameters & $(\beta_1,\beta_2)$ selected by validation comparison from $\{(0.90,0.999),\ (0.95,0.999),\ (0.99,0.999)\}$ \\
@@ -951,10 +951,10 @@ pseudocode is presented in
 Algorithm~\ref{tab:dnn_training_algorithm_annex}
 (Annexure~\ref{annexure:dnn_algorithm_detailed}).
 
-\subsubsection{Benchmark Generalised Linear Model}
+\subsubsection{Benchmark \Gls{glm}}
 \label{sec:glm_benchmark_methods}
 
-A classical actuarial benchmark is provided by a generalised linear model
+A classical actuarial benchmark is provided by a \gls{glm}
 (\gls{glm}) with a gamma distribution and logarithmic link function
 \citep{dobson2008introduction, denuit2007actuarial}.  For a policyholder with
 model-ready input vector $\mathbf{z}_i \in \mathbb{R}^{22}$ (the same encoded
@@ -1041,9 +1041,9 @@ provide a more comprehensive model-class comparison.  Both models use the
 same 22 encoded features and 60/20/20 partition as the \gls{dnn} and
 \gls{glm}.
 
-% ----- Random Forest -----
+% ----- \Gls{rf} -----
 
-\subsubsection*{Random Forest}
+\subsubsection*{\Gls{rf}}
 A \gls{rf} regressor \citep{breiman2001random} is fitted with 500 trees,
 maximum depth unrestricted, minimum samples per leaf of 5, and
 \texttt{random\_state=42}.  \gls{rf} aggregates predictions across
@@ -1066,7 +1066,7 @@ the average across all $B$ trees:
     T_b(\mathbf{z}).
     \label{eq:rf_prediction}
 \end{equation}
-\equationlistentry{Random Forest ensemble prediction}
+\equationlistentry{\Gls{rf} ensemble prediction}
 
 Each tree $T_b$ is grown by recursively partitioning the feature space.
 At each internal node, the algorithm selects a random subset of
@@ -1084,7 +1084,7 @@ the weighted sum of squared residuals in the resulting child nodes:
     \Biggr],
     \label{eq:rf_split_criterion}
 \end{equation}
-\equationlistentry{Random Forest split criterion}
+\equationlistentry{\Gls{rf} split criterion}
 where $\mathcal{S} \subset \{1,\dots,p\}$ with $|\mathcal{S}| = m$ is the
 randomly selected predictor subset, and $\bar{y}_{L}$ and $\bar{y}_{R}$
 denote the sample means in the left and right child nodes respectively.
@@ -1102,7 +1102,7 @@ correlation $\rho$, then
     \frac{1 - \rho}{B}\,\sigma^{2}.
     \label{eq:rf_variance_reduction}
 \end{equation}
-\equationlistentry{Random Forest variance reduction}
+\equationlistentry{\Gls{rf} variance reduction}
 As $B$ increases, the second term vanishes, and the ensemble variance is
 governed by $\rho\,\sigma^{2}$.  By restricting splits to a random
 predictor subset, the \gls{rf} reduces $\rho$ below the value obtained by
@@ -1124,7 +1124,7 @@ configuration.
 
 \begin{table}[H]
 \centering
-\caption{Random Forest configuration.}
+\caption{\Gls{rf} configuration.}
 \label{tab:rf_hyperparameters_ch3}
 \small
 \renewcommand{\arraystretch}{1.15}
@@ -1137,7 +1137,7 @@ Candidate predictors per split ($m$) & $\lfloor p/3 \rfloor = 7$ \\
 Maximum depth & Unrestricted \\
 Minimum samples per leaf & 5 \\
 Bootstrap sampling & With replacement, sample size $= n_{\mathrm{train}}$ \\
-Split criterion & Mean squared error (equation~\eqref{eq:rf_split_criterion}) \\
+Split criterion & \Gls{mse} (equation~\eqref{eq:rf_split_criterion}) \\
 Hyperparameter tuning & Not applied (default values) \\
 Random seed & 42 \\
 Implementation & \texttt{scikit-learn} \texttt{RandomForestRegressor} \\
@@ -1336,7 +1336,7 @@ scale across all three partitions.
 
 The predictive and structural diagnostics described below serve a single
 purpose: to verify that the fitted \gls{dnn} is sufficiently stable and
-well-behaved to act as the prediction surface in the subsequent Monte Carlo
+well-behaved to act as the prediction surface in the subsequent \gls{mc}
 and Shapley-value analyses.
 
 All predictive performance metrics are computed on the original monetary
@@ -1490,7 +1490,7 @@ produced:
 \end{enumerate}
 The \gls{dnn} does not require normally distributed residuals; these checks
 are purely descriptive.  The fitted residuals are also retained for the
-residual-augmented Monte Carlo sensitivity analysis described later.
+residual-augmented \gls{mc} sensitivity analysis described later.
 
 \begin{figure}[H]
 \centering
@@ -1758,14 +1758,14 @@ and~\ref{fig:heatmap_test_predicted_ch3}) reproduces the same patterns,
 with the target-correlation rows near-identical across both the actual and
 predicted versions. These consistency findings complete the diagnostic
 verification; the fitted DNN is therefore ready to serve as the prediction
-surface for the Monte Carlo and Shapley-value analyses that follow.
+surface for the \gls{mc} and Shapley-value analyses that follow.
 
 
 % =============================================================
-\subsection{Parametric Monte Carlo Simulation Design}
+\subsection{Parametric \gls{mc} Simulation Design}
 \label{sec:mc_simulation_design}
 
-The Monte Carlo stage generates a synthetic policyholder input space and
+The \gls{mc} stage generates a synthetic policyholder input space and
 the corresponding model-implied distribution of predicted costs.  Each raw
 predictor variable is assigned a fitted simulation distribution, synthetic
 policyholder profiles are drawn from these distributions, and the fitted
@@ -1792,7 +1792,7 @@ encoding yields
     \widehat{F}_{X_j}.
     \label{eq:raw_product_mc_distribution_ch3}
 \end{equation}
-\equationlistentry{Product-marginal Monte Carlo input distribution}
+\equationlistentry{Product-marginal \gls{mc} input distribution}
 As discussed in Section~\ref{montecarlo_propagation}, the product-marginal
 construction is a modelling choice adopted for simulation purposes.  Two
 empirical findings from the exploratory analysis support it in this dataset: the weak pairwise
@@ -1819,7 +1819,7 @@ distributional assumptions for each raw variable.
 
 \begin{table}[H]
 \centering
-\caption{Monte Carlo input distributions for raw policyholder variables.}
+\caption{\gls{mc} input distributions for raw policyholder variables.}
 \label{tab:mc_distribution_assumptions_ch3}
 \small
 \renewcommand{\arraystretch}{1.18}
@@ -1943,7 +1943,7 @@ the response variable.
 
 \begin{table}[H]
 \centering
-\caption{Monte Carlo convergence quantities recorded during the pilot run.}
+\caption{\gls{mc} convergence quantities recorded during the pilot run.}
 \label{tab:mc_convergence_quantities_ch3}
 \small
 \renewcommand{\arraystretch}{1.15}
@@ -1957,16 +1957,16 @@ Median & Checks central distributional stability \\
 90th percentile & Checks upper-tail stability \\
 95th percentile & Candidate high-cost threshold \\
 99th percentile & Extreme upper-tail stability check \\
-Monte Carlo standard error & Quantifies simulation precision for selected summaries \\
+\gls{mcse} & Quantifies simulation precision for selected summaries \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsubsection{Base DNN Monte Carlo scoring}
+\subsubsection{Base DNN \gls{mc} scoring}
 
 For each simulated raw profile, the preprocessing map $T(\cdot)$ produces
 the model-ready input vector $\mathbf{z}^{(b)}$.  The fitted \gls{dnn} then
-calculates the base Monte Carlo prediction, following the formulation in
+calculates the base \gls{mc} prediction, following the formulation in
 equation~\eqref{eq:mc_predictions_framework}:
 \begin{equation}
     \widehat{Y}^{(b)}
@@ -1979,7 +1979,7 @@ equation~\eqref{eq:mc_predictions_framework}:
     b=1,\ldots,B.
     \label{eq:base_mc_prediction_ch3}
 \end{equation}
-\equationlistentry{Base Monte Carlo DNN prediction}
+\equationlistentry{Base \gls{mc} DNN prediction}
 The resulting collection
 $\{\widehat{Y}^{(1)},\ldots,\widehat{Y}^{(B)}\}$
 forms the base model-implied predicted-cost distribution introduced in
@@ -1989,13 +1989,13 @@ simulated input space produced the DNN predictions.
 
 \begin{table}[H]
 \centering
-\caption{Base Monte Carlo simulation algorithm.}
+\caption{Base \gls{mc} simulation algorithm.}
 \label{tab:base_mc_algorithm_ch3}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{p{0.92\textwidth}}
 \toprule
-\textbf{Algorithm 3.1: Base parametric Monte Carlo simulation} \\
+\textbf{Algorithm 3.1: Base parametric \gls{mc} simulation} \\
 \midrule
 \textbf{Input:} fitted raw-variable distributions
 $\{\widehat{F}_{X_j}\}_{j=1}^{q}$, fitted model
@@ -2019,7 +2019,7 @@ $\{\widehat{Y}^{(b)}\}_{b=1}^{B}$. \\[3pt]
 \end{table}
 
 % =============================================================
-\subsection{Validation of the Monte Carlo Input Distribution}
+\subsection{Validation of the \gls{mc} Input Distribution}
 \label{sec:mc_input_validation}
 
 The product-marginal simulation law in
@@ -2037,7 +2037,7 @@ affects the Shapley-value attributions derived from the simulated profiles.
 \subsubsection*{Correlation matrix difference}
 The Pearson correlation matrix is computed separately for the $q = 11$
 raw predictor variables on the training partition and on the parametric
-Monte Carlo sample. The element-wise difference
+\gls{mc} sample. The element-wise difference
 \begin{equation}
     \Delta_{jk}
     =
@@ -2051,7 +2051,7 @@ Monte Carlo sample. The element-wise difference
 \equationlistentry{Correlation matrix difference (training minus MC)}
 quantifies how the pairwise linear association structure of the simulated
 profiles deviates from that of the training data. Because the parametric
-Monte Carlo sample draws each variable independently, the off-diagonal
+\gls{mc} sample draws each variable independently, the off-diagonal
 entries of the MC correlation matrix are approximately zero by
 construction, so $\Delta_{jk} \approx r_{jk}^{(\mathrm{train})}$ for
 $j \neq k$. The resulting difference heatmap therefore reveals which
@@ -2069,7 +2069,7 @@ are absent from the simulation.
 For multi-level categorical predictors the strength of association is
 measured using Cram\'{e}r's $V$ statistic \citep{cramer1946mathematical}.
 For each pair of categorical variables, $V$ is computed on the training
-partition and on the parametric Monte Carlo sample. All pairwise values of
+partition and on the parametric \gls{mc} sample. All pairwise values of
 $V$ are compared to confirm that cross-variable associations are below a
 weak-association threshold in both datasets and that the parametric MC
 sample, which has exactly zero association by construction, does not
@@ -2108,7 +2108,7 @@ single direction dominates the 22-dimensional input space.
 \end{figure}
 
 \noindent
-The Monte Carlo sample populates the same region of principal component
+The \gls{mc} sample populates the same region of principal component
 space as the training data. The vertical banding visible in both panels
 reflects the discrete structure introduced by the categorical predictors.
 The overlay in panel~(c) confirms that the two point clouds are broadly
@@ -2116,11 +2116,11 @@ co-located, with the MC cloud exhibiting a marginally wider spread
 consistent with the removal of the weak dependencies identified in the
 correlation analysis.
 
-\subsubsection{Bootstrap Monte Carlo resampling}
+\subsubsection{Bootstrap \gls{mc} resampling}
 \label{sec:bootstrap_mc_resampling}
 
 To separate the effect of the independence assumption from the effect of
-marginal distribution choice, a second Monte Carlo sample of size $B$ is
+marginal distribution choice, a second \gls{mc} sample of size $B$ is
 drawn via bootstrap resampling with replacement from the training set:
 \begin{equation}
     \mathbf{X}_{\mathrm{raw}}^{(b,\mathrm{boot})}
@@ -2130,7 +2130,7 @@ drawn via bootstrap resampling with replacement from the training set:
     b = 1, \ldots, B,
     \label{eq:bootstrap_mc_ch3}
 \end{equation}
-\equationlistentry{Bootstrap Monte Carlo resampling from empirical distribution}
+\equationlistentry{Bootstrap \gls{mc} resampling from empirical distribution}
 where $\widehat{F}_{X,\mathrm{emp}}$ is the empirical distribution of the
 training data. This sample preserves the empirical joint distribution
 exactly, including all cross-variable dependencies, while the parametric MC
@@ -2142,7 +2142,7 @@ the attribution results under the two input regimes.
 
 \begin{table}[H]
 \centering
-\caption{Comparison of the two Monte Carlo input regimes.}
+\caption{Comparison of the two \gls{mc} input regimes.}
 \label{tab:mc_input_regimes_ch3}
 \small
 \renewcommand{\arraystretch}{1.15}
@@ -2230,17 +2230,17 @@ rather than the dependence pattern of the input profiles, determines the
 attribution results.
 
 % =============================================================
-\subsection{Residual-Augmented Monte Carlo Sensitivity Analysis}
+\subsection{Residual-Augmented \gls{mc} Sensitivity Analysis}
 \label{sec:residual_augmented_mc}
 
-A second Monte Carlo design assesses sensitivity to fitted residual
-variation. The base Monte Carlo design produces deterministic fitted
+A second \gls{mc} design assesses sensitivity to fitted residual
+variation. The base \gls{mc} design produces deterministic fitted
 predictions. The residual-augmented design adds a residual component to the
 predicted costs to examine how the simulated output distribution changes
 when fitted model error is introduced. The perturbation operates in the
 output space (predicted costs) rather than the input space (policyholder
 covariates). This is appropriate because the primary concern is whether the
-distributional conclusions drawn from the base Monte Carlo analysis are
+distributional conclusions drawn from the base \gls{mc} analysis are
 sensitive to the magnitude of the fitted model's residual error, not to
 misspecification of the input distributions.
 
@@ -2291,7 +2291,7 @@ standard deviation is
 
 \subsubsection{Residual-augmented simulation}
 
-For each base Monte Carlo prediction $\widehat{Y}^{(b)}$, a residual draw is
+For each base \gls{mc} prediction $\widehat{Y}^{(b)}$, a residual draw is
 sampled:
 \begin{equation}
     \varepsilon^{(b)}
@@ -2350,7 +2350,7 @@ data-generating uncertainty.
 
 \begin{table}[H]
 \centering
-\caption{Residual-augmented Monte Carlo sensitivity design.}
+\caption{Residual-augmented \gls{mc} sensitivity design.}
 \label{tab:residual_augmented_design_ch3}
 \small
 \renewcommand{\arraystretch}{1.15}
@@ -2371,15 +2371,15 @@ Non-negativity rule & Negative simulated costs truncated at zero \\
 
 \begin{table}[H]
 \centering
-\caption{Residual-augmented Monte Carlo algorithm.}
+\caption{Residual-augmented \gls{mc} algorithm.}
 \label{tab:residual_augmented_algorithm_ch3}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{p{0.92\textwidth}}
 \toprule
-\textbf{Algorithm 3.2: Residual-augmented Monte Carlo sensitivity simulation} \\
+\textbf{Algorithm 3.2: Residual-augmented \gls{mc} sensitivity simulation} \\
 \midrule
-\textbf{Input:} base Monte Carlo predictions
+\textbf{Input:} base \gls{mc} predictions
 $\{\widehat{Y}^{(b)}\}_{b=1}^{B}$, fitted residual distribution
 $\widehat{F}_{\varepsilon}$, residual standard deviation
 $\widehat{\sigma}_{\varepsilon}$, random seed $s$. \\[3pt]
@@ -2396,7 +2396,7 @@ $\{Y_{-}^{(b)}\}_{b=1}^{B}$. \\[3pt]
 5. Calculate $Y_{\mathrm{res}}^{(b)} = \widehat{Y}^{(b)}+\varepsilon^{(b)}$. \\
 6. Apply the non-negativity rule if required. \\
 7. Calculate the fixed perturbation outputs $Y_{+}^{(b)}$ and $Y_{-}^{(b)}$. \\
-8. Store all outputs for comparison with the base Monte Carlo distribution. \\
+8. Store all outputs for comparison with the base \gls{mc} distribution. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2410,7 +2410,7 @@ $\{Y_{-}^{(b)}\}_{b=1}^{B}$. \\[3pt]
 
 Shapley-value methods are used to explain the fitted \gls{dnn} predictions
 calculated for simulated policyholder profiles. The attribution analysis is
-connected to the Monte Carlo predicted-cost distribution, with particular
+connected to the \gls{mc} predicted-cost distribution, with particular
 attention to the upper tail.
 
 \subsubsection{Prediction function and Shapley decomposition}
@@ -2459,7 +2459,7 @@ Output scale & Original monetary scale of \texttt{charges} \\
 Explainer & Gradient-based SHAP explainer \\
 Background data & Sample from the model-ready training partition \\
 Background size & $m_0 = 200$ observations, selected as the largest size that maintains computational feasibility for the gradient-based explainer \\
-Explained profiles & Monte Carlo simulated profiles $\mathbf{z}^{(b)}$ \\
+Explained profiles & \gls{mc} simulated profiles $\mathbf{z}^{(b)}$ \\
 Primary summaries & Mean signed and mean absolute Shapley values \\
 Conditional summaries & Shapley summaries for upper-tail simulated profiles \\
 Categorical treatment & Dummy-level attributions aggregated to raw-variable level \\
@@ -2503,7 +2503,7 @@ fully decomposed into $q = 11$ raw-variable contributions without remainder.
 \subsubsection{Global Shapley summaries}
 
 Shapley values are computed for all $B$ simulated profiles generated in the
-base Monte Carlo simulation, so $B_{\mathrm{shap}} = B$. Global feature
+base \gls{mc} simulation, so $B_{\mathrm{shap}} = B$. Global feature
 importance $I_j$ follows the mean absolute Shapley value defined in
 Section~\ref{sec:explainability_shapley_shap}, computed over the simulated
 profiles. A mean signed summary is also reported.
@@ -2604,8 +2604,8 @@ Base versus residual high-cost sets & Checks whether residual augmentation chang
 \end{tabular}
 \end{table}
 
-The attribution analysis is interpreted jointly with the Monte Carlo
-distribution. Monte Carlo simulation identifies the distributional regions of
+The attribution analysis is interpreted jointly with the \gls{mc}
+distribution. \gls{mc} simulation identifies the distributional regions of
 interest, and Shapley values decompose the fitted model behaviour within
 those regions.
 
@@ -2653,7 +2653,7 @@ Synthetic profiles are generated at the raw variable level and only then encoded
 
 A6 &
 Product-marginal input distribution &
-The joint Monte Carlo input law is a practical simulation assumption and not a proof of covariate independence; validated by joint-distribution diagnostics and Shapley invariance comparison (Section~\ref{sec:mc_input_validation}) \\
+The joint \gls{mc} input law is a practical simulation assumption and not a proof of covariate independence; validated by joint-distribution diagnostics and Shapley invariance comparison (Section~\ref{sec:mc_input_validation}) \\
 
 A7 &
 Joint-distribution validation &
