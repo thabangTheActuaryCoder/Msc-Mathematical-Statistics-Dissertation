@@ -406,7 +406,7 @@ methodological choices made in this dissertation; others reflect the
 constraints of the benchmark data.
 
 All results are conditional on the Kaggle Insurance Data for
-Machine Learning benchmark dataset, which has a strong simulated
+Machine Learning benchmark dataset \citep{kaggleInsuranceDataML}, which has a strong simulated
 structure.  The unusually high predictive performance ($R^2 = 0.9957$)
 reflects this structure and should not be extrapolated to real-world
 insurance portfolios, where data are noisier, relationships between
@@ -571,7 +571,7 @@ the model's output landscape, rather than relying on point predictions at
 observed data points, provides a richer basis for actuarial decision
 making.  However, these implications must be qualified by the limitations
 of the benchmark data.  The unusually clean structure of the Kaggle
-dataset produces predictive performance that would be unattainable on most
+dataset \citep{kaggleInsuranceDataML} produces predictive performance that would be unattainable on most
 real-world insurance portfolios.  The methodology is transferable, but the
 specific performance figures are not.
 
@@ -674,7 +674,7 @@ Evaluation metric
     & \gls{r2}, \gls{rmse}, \gls{mae}
     & Poisson deviance \\
 Dataset
-    & Kaggle ($n = 1\,000\,000$)
+    & Kaggle \citep{kaggleInsuranceDataML} ($n = 1\,000\,000$)
     & French MTPL ($n = 678\,007$) \\
 Constraint mechanism
     & None (unconstrained models)
