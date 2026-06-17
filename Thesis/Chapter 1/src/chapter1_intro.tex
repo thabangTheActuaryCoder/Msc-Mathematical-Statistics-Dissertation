@@ -75,10 +75,10 @@ of the model.  The gap between what a linear predictor can represent and
 what the data contain motivates the exploration of more flexible model
 classes.
 
-Moreover, the actuarial convention of using the Gamma distribution
-assumes a specific variance-mean relationship ($\text{Var}(Y_i) \propto
-\mu_i^2$), which may not hold uniformly across all segments of the
-policyholder population.  While robust standard errors and alternative
+A further limitation concerns the distributional assumption itself.
+The Gamma distribution implies a specific variance-mean relationship
+($\text{Var}(Y_i) \propto \mu_i^2$), which may not hold uniformly
+across all segments of the policyholder population.  While robust standard errors and alternative
 distributional assumptions can mitigate this concern, the fundamental
 limitation of the linear predictor structure remains.  As
 \citep{goodfellow2016deep} note, the capacity of a model class to
