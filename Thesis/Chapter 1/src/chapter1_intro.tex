@@ -321,13 +321,15 @@ individual input variables to a prediction can be decomposed through
 Shapley values.
 
 Each of these components has a well-established theoretical basis in
-mathematical statistics.  The contribution of this dissertation lies not
-in advancing any single component, but in their integration within a
-single empirical workflow applied to health insurance cost prediction.
-The \gls{mc} distribution defines the regions of interest for the
-Shapley analysis, and the conditional Shapley analysis decomposes the
-model behaviour within those regions.  This integration produces insight
-that none of the three components could provide in isolation.
+mathematical statistics, and their combination in a simulation-based
+workflow has been demonstrated in other applied domains
+\citep{santos2023explainable}.  The contribution of this dissertation
+lies in adapting that integration to health insurance cost prediction
+within a single empirical workflow.  The \gls{mc} distribution defines
+the regions of interest for the Shapley analysis, and the conditional
+Shapley analysis decomposes the model behaviour within those regions.
+This integration produces insight that none of the three components
+could provide in isolation.
 
 % ---------------------------------------------------------
 % 1.3 CONCEPTUAL FRAMEWORK
@@ -397,10 +399,10 @@ prediction, parametric \gls{mc} simulation and Shapley-value
 attribution within a single reproducible framework demonstrates a workflow
 that is applicable to any regression problem where distributional
 analysis and feature attribution in specific output regions are of
-interest.  While each component is individually well established, their
-combination in a sequential framework, where the simulation defines the
-regions and the Shapley analysis explains the model behaviour within
-those regions, is not standard in the literature.
+interest.  While each component is individually well established, and the
+three-stage combination has been applied in other domains
+\citep{santos2023explainable}, its application to health insurance cost
+prediction has received limited attention in the literature.
 
 From a practical perspective, the conditional Shapley analysis at
 upper-tail thresholds addresses a question of direct relevance to

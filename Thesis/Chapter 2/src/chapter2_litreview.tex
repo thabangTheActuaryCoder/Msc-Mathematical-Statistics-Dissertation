@@ -204,12 +204,13 @@ machine-learning model approximates the relationship between those inputs
 and a continuous project-performance outcome, and Shapley-based
 explanations attribute the resulting predictions to individual input
 variables.  The framework adopted here applies the same three-stage logic
-to health insurance cost prediction: \gls{mc} simulation generates
-synthetic policyholder profiles from parametric distributions fitted to the
-observed training attributes, the fitted \gls{dnn} maps each profile to a
-predicted cost, and Shapley values decompose those predictions into
-feature-level contributions, with particular attention given to the
-high-cost region of the simulated predicted-cost distribution.  The primary
+to health insurance cost prediction: a fitted \gls{dnn} provides the
+prediction surface, \gls{mc} simulation generates synthetic policyholder
+profiles from parametric distributions fitted to the observed training
+attributes and propagates them through the network, and Shapley values
+decompose the resulting predictions into feature-level contributions,
+with particular attention given to the high-cost region of the simulated
+predicted-cost distribution.  The primary
 difference is the empirical domain and the choice of prediction model: the
 present study uses a \gls{dnn} rather than a general machine-learning
 regressor and applies the workflow to policyholder-level health insurance
