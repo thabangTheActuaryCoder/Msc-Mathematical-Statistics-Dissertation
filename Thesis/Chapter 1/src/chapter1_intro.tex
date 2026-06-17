@@ -123,14 +123,17 @@ $f: [0,1]^p \to \mathbb{R}$ and any $\varepsilon > 0$, there exists a
 single-hidden-layer network $F$ such that
 $\sup_{\mathbf{x}} |F(\mathbf{x}) - f(\mathbf{x})| < \varepsilon$.
 The domain $[0,1]^p$ requires that every input variable is confined
-to a finite, closed range.  This matters because the approximation
-guarantee only holds when the inputs cannot grow without bound; if
-they could, no fixed-size network would be able to track the target
-function everywhere.  In this dissertation the condition is met
-naturally: all numerical inputs are rescaled to a bounded interval
-during preprocessing and all categorical inputs are coded as zero-one
-indicators, so the network always operates within a bounded input
-space.  In
+to a finite, closed range.  The specific choice of $[0,1]$ rather
+than some other interval is a notational convention: any bounded range
+$[a,b]$ can be mapped to $[0,1]$ by a simple linear rescaling, so the
+theorem applies equally to any compact input domain.  What matters is
+not the particular endpoints but the fact that the inputs cannot grow
+without bound; if they could, no fixed-size network would be able to
+track the target function everywhere.  In this dissertation the
+condition is met naturally: all numerical inputs are rescaled to a
+bounded interval during preprocessing and all categorical inputs are
+coded as zero-one indicators, so the network always operates within a
+bounded input space.  In
 practice, modern deep networks with multiple hidden layers and nonlinear
 activations learn hierarchical representations that capture complex
 interactions without requiring the modeller to enumerate them in advance
