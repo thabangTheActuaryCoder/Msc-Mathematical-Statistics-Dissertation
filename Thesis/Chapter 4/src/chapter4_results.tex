@@ -329,7 +329,7 @@ The benchmark comparison serves two purposes.  First, it establishes
 that the \gls{dnn}'s high $R^2$ reflects genuine predictive superiority
 over the actuarial-standard \gls{glm} and competitive performance
 relative to the tree-based alternatives, not merely an artefact of the
-dataset's synthetic regularity.  Second, because the Gamma/log-link
+Kaggle benchmark dataset's \citep{kaggleInsuranceDataML} algorithmically generated structure.  Second, because the Gamma/log-link
 \gls{glm} is the model an actuary would deploy as a first approach and
 \gls{xgboost} represents the current state of the art for tabular data,
 the comparison provides practical benchmark context that situates the
@@ -348,7 +348,7 @@ traditional regression baselines for insurance cost estimation.  As noted
 in Section~\ref{sec:integrating_dnn_mc_shapley}, however, this
 superiority is not universal across all tabular insurance datasets
 \citep{richman2021ai}, and the present comparison is conducted on a
-benchmark dataset with a strong synthetic structure.
+benchmark dataset \citep{kaggleInsuranceDataML} whose deterministic cost formula produces a strong, noise-free covariate-response structure.
 
 A related line of actuarial research applies explicit shape constraints
 to neural networks during training.  \citep{richman2024icenet} develop
