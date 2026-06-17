@@ -997,8 +997,7 @@ log-likelihood for the gamma \gls{glm} is
 \equationlistentry{Gamma GLM log-likelihood}
 where $\mu_i = \exp(\mathbf{z}_i^{\top}\boldsymbol{\beta})$ and
 $\boldsymbol{\beta} = (\beta_0, \beta_1, \ldots, \beta_{22})^{\top}$.
-The parameter vector $\boldsymbol{\beta}$ is estimated by iteratively
-reweighted least squares (IRLS), which solves the score equations
+The parameter vector $\boldsymbol{\beta}$ is estimated by \gls{irls}, which solves the score equations
 \begin{equation}
     \sum_{i=1}^{n}
     \frac{(y_i - \mu_i)}{\mathrm{Var}(Y_i)}
@@ -1012,7 +1011,7 @@ reweighted least squares (IRLS), which solves the score equations
 \end{equation}
 \equationlistentry{GLM score equations}
 where $\eta_i = \log(\mu_i)$ is the linear predictor and
-$\mathrm{Var}(Y_i) = \phi\,\mu_i^{2}$ under the gamma family.  Each IRLS
+$\mathrm{Var}(Y_i) = \phi\,\mu_i^{2}$ under the gamma family.  Each \gls{irls}
 iteration computes a weighted least squares regression of an adjusted
 dependent variable on the design matrix, with weights inversely
 proportional to the variance function evaluated at the current fitted
@@ -1020,13 +1019,13 @@ values \citep{dobson2008introduction}.
 
 Algorithm~\ref{tab:glm_algorithm_annex} formalises the fitting procedure.
 
-The GLM is fitted via iteratively reweighted least squares (IRLS),
+The GLM is fitted via \gls{irls},
 which computes working weights and adjusted dependent variables at each
 iteration until convergence.  The dispersion parameter
 $\widehat{\phi}$ is estimated from the Pearson residuals, and
 predictions are obtained on the original monetary scale by applying the
 inverse link $\widehat{y}_i = \exp(\mathbf{z}_i^{\top}
-\widehat{\boldsymbol{\beta}})$.  The complete IRLS algorithm is
+\widehat{\boldsymbol{\beta}})$.  The complete \gls{irls} algorithm is
 presented in Algorithm~\ref{tab:glm_algorithm_annex}
 (Annexure~\ref{annexure:glm_algorithm}).
 

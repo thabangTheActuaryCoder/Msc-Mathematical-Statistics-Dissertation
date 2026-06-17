@@ -113,10 +113,10 @@ trajectories for each phase of the sequential hyperparameter comparison.
 \end{figure}
 
 % -------------------------------------------------------------
-\subsection{Bayesian Optimisation: GP Surrogate}
+\subsection{Bayesian Optimisation: \Gls{gp} Surrogate}
 \label{annexure:bo_methodology}
 
-A Gaussian process surrogate with a Mat\'{e}rn $\nu = 5/2$ kernel was fitted to the observed hyperparameter evaluations to visualise the validation-error landscape. The GP was fitted using scikit-learn's \texttt{GaussianProcessRegressor} with 15 random restarts, seed 42, and a composite kernel consisting of a constant kernel multiplied by the Mat\'{e}rn kernel plus a white noise kernel. Log-scaled axes were used for the learning rate dimension. The fitted surface and its uncertainty were evaluated on a $100 \times 100$ grid with 15\% margin beyond the observed range.
+A \gls{gp} surrogate with a Mat\'{e}rn $\nu = 5/2$ kernel was fitted to the observed hyperparameter evaluations to visualise the validation-error landscape. The \gls{gp} was fitted using scikit-learn's \texttt{GaussianProcessRegressor} with 15 random restarts, seed 42, and a composite kernel consisting of a constant kernel multiplied by the Mat\'{e}rn kernel plus a white noise kernel. Log-scaled axes were used for the learning rate dimension. The fitted surface and its uncertainty were evaluated on a $100 \times 100$ grid with 15\% margin beyond the observed range.
 
 % -------------------------------------------------------------
 \subsection{Consolidated Best Hyperparameter Summary}

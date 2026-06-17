@@ -485,15 +485,14 @@ Nevertheless, the precision of the conditional estimates remains lower
 than the global estimates, which are computed over the full simulation.
 It is worth noting that the upper-tail analysis in this dissertation is
 conducted through quantile-based thresholding of the predicted-cost
-distribution, rather than through the formal apparatus of extreme value
-theory (EVT).  In the EVT framework, exceedances above a high threshold
+distribution, rather than through the formal apparatus of \gls{evt}.  In the \gls{evt} framework, exceedances above a high threshold
 are modelled using the generalised Pareto distribution, which provides a
 principled basis for estimating tail probabilities and return levels.  The
 conditional Shapley analysis developed here addresses a different
 question, namely which input variables contribute most to predictions in
 the upper tail, but it does not exploit the asymptotic distributional
 theory that underpins formal tail estimation.  Future work could integrate
-EVT-based tail modelling with the conditional Shapley framework by using
+\gls{evt}-based tail modelling with the conditional Shapley framework by using
 peaks-over-threshold methods to define the high-cost region and by
 assessing the sensitivity of the attribution results to the threshold
 selection.
@@ -616,16 +615,16 @@ interpretability literature.
 
 There is also a connection to the broader field of extreme value analysis.
 The conditional Shapley analysis at upper-tail thresholds is conceptually
-related to the peaks-over-threshold approach in extreme value theory,
+related to the peaks-over-threshold approach in \gls{evt},
 where interest centres on the behaviour of a distribution above a high
-quantile.  In the EVT context, the focus is on estimating tail
+quantile.  In the \gls{evt} context, the focus is on estimating tail
 probabilities and return levels; in the conditional Shapley context, the
 focus is on decomposing the predictions that exceed the threshold into
-feature-level contributions.  The two perspectives are complementary: EVT
+feature-level contributions.  The two perspectives are complementary: \gls{evt}
 characterises the statistical properties of the tail, while the
 conditional Shapley analysis explains the model's behaviour within the
 tail.  Future work could integrate these perspectives by using
-EVT-informed threshold selection to define the conditioning region for
+\gls{evt}-informed threshold selection to define the conditioning region for
 the Shapley analysis, and by assessing whether the attribution patterns
 are sensitive to the specific choice of threshold.
 
@@ -849,9 +848,9 @@ the attribution and interpretation components.
           information that static cross-sectional analyses cannot offer.
 
     \item The conditional Shapley analysis could be integrated with
-          formal extreme value theory by using peaks-over-threshold
+          formal \gls{evt} by using peaks-over-threshold
           methods and the generalised Pareto distribution to define the
-          high-cost region.  EVT-informed threshold selection would
+          high-cost region.  \Gls{evt}-informed threshold selection would
           provide a principled statistical basis for the conditioning,
           and the resulting Shapley decomposition would be grounded in
           the asymptotic distributional theory that underpins formal tail
