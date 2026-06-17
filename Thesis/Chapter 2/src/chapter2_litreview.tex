@@ -49,77 +49,81 @@ Section~\ref{sec:research_gap}.
 \label{sec:integrating_dnn_mc_shapley}
 
 \noindent
-\gls{mc} simulation is a long-established framework for analysing the
-behaviour of complex functions by generating samples from a specified input
-distribution and evaluating the function at each sampled point
-\citep{glasserman2004monte, rubinstein2016simulation, owen2013monte}. Its
+Health insurance cost prediction provides a natural setting for the
+three-stage framework developed in this dissertation.  The empirical task
+can be framed as a supervised statistical-learning problem in which a vector
+of policyholder attributes is used to approximate a continuous monetary
+outcome \citep{hastie2009elements, james2021introduction}.  A \gls{dnn}
+supplies a flexible nonlinear regression function for modelling the
+relationship between policyholder attributes and cost
+\citep{goodfellow2016deep, hornik1989multilayer, richman2021ai,
+samiuddin2023health}.  The use of a \gls{dnn} in this role is motivated by
+the universal approximation property: feedforward neural networks with
+suitable activation functions can approximate broad classes of continuous
+functions \citep{hornik1989multilayer, goodfellow2016deep}, so that the
+nonlinear relationship between policyholder attributes and cost does not
+need to be specified in advance by the researcher.  The formal statement of
+this property and its conditions is presented in
+Chapter~\ref{chap:methods_and_data}.
+
+\noindent
+Once the network has been fitted, its behaviour across a broad range of
+input configurations is examined through \gls{mc} simulation.  \Gls{mc}
+simulation is a long-established framework for analysing the behaviour of
+complex functions by generating samples from a specified input distribution
+and evaluating the function at each sampled point
+\citep{glasserman2004monte, rubinstein2016simulation, owen2013monte}.  Its
 central advantage is that direct analytical evaluation can be replaced with
 repeated numerical evaluation over a large synthetic sample, so that the
-function is studied indirectly through its simulated outputs. The resulting
+function is studied indirectly through its simulated outputs.  The resulting
 outputs form an empirical distribution that can be summarised using
 descriptive quantities such as the mean, variance, quantiles and upper-tail
-probabilities. This approach is particularly useful when the function of
+probabilities.  This approach is particularly useful when the function of
 interest has no convenient closed-form representation, as is often the case
 for nonlinear fitted models such as \glspl{dnn}
-\citep{goodfellow2016deep, hornik1989multilayer}. Although such models define
-an explicit computational mapping from inputs to outputs, their fitted response
-surfaces are typically too complex to be examined using closed-form analytical
-arguments.
+\citep{goodfellow2016deep, hornik1989multilayer}.  Although such models
+define an explicit computational mapping from inputs to outputs, their
+fitted response surfaces are typically too complex to be examined using
+closed-form analytical arguments.  In the framework adopted here, \gls{mc}
+simulation is used to generate a large synthetic sample of policyholder
+profiles from parametric distributions fitted to the observed training
+attributes.  The fitted network is then evaluated at each simulated profile
+to obtain a model-implied distribution of predicted costs.
 
 \noindent
 Shapley values provide the attribution layer for the simulated output space.
 Originally introduced in cooperative game theory by \citep{shapley1953value}
 and subsequently adapted to the explanation of machine-learning predictions
-\citep{lundberg2017unified, rozemberczki2022shapley}, Shapley values decompose
-an individual fitted prediction into additive contributions attributed to each
-input variable. This decomposition is particularly valuable when the fitted
-model is too complex for its parameters to admit direct interpretation. In a
-linear regression, individual coefficients describe the contribution of each
-predictor to the fitted response. In a nonlinear model such as a \gls{dnn},
-the relationship between inputs and predictions is distributed across many
-layers and parameters \citep{goodfellow2016deep}, so that no single parameter
-captures the role of a given input variable. Shapley values address this
-difficulty by providing a model-agnostic attribution that satisfies formal
-fairness axioms\footnote{The four axioms are efficiency, symmetry, dummy and
-additivity \citep{shapley1953value, lundberg2017unified}.} regardless of the
-internal structure of the fitted function
-\citep{lundberg2017unified, rozemberczki2022shapley}. \gls{mc} simulation
-therefore describes the distributional behaviour of the fitted function, while
-Shapley values describe the variables associated with particular fitted
-predictions. Used jointly, the two methods allow both the output distribution
-and the feature-level drivers of selected regions of that distribution to be
-examined.
+\citep{lundberg2017unified, rozemberczki2022shapley}, Shapley values
+decompose an individual fitted prediction into additive contributions
+attributed to each input variable.  This decomposition is particularly
+valuable when the fitted model is too complex for its parameters to admit
+direct interpretation.  In a linear regression, individual coefficients
+describe the contribution of each predictor to the fitted response.  In a
+nonlinear model such as a \gls{dnn}, the relationship between inputs and
+predictions is distributed across many layers and parameters
+\citep{goodfellow2016deep}, so that no single parameter captures the role
+of a given input variable.  Shapley values address this difficulty by
+providing a model-agnostic attribution that satisfies formal fairness
+axioms\footnote{The four axioms are efficiency, symmetry, dummy and
+additivity \citep{shapley1953value, lundberg2017unified}.} regardless of
+the internal structure of the fitted function
+\citep{lundberg2017unified, rozemberczki2022shapley}.  In this dissertation,
+Shapley values are applied to the simulated predictions, with particular
+attention given to profiles in the high-cost region of the predicted-cost
+distribution, namely profiles whose fitted predictions exceed a chosen
+upper-tail threshold, as formalised in Section~\ref{high-cost}.
 
 \noindent
-Health insurance cost prediction provides a natural setting in which to
-combine these ideas. The empirical task can be framed as a supervised
-statistical-learning problem in which a vector of policyholder attributes is
-used to approximate a continuous monetary outcome
-\citep{hastie2009elements, james2021introduction}. A \gls{dnn} supplies a
-flexible nonlinear regression function for modelling the relationship between
-policyholder attributes and cost
-\citep{goodfellow2016deep, hornik1989multilayer, richman2021ai,
-samiuddin2023health}. The use of a \gls{dnn} in this role is motivated by the
-universal approximation property: feedforward neural networks with suitable
-activation functions can approximate broad classes of continuous functions
-\citep{hornik1989multilayer, goodfellow2016deep}, so that the nonlinear
-relationship between policyholder attributes and cost does not need to be
-specified in advance by the researcher. The formal statement of this property
-and its conditions is presented in Chapter~\ref{chap:methods_and_data}. After
-the network has been fitted, \gls{mc} simulation is used to generate a
-large synthetic sample of policyholder profiles from parametric distributions
-fitted to the observed training attributes. The fitted network is then
-evaluated at each simulated profile to obtain a model-implied distribution of
-predicted costs. Shapley values are subsequently applied to the simulated
-predictions, with particular attention given to profiles in the high-cost
-region of that distribution, namely profiles whose fitted predictions exceed
-a chosen upper-tail threshold, as formalised in Section~\ref{high-cost}. The
+The three components are hierarchically justified: the \gls{dnn} provides
+the fitted prediction surface, \gls{mc} simulation examines its behaviour
+empirically where closed-form analysis is unavailable, and Shapley values
+attribute predictions to input features where the network's parameters
+cannot be interpreted directly.  Used jointly, the simulation and
+attribution layers allow both the output distribution and the feature-level
+drivers of selected regions of that distribution to be examined.  The
 precise distributional choices and simulation procedure are specified in
-Chapter~\ref{chap:methods_and_data}. The three components are hierarchically
-justified: the \gls{dnn} provides the fitted prediction surface, \gls{mc}
-simulation examines its behaviour empirically where closed-form analysis is
-unavailable, and Shapley values attribute predictions to input features where
-the network's parameters cannot be interpreted directly.
+Chapter~\ref{chap:methods_and_data}.
 
 \noindent
 Predictive accuracy provides only a partial description of model behaviour.
