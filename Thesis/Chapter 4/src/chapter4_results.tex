@@ -843,7 +843,7 @@ of $\pm 0.5\,\widehat{\sigma}_{\varepsilon}$ was computed following
 equation~\eqref{eq:fixed_residual_perturbation_ch3}.
 
 The centred training residuals from which the augmented draws are sampled
-were verified as suitable for the perturbation analysis
+were verified as symmetric, centred at zero and free of systematic bias across prediction ranges, satisfying the requirements for the perturbation analysis
 (Figure~\ref{fig:mc_residual_diagnostics_annex},
 Annexure~\ref{annexure:residual_diagnostics}).  The residual histogram
 is symmetric and bell-shaped with no systematic bias; the Q-Q plot shows
@@ -892,8 +892,8 @@ standard deviation $\hat{\sigma}_{\varepsilon} \approx \text{R}290$ is
 consistent across all five seeds, and the augmentation adds
 approximately 2\% extra variance to the predicted-cost distribution.
 The base-to-augmented distributional shift is negligible in every seed,
-confirming that the residual-augmented conclusions of the preceding
-section are not sensitive to the training initialisation.
+confirming that the residual-augmented conclusions of
+Section~\ref{sec:residual_augmented_results} are not sensitive to the training initialisation.
 
 
 % =============================================================

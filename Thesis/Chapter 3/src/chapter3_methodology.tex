@@ -7,7 +7,7 @@
 
 \noindent
 This chapter translates the conceptual \gls{dnn}, \gls{mc} and Shapley framework
-of Chapter~\ref{sec:literature_review} into a concrete empirical workflow.  The analysis uses a publicly available health insurance benchmark dataset containing one
+of Chapter~\ref{sec:literature_review} into a concrete empirical workflow.  The analysis uses the Kaggle Insurance Data for Machine Learning benchmark dataset \citep{kaggleInsuranceDataML}, containing one
 million policyholder records, eleven raw predictors, and a continuous
 response variable, \texttt{charges}.  The chapter proceeds sequentially:
 it first describes the data and the exploratory diagnostics that motivate
@@ -2441,7 +2441,7 @@ primary implementation uses a gradient-based SHAP explainer for the
 differentiable \gls{dnn}. A model-agnostic KernelSHAP calculation may be
 applied to a small validation subset as a computational check if required.
 
-It is important to note that the gradient-based SHAP explainer computes
+The gradient-based SHAP explainer computes
 approximate Shapley values, not exact game-theoretic Shapley
 values.  Exact computation requires evaluating the prediction function at
 all $2^p$ feature subsets, which is computationally infeasible for $p = 22$

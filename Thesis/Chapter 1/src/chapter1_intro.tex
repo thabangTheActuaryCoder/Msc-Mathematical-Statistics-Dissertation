@@ -38,7 +38,7 @@ The statistical modelling of insurance costs has a long history.
 for actuarial pricing since the seminal work of
 \citep{nelder1972generalized} and their subsequent adoption by the
 insurance profession.  In health insurance, the Gamma distribution with
-a logarithmic link function is commonly used to model the right-skewed,
+a logarithmic link function is commonly used \citep{mccullagh1989generalized, denuit2007actuarial} to model the right-skewed,
 positive-valued distribution of claim amounts.  The Gamma family is
 well suited to this setting because it is supported on the positive
 real line, matching the strictly positive nature of insurance costs,
@@ -149,8 +149,8 @@ cannot capture.  The feed-forward architecture, in which each layer
 computes $\mathbf{h}^{(\ell)} = \sigma(\mathbf{W}^{(\ell)}
 \mathbf{h}^{(\ell-1)} + \mathbf{b}^{(\ell)})$ for an activation function
 $\sigma$, weight matrix $\mathbf{W}^{(\ell)}$ and bias vector
-$\mathbf{b}^{(\ell)}$, is the most commonly used architecture for
-tabular regression problems.
+$\mathbf{b}^{(\ell)}$, is a widely employed architecture for
+tabular regression problems \citep{goodfellow2016deep, richman2021ai}.
 
 The flexibility of \glspl{dnn}, however, comes at the expense of
 direct interpretability.  The parameters of a trained network, which may
@@ -265,8 +265,8 @@ inference tradition within mathematical statistics, where the behaviour
 of estimators, test statistics and predictive quantities is routinely
 studied through \gls{mc} experiments.  A caveat is warranted: because
 the marginals are fitted to the same data on which the network was
-trained, and because the network achieves near-perfect fit on this
-benchmark dataset, the model-implied predicted-cost distribution
+trained, and because the network achieves near-perfect fit on the
+Kaggle benchmark dataset \citep{kaggleInsuranceDataML}, the model-implied predicted-cost distribution
 necessarily recovers the empirical charge distribution almost by
 construction.  The primary role of the \gls{mc} stage in this
 application is therefore not to reveal unexpected distributional
@@ -690,21 +690,7 @@ independent researchers with access to the same dataset and software
 environment.
 
 % ---------------------------------------------------------
-% 1.10 DEFINITION OF KEY TERMS
-% ---------------------------------------------------------
-
-\subsection{Definition of Key Terms}
-\label{sec:key_terms}
-
-Formal definitions of the key terms used throughout this dissertation,
-including \gls{dnn}, funnel architecture, \gls{glm}, \gls{rf}, gradient-boosted trees, \gls{mc} simulation,
-Shapley value, SHAP, conditional Shapley analysis, feature-importance
-ranking reversal, data-leakage prevention and residual-augmented
-sensitivity analysis, are provided in
-Annexure~\ref{annexure:glossary}.
-
-% ---------------------------------------------------------
-% 1.11 DISSERTATION OUTLINE
+% 1.10 DISSERTATION OUTLINE
 % ---------------------------------------------------------
 
 \subsection{Dissertation Outline}
