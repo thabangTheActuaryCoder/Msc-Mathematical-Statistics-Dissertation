@@ -10,7 +10,7 @@ The FunnelDNN model uses a feed-forward architecture with monotonically decreasi
 \subsection{Training Procedure}
 \label{annexure:train_model}
 
-Training minimises the \gls{mse} loss on normalised data using the NAdam optimiser. Validation-based early stopping monitors the dot-product \gls{r2} on the validation set every 5 epochs, with a patience of 10 checks.
+Training minimises the \gls{mse} loss on normalised data using the \gls{nadam} optimiser. Validation-based early stopping monitors the dot-product \gls{r2} on the validation set every 5 epochs, with a patience of 10 checks.
 
 \begin{algorithm}[htbp]
 \caption{FunnelDNN training with early stopping.}
@@ -23,7 +23,7 @@ Training minimises the \gls{mse} loss on normalised data using the NAdam optimis
 \For{$t = 1, 2, \ldots, T_{\max}$}
     \For{each mini-batch $(\mathbf{X}_b, \mathbf{y}_b)$ of size $B$}
         \State Compute $\mathcal{L} = \mathrm{MSE}\bigl(f_{\boldsymbol{\theta}}(\mathbf{X}_b),\, \mathbf{y}_b\bigr)$
-        \State Update $\boldsymbol{\theta}$ via NAdam with learning rate $\eta$
+        \State Update $\boldsymbol{\theta}$ via \gls{nadam} with learning rate $\eta$
     \EndFor
     \If{$t \bmod V = 0$}
         \State Compute $R^2_{\mathrm{val}} = r^2_{\mathrm{dot}}\bigl(\mathbf{y}_{\mathrm{val}},\, f_{\boldsymbol{\theta}}(\mathbf{X}_{\mathrm{val}})\bigr)$
@@ -230,18 +230,18 @@ $\{T_1, \ldots, T_B\}$. \\[3pt]
 \end{table}
 
 % -------------------------------------------------------------
-\subsection{XGBoost Training Algorithm}
+\subsection{\Gls{xgboost} Training Algorithm}
 \label{annexure:xgb_algorithm}
 
 \begin{table}[H]
 \centering
-\caption{XGBoost gradient-boosted tree regression training algorithm.}
+\caption{\Gls{xgboost} gradient-boosted tree regression training algorithm.}
 \label{tab:xgb_algorithm_annex}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{p{0.92\textwidth}}
 \toprule
-\textbf{Algorithm C.4: XGBoost gradient-boosted tree regression} \\
+\textbf{Algorithm C.4: \Gls{xgboost} gradient-boosted tree regression} \\
 \midrule
 \textbf{Input:} model-ready training data
 $\{(\mathbf{z}_i, y_i)\}_{i \in \mathcal{D}_{\mathrm{train}}}$,

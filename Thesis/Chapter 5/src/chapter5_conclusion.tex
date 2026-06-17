@@ -56,7 +56,7 @@ for Machine Learning benchmark dataset \citep{kaggleInsuranceDataML},
 containing one million policyholder records.  The chapter specified the
 data preprocessing, the \gls{dnn} architecture and five-phase hyperparameter
 comparison, the three benchmark models (Gamma \gls{glm}, \gls{rf},
-XGBoost), the \gls{mc} simulation design and the validation
+\gls{xgboost}), the \gls{mc} simulation design and the validation
 diagnostics (see Table~\ref{tab:modelling_assumptions_ch3} for the
 consolidated modelling assumptions).
 
@@ -67,8 +67,8 @@ achieved test-set $R^2 = 0.9957$ with near-identical training and test
 metrics ruling out overfitting.  The \gls{dnn} substantially outperformed the
 Gamma \gls{glm}, whose log-link multiplicative structure does not match the
 approximately additive data-generating process of the benchmark data.
-The tree-based benchmarks (\gls{rf} and XGBoost) also achieved
-strong performance; after tuning, XGBoost matched the \gls{dnn} to four
+The tree-based benchmarks (\gls{rf} and \gls{xgboost}) also achieved
+strong performance; after tuning, \gls{xgboost} matched the \gls{dnn} to four
 decimal places.  The \gls{dnn} was retained for the subsequent analyses on the
 grounds of its differentiability for gradient-based \gls{shap} computation.
 Full performance comparisons are reported in
@@ -108,7 +108,7 @@ Each question is now addressed in light of the empirical results.
 
 \subsubsection*{Research Question~\ref{rq:1}}
 How does a \gls{dnn} regression model compare with a
-classical \gls{glm}, a \gls{rf} and an XGBoost
+classical \gls{glm}, a \gls{rf} and an \gls{xgboost}
 gradient-boosted tree in predicting health insurance costs on a benchmark
 dataset?
 
@@ -117,7 +117,7 @@ test \gls{rmse} of R290.  The Gamma \gls{glm} (log-link) achieves a test-set \gl
 $0.9571$, a test \gls{mae} of R624 and a test \gls{rmse} of R913.  The \gls{dnn} therefore
 outperforms the \gls{glm} on every metric, reducing the test \gls{rmse} by $68.2\%$
 and the test \gls{mae} by $59.8\%$.  The two tree-based benchmarks narrow the
-gap: the \gls{rf} achieves $R^2 = 0.9899$ and XGBoost reaches
+gap: the \gls{rf} achieves $R^2 = 0.9899$ and \gls{xgboost} reaches
 $R^2 = 0.9955$, approaching the \gls{dnn}'s accuracy.  All four models show
 near-identical training and test performance, ruling out overfitting.
 The \gls{glm}'s performance gap is attributable to the log-link's
@@ -132,7 +132,7 @@ The five-phase sequential hyperparameter comparison selected the final
 in Annexure~\ref{annexure:hyperparameters}.  When the tree-based
 benchmarks were subsequently tuned via randomised search with
 cross-validation, the tuned \gls{rf} reached $R^2 = 0.9924$ and
-the tuned XGBoost matched the \gls{dnn} at $R^2 = 0.9956$.  The \gls{dnn} retains
+the tuned \gls{xgboost} matched the \gls{dnn} at $R^2 = 0.9956$.  The \gls{dnn} retains
 a marginal advantage ($R^2 = 0.9957$), but the practical gap is
 negligible; the \gls{dnn} was retained for its differentiability rather than
 for predictive superiority.  Multi-seed replication across five random
@@ -247,7 +247,7 @@ surface.  The residual variation in predicted costs within the
 $\tau_{99}$ set is therefore attributable to coverage tier, medical
 history and family medical history.
 To illustrate this with a concrete example: consider two profiles in the
-$\tau_{99}$ set, both smokers with high BMI.  One holds Premium coverage
+$\tau_{99}$ set, both smokers with high \gls{bmi}.  One holds Premium coverage
 with a family history of Heart disease; the other holds Standard coverage
 with no family medical history.  Despite their identical smoking status,
 the first profile receives substantially higher predicted costs, and the
@@ -361,7 +361,7 @@ routinely checked in the machine-learning interpretability literature,
 where Shapley values are often reported without assessing their
 sensitivity to the input distribution or the residual structure of the
 fitted model.  Finally, the three benchmark models (Gamma \gls{glm}, \gls{rf} and
-XGBoost) contextualise the \gls{dnn}'s performance across the model-class
+\gls{xgboost}) contextualise the \gls{dnn}'s performance across the model-class
 spectrum, establishing that the predictive superiority reflects genuine
 advantages of smooth nonlinear function approximation rather than
 artefacts of the benchmark data.
@@ -422,12 +422,12 @@ reproducible dataset, but the specific numerical results are properties of
 this dataset and not of health insurance cost prediction in general.
 
 The study compares the \gls{dnn} against a Gamma/log-link \gls{glm}, a \gls{rf}
-and an XGBoost gradient-boosted tree regressor.  While these benchmarks
+and an \gls{xgboost} gradient-boosted tree regressor.  While these benchmarks
 span three major model classes (parametric, bagging and boosting), ensemble
 methods such as stacking, Bayesian neural networks and other advanced
 alternatives were not evaluated.  The existing literature suggests that
 gradient-boosted trees often perform competitively with neural networks on
-tabular data \citep{richman2021ai}, and indeed the XGBoost benchmark
+tabular data \citep{richman2021ai}, and indeed the \gls{xgboost} benchmark
 achieves near-\gls{dnn} accuracy on this dataset.  A broader model-selection
 study including additional architectures and datasets would further
 strengthen the conclusions.
@@ -445,12 +445,12 @@ exhaustive exploration of the initialisation space, the convergent
 results across these independent replications provide strong evidence
 that the findings are not artefacts of a single random initialisation.
 
-The tuned XGBoost benchmark achieves $R^2 = 0.9956$, matching the \gls{dnn}
+The tuned \gls{xgboost} benchmark achieves $R^2 = 0.9956$, matching the \gls{dnn}
 ($R^2 = 0.9957$) to within one unit in the fourth decimal place.  This
-parity implies that the \gls{dnn}'s selection over XGBoost for the subsequent
+parity implies that the \gls{dnn}'s selection over \gls{xgboost} for the subsequent
 analyses is motivated by the availability of gradient-based \gls{shap} rather
 than by a meaningful predictive advantage.  On datasets where
-differentiability is not required, XGBoost may be a more parsimonious
+differentiability is not required, \gls{xgboost} may be a more parsimonious
 alternative that achieves equivalent accuracy with less computational
 cost.
 
@@ -460,7 +460,7 @@ that the training-data dependence structure is weak ($p = 0.730$), the
 independence assumption broadens the simulated input space beyond what
 would be observed in practice.  In particular, the product-marginal
 sampling can generate covariate combinations that are implausible in a
-real insurance portfolio, i.e.\ profiles with extreme BMI, many dependants
+real insurance portfolio, i.e.\ profiles with extreme \gls{bmi}, many dependants
 and low exercise frequency that are rare or absent in the training data.
 The impact of these implausible profiles on the results is mitigated by
 their low probability, but it cannot be excluded entirely.
@@ -538,8 +538,8 @@ this benchmark dataset illustrates the potential of flexible
 machine-learning models to improve upon the classical pricing framework,
 at least on datasets where the data-generating process does not conform to
 the log-link's multiplicative structure.  The tree-based benchmarks
-reinforce this conclusion: both the \gls{rf} and XGBoost
-substantially outperform the \gls{glm}, with XGBoost approaching the \gls{dnn}'s
+reinforce this conclusion: both the \gls{rf} and \gls{xgboost}
+substantially outperform the \gls{glm}, with \gls{xgboost} approaching the \gls{dnn}'s
 accuracy, confirming that the \gls{glm}'s limitation on this dataset is
 structural rather than a general feature of simpler models.  For
 actuarial practitioners, these results motivate the evaluation of
@@ -663,11 +663,11 @@ Response distribution
     & Continuous
     & Poisson \\
 Models compared
-    & \Gls{glm}, \Gls{rf}, XGBoost, \gls{dnn}
+    & \Gls{glm}, \Gls{rf}, \Gls{xgboost}, \gls{dnn}
     & FCN, ICEnet \\
 Best test-set result
     & \Gls{dnn} $R^2 = 0.9957$; \gls{glm} $0.9571$;
-      \gls{rf} $0.9899$; XGBoost $0.9955$
+      \gls{rf} $0.9899$; \gls{xgboost} $0.9955$
     & ICEnet deviance $= 0.2388$;
       FCN $0.2387$ \\
 Evaluation metric
@@ -681,7 +681,7 @@ Constraint mechanism
     & Smoothness and monotonicity penalties \\
 Interpretability
     & Post-hoc Shapley values
-    & In-training ICE/PDP constraints \\
+    & In-training \gls{ice}/\gls{pdp} constraints \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -712,7 +712,7 @@ compliance.  The present dissertation pursues interpretability post hoc
 through Shapley-value decomposition, revealing that the dominant cost
 drivers shift between the global level and the upper tail of the
 predicted-cost distribution.  This distributional insight is not
-accessible through the ICE or PDP framework alone.  The two approaches
+accessible through the \gls{ice} or \gls{pdp} framework alone.  The two approaches
 address different aspects of model interpretability and are
 complementary rather than competing: constrained training ensures that
 the learned relationships are commercially reasonable, while
@@ -741,7 +741,7 @@ the attribution and interpretation components.
           Such comparisons would clarify whether the Shapley attribution
           patterns documented here are model-dependent or model-invariant,
           and whether more complex architectures offer further predictive
-          gains beyond the \gls{dnn} and XGBoost benchmarks already evaluated.
+          gains beyond the \gls{dnn} and \gls{xgboost} benchmarks already evaluated.
 
     \item Replacing the product-marginal input distribution with a
           copula-based joint distribution would allow the simulation to

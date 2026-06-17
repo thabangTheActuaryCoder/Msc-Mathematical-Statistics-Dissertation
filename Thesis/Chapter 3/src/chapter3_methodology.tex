@@ -1156,7 +1156,7 @@ Implementation & \texttt{scikit-learn} \texttt{RandomForestRegressor} \\
 
 % ----- XGBoost -----
 
-\subsubsection*{XGBoost}
+\subsubsection*{\Gls{xgboost}}
 A gradient-boosted tree regressor is fitted using the \gls{xgboost}
 implementation \citep{chen2016xgboost} with 1\,000 boosting rounds, a
 learning rate of 0.05, maximum depth of 8, and early stopping on the
@@ -1173,7 +1173,7 @@ ensemble prediction after $M$ boosting rounds is
     \eta \, h_m(\mathbf{z}),
     \label{eq:xgb_additive_model}
 \end{equation}
-\equationlistentry{XGBoost additive ensemble model}
+\equationlistentry{\Gls{xgboost} additive ensemble model}
 where $h_0(\mathbf{z}) = \bar{y}$ is the initial constant prediction
 (the training-set mean), $h_m$ is the regression tree fitted at round $m$,
 and $\eta \in (0,1]$ is the learning rate (shrinkage parameter) that
@@ -1191,7 +1191,7 @@ regression, the objective at round $m$ is
     \Omega(h_m),
     \label{eq:xgb_objective}
 \end{equation}
-\equationlistentry{XGBoost regularised objective}
+\equationlistentry{\Gls{xgboost} regularised objective}
 where $\ell(y, \hat{y}) = \tfrac{1}{2}(y - \hat{y})^{2}$ is the
 squared-error loss and $\Omega(h_m)$ is a regularisation penalty on the
 complexity of tree $h_m$.  The regularisation term is defined as
@@ -1205,7 +1205,7 @@ complexity of tree $h_m$.  The regularisation term is defined as
     w_j^{2},
     \label{eq:xgb_regularisation}
 \end{equation}
-\equationlistentry{XGBoost tree complexity penalty}
+\equationlistentry{\Gls{xgboost} tree complexity penalty}
 where $J$ is the number of terminal nodes (leaves), $w_j$ is the
 predicted value in leaf $j$, $\gamma \ge 0$ penalises additional leaves,
 and $\lambda \ge 0$ applies $\mathcal{L}_2$ shrinkage to the leaf weights.
@@ -1226,7 +1226,7 @@ gradient statistics for observation $i$:
     \bigg|_{\hat{y} = \hat{f}_{m-1}(\mathbf{z}_i)}.
     \label{eq:xgb_gradient_hessian}
 \end{equation}
-\equationlistentry{XGBoost gradient and Hessian statistics}
+\equationlistentry{\Gls{xgboost} gradient and Hessian statistics}
 For the squared-error loss, $g_i = \hat{f}_{m-1}(\mathbf{z}_i) - y_i$
 (the negative residual) and $h_i = 1$.  With these gradient statistics,
 the approximate objective simplifies to
@@ -1243,7 +1243,7 @@ the approximate objective simplifies to
     \gamma \, J,
     \label{eq:xgb_approx_objective}
 \end{equation}
-\equationlistentry{XGBoost second-order approximate objective}
+\equationlistentry{\Gls{xgboost} second-order approximate objective}
 where $G_j = \sum_{i \in I_j} g_i$ and $H_j = \sum_{i \in I_j} h_i$ are
 the sums of gradient and Hessian statistics over the observations
 $I_j$ assigned to leaf $j$.  The optimal leaf weight and the
@@ -1262,7 +1262,7 @@ corresponding optimal objective value are
     \gamma \, J.
     \label{eq:xgb_optimal_leaf}
 \end{equation}
-\equationlistentry{XGBoost optimal leaf weight and objective}
+\equationlistentry{\Gls{xgboost} optimal leaf weight and objective}
 
 To evaluate a candidate split that partitions observations in a node into
 left ($I_L$) and right ($I_R$) child nodes, \gls{xgboost} computes the
@@ -1282,7 +1282,7 @@ gain:
     \gamma,
     \label{eq:xgb_split_gain}
 \end{equation}
-\equationlistentry{XGBoost split gain criterion}
+\equationlistentry{\Gls{xgboost} split gain criterion}
 where $G_L = \sum_{i \in I_L} g_i$, $G_R = \sum_{i \in I_R} g_i$,
 $H_L = \sum_{i \in I_L} h_i$, and $H_R = \sum_{i \in I_R} h_i$.  A
 split is made only if $\mathrm{Gain} > 0$; the regularisation parameter
@@ -1306,7 +1306,7 @@ configuration.
 
 \begin{table}[H]
 \centering
-\caption{XGBoost configuration.}
+\caption{\Gls{xgboost} configuration.}
 \label{tab:xgb_hyperparameters_ch3}
 \small
 \renewcommand{\arraystretch}{1.15}
@@ -1587,16 +1587,16 @@ $k$ is
     \label{eq:pca_scores}
 \end{equation}
 \equationlistentry{PCA principal component scores}
-The PCA decomposition is computed from the training partition only; the
+The \gls{pca} decomposition is computed from the training partition only; the
 resulting eigenvectors are then used to project the validation and test
 observations, so that all sets are displayed in a common coordinate system.
 The first two principal components provide the two-dimensional diagnostic
 projection.
 
-Two PCA comparisons are performed.  First, the training, validation and test
+Two \gls{pca} comparisons are performed.  First, the training, validation and test
 point clouds are overlaid; similar structure across partitions supports the
 view that the data split has not introduced a major structural shift.
-Second, the same PCA coordinates are coloured by observed charges and by
+Second, the same \gls{pca} coordinates are coloured by observed charges and by
 fitted predictions; similar colour gradients indicate that the fitted
 \gls{dnn} has captured the dominant target structure visible in the input
 space.
@@ -1638,12 +1638,12 @@ inspection is descriptive and is not used to modify the fitted model.
     \caption{Test set, predicted charges.}
     \label{fig:pca_test_predicted_ch3}
 \end{subfigure}
-\caption{PCA projections coloured by actual and predicted charges on training and test sets.}
+\caption{\Gls{pca} projections coloured by actual and predicted charges on training and test sets.}
 \label{fig:pca_diagnostics_ch3}
 \end{figure}
 
 \noindent
-Figure~\ref{fig:pca_diagnostics_ch3} displays the PCA diagnostic scatter
+Figure~\ref{fig:pca_diagnostics_ch3} displays the \gls{pca} diagnostic scatter
 plots. In the training set
 (Figures~\ref{fig:pca_train_actual_ch3}
 and~\ref{fig:pca_train_predicted_ch3}), the first two principal components
@@ -1669,7 +1669,7 @@ diagnostic criteria.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.90\textwidth]{Thesis/Chapter 3/Figures/fig_pca_loadings.png}
-\caption{PCA loading vectors for all 22 encoded predictors.}
+\caption{\Gls{pca} loading vectors for all 22 encoded predictors.}
 \label{fig:pca_loadings_ch3}
 \end{figure}
 
@@ -2091,7 +2091,7 @@ materially differ from the training data.
 \label{fig:cramers_v_comparison_ch3}
 \end{figure}
 
-\subsubsection*{PCA overlay of the joint input space}
+\subsubsection*{\Gls{pca} overlay of the joint input space}
 A principal component projection provides a visual comparison of the joint
 input structure. The first two principal components are computed from the
 standardised training inputs (using the eigenvectors from
@@ -2112,7 +2112,7 @@ single direction dominates the 22-dimensional input space.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 3/Figures/fig_mc_joint_pca_comparison.png}
-\caption{PCA projection of joint input structure: training, \gls{mc} sample and overlay.}
+\caption{\Gls{pca} projection of joint input structure: training, \gls{mc} sample and overlay.}
 \label{fig:pca_joint_overlay_ch3}
 \end{figure}
 
@@ -2220,7 +2220,7 @@ training data carries weak but non-zero dependencies. However, the
 magnitude of these differences is small. The correlation matrix differences
 do not exceed 0.042 (Figure~\ref{fig:correlation_difference_heatmap_ch3}),
 all Cram\'{e}r's $V$ values fall below 0.04
-(Figure~\ref{fig:cramers_v_comparison_ch3}), and the PCA overlays show that
+(Figure~\ref{fig:cramers_v_comparison_ch3}), and the \gls{pca} overlays show that
 both datasets populate the same region of principal component space
 (Figure~\ref{fig:pca_joint_overlay_ch3}). The Shapley invariance comparison
 yields a Spearman rank correlation of $\rho_{\mathrm{S}} = 0.991$ between
