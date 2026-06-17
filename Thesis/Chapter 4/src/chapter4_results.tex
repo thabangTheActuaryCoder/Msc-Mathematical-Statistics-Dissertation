@@ -46,15 +46,15 @@ The results of each phase are presented below.
 \subsubsection{Phase 1: Activation function}
 
 Three candidate activation functions were compared: \gls{celu}
-(equation~\eqref{eq:celu}), GELU and Tanh, with all other
-hyperparameters fixed at learning rate $0.001$, batch size $256$ and Adam.
+(equation~\eqref{eq:celu}), \gls{gelu} and Tanh, with all other
+hyperparameters fixed at learning rate $0.001$, batch size $256$ and \gls{adam}.
 
 \noindent
 The validation loss and $R^2$ trajectories for this phase are presented in
 Figure~\ref{fig:phase1_activation_annex}
 (Annexure~\ref{annexure:hyperparameters}).  \gls{celu} achieves the
 lowest validation loss (approximately $0.00435$) and the highest
-validation $R^2$ (approximately $0.9957$) from epoch~60 onwards.  GELU
+validation $R^2$ (approximately $0.9957$) from epoch~60 onwards.  \Gls{gelu}
 tracks \gls{celu} closely but settles at a marginally higher loss
 plateau.  Tanh converges more slowly and exhibits greater epoch-to-epoch
 volatility, reaching a best validation $R^2$ of approximately $0.9954$.
@@ -96,22 +96,22 @@ validation loss values while maintaining stable convergence behaviour.
 
 \subsubsection{Phase 4: Optimiser}
 
-Adam and NAdam were compared with all previous best choices carried
+\gls{adam} and \gls{nadam} were compared with all previous best choices carried
 forward.
 
 \noindent
 The validation trajectories are shown in
 Figure~\ref{fig:phase4_optimiser_annex}
 (Annexure~\ref{annexure:hyperparameters}).
-NAdam converges faster than Adam in the initial epochs and exhibits
+\Gls{nadam} converges faster than \gls{adam} in the initial epochs and exhibits
 smoother validation loss trajectories throughout training.  From
-approximately epoch~40 onwards, NAdam consistently achieves lower
-validation loss and higher validation $R^2$ than Adam, with fewer loss
-spikes.  NAdam was therefore retained.
+approximately epoch~40 onwards, \gls{nadam} consistently achieves lower
+validation loss and higher validation $R^2$ than \gls{adam}, with fewer loss
+spikes.  \Gls{nadam} was therefore retained.
 
 \subsubsection{Phase 5: Momentum parameters}
 
-Three momentum configurations were compared for the NAdam optimiser:
+Three momentum configurations were compared for the \gls{nadam} optimiser:
 $(\beta_1, \beta_2) \in \{(0.90, 0.999),\; (0.95, 0.999),\;
 (0.99, 0.999)\}$.
 
@@ -133,7 +133,7 @@ Figure~\ref{fig:validation_loss_overview_annex}
 (Annexure~\ref{annexure:hyperparameters}) presents the best validation
 loss achieved by each configuration across all five phases.
 The selected configuration (\gls{celu}, $\eta = 0.0005$,
-$|\mathcal{B}| = 256$, NAdam, $\beta_1 = 0.95$) achieves the lowest
+$|\mathcal{B}| = 256$, \gls{nadam}, $\beta_1 = 0.95$) achieves the lowest
 validation loss among all evaluated configurations.
 Table~\ref{tab:final_hyperparameters_ch4} records the final training
 configuration.
@@ -148,10 +148,10 @@ configuration.
 \toprule
 \textbf{Phase} & \textbf{Candidates} & \textbf{Selected} \\
 \midrule
-1. Activation function & \gls{celu}, GELU, Tanh & \gls{celu} \\
+1. Activation function & \gls{celu}, \gls{gelu}, Tanh & \gls{celu} \\
 2. Learning rate & 0.01, 0.001, 0.0005, 0.0001 & 0.0005 \\
 3. Batch size & 64, 128, 256, 512 & 256 \\
-4. Optimiser & Adam, NAdam & NAdam \\
+4. Optimiser & \gls{adam}, \gls{nadam} & \gls{nadam} \\
 5. Momentum $(\beta_1, \beta_2)$ & (0.90, 0.999), (0.95, 0.999), (0.99, 0.999) & (0.95, 0.999) \\
 \bottomrule
 \end{tabular}

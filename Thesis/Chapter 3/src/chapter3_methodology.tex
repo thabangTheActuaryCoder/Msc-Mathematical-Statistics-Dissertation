@@ -807,7 +807,7 @@ The gradient of the loss with respect to the weight matrix of layer $l$ is
     \label{eq:weight_gradient}
 \end{equation}
 Because bias vectors are omitted, no bias-update term appears.  The weight
-matrices are then updated by the NAdam optimiser
+matrices are then updated by the \gls{nadam} optimiser
 (Section~\ref{sec:training_configuration}), which combines Nesterov-accelerated momentum with adaptive learning rates.
 
 These equations are standard in the deep learning literature
@@ -826,7 +826,7 @@ optimisation.
 
 The network is trained by minimising the \gls{mse} on the
 standardised response scale (equation~\eqref{eq:mse_loss}).  Weights are
-updated with the NAdam optimiser \citep{dozat2016incorporating}, described
+updated with the \gls{nadam} optimiser \citep{dozat2016incorporating}, described
 in Section~\ref{sec:loss_optimisation}.  Validation performance is
 evaluated every $v = 5$ epochs.  For a fixed validation set, minimising
 the validation \gls{mse} is equivalent to maximising the validation \gls{r2}; the
@@ -874,7 +874,7 @@ Training response & Standardised \texttt{charges} \\
 Prediction scale & De-normalised to the original monetary scale \\
 Training objective & \Gls{mse} on the standardised response scale \\
 Secondary evaluation metrics & \gls{mae}, \gls{rmse} and \gls{r2} on the original response scale \\
-Optimiser & NAdam \citep{dozat2016incorporating} \\
+Optimiser & \gls{nadam} \citep{dozat2016incorporating} \\
 Momentum parameters & $(\beta_1,\beta_2)$ selected by validation comparison from $\{(0.90,0.999),\ (0.95,0.999),\ (0.99,0.999)\}$ \\
 Learning rate & Selected by validation comparison from $\{0.01, 0.001, 0.0005, 0.0001\}$ \\
 Batch size & Selected by validation comparison from $\{64, 128, 256, 512\}$ \\
@@ -896,15 +896,15 @@ The main training hyperparameters that materially affect the fitted
 prediction surface are compared sequentially:
 
 \begin{enumerate}
-    \item \textbf{Hidden activation:}  \gls{celu}, GELU and Tanh are evaluated
-          with learning rate $0.001$, batch size $256$, and Adam held fixed.
+    \item \textbf{Hidden activation:}  \gls{celu}, \gls{gelu} and Tanh are evaluated
+          with learning rate $0.001$, batch size $256$, and \gls{adam} held fixed.
     \item \textbf{Learning rate:}  Values $\{0.01, 0.001, 0.0005, 0.0001\}$
           are tested with the best activation carried forward.
     \item \textbf{Batch size:}  Sizes $\{64, 128, 256, 512\}$ are tested
           with the best activation and learning rate.
-    \item \textbf{Optimiser:}  Adam and NAdam are compared with all previous
+    \item \textbf{Optimiser:}  \gls{adam} and \gls{nadam} are compared with all previous
           best choices carried forward.
-    \item \textbf{Momentum parameters:} $(\beta_1,\beta_2)$.  Since NAdam is
+    \item \textbf{Momentum parameters:} $(\beta_1,\beta_2)$.  Since \gls{nadam} is
           selected in the previous step, its Nesterov-accelerated momentum
           parameters are compared over
           $\{(0.90,0.999),\linebreak[1] (0.95,0.999),\linebreak[1] (0.99,0.999)\}$.  The first
@@ -951,7 +951,7 @@ scales the initial weights according to the fan-in of each layer so
 that activations neither vanish nor explode during the early forward
 passes, a property that is particularly important in deeper
 architectures such as the five-hidden-layer network used here;
-(2)~mini-batch gradient descent with the NAdam optimiser;
+(2)~mini-batch gradient descent with the \gls{nadam} optimiser;
 (3)~validation evaluation every 5 epochs using the dot-product \gls{r2};
 (4)~early stopping when the validation \gls{r2} has not improved for 10
 consecutive checks; (5)~selection of the checkpoint with the highest

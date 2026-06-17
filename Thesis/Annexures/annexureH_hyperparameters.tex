@@ -11,10 +11,10 @@
 Hyperparameters were selected through a five-phase sequential comparison procedure. In each phase, one hyperparameter was varied while all others were held at their current best values. The phases proceeded in the following order:
 
 \begin{enumerate}
-    \item Activation function (\gls{celu}, GELU, Tanh), with fixed lr${}=0.001$, batch size${}=256$, Adam.
-    \item Learning rate ($0.01, 0.001, 0.0005, 0.0001$), with fixed best activation, batch size${}=256$, Adam.
-    \item Batch size ($64, 128, 256, 512$), with fixed best activation and learning rate, Adam.
-    \item Optimiser (Adam vs NAdam), with all previous best values fixed.
+    \item Activation function (\gls{celu}, \gls{gelu}, Tanh), with fixed lr${}=0.001$, batch size${}=256$, \gls{adam}.
+    \item Learning rate ($0.01, 0.001, 0.0005, 0.0001$), with fixed best activation, batch size${}=256$, \gls{adam}.
+    \item Batch size ($64, 128, 256, 512$), with fixed best activation and learning rate, \gls{adam}.
+    \item Optimiser (\gls{adam} vs \gls{nadam}), with all previous best values fixed.
     \item Momentum $\beta_1$ ($0.90, 0.95, 0.99$) with $\beta_2 = 0.999$ fixed, using the best optimiser.
 \end{enumerate}
 
@@ -31,7 +31,7 @@ Each configuration was trained with early stopping (patience of 10 validation ch
 \midrule
 \multirow{3}{*}{Phase 1: Activation}
   & \gls{celu}  & 100 & 0.995682 & 556.7 \\
-  & GELU  &  25 & 0.995636 & 313.8 \\
+  & \gls{gelu}  &  25 & 0.995636 & 313.8 \\
   & Tanh  & 100 & 0.995532 & 565.9 \\
 \midrule
 \multirow{4}{*}{Phase 2: Learning Rate}
@@ -47,8 +47,8 @@ Each configuration was trained with early stopping (patience of 10 validation ch
   & 512 & 160 & 0.995685 &  487.3 \\
 \midrule
 \multirow{2}{*}{Phase 4: Optimiser}
-  & Adam  & 100 & 0.995692 & 562.7 \\
-  & NAdam &  85 & 0.995693 & 582.5 \\
+  & \gls{adam}  & 100 & 0.995692 & 562.7 \\
+  & \gls{nadam} &  85 & 0.995693 & 582.5 \\
 \midrule
 \multirow{3}{*}{Phase 5: Momentum}
   & $\beta_1=0.90$ & 85 & 0.995693 & 586.6 \\
@@ -134,7 +134,7 @@ Architecture    & $22 \to 256 \to 128 \to 64 \to 32 \to 16 \to 1$ \\
 Activation      & \gls{celu} \\
 Learning rate   & 0.0005 \\
 Batch size      & 256 \\
-Optimiser       & NAdam \\
+Optimiser       & \gls{nadam} \\
 $\beta_1$       & 0.90 \\
 $\beta_2$       & 0.999 \\
 Bias            & False (all layers) \\
