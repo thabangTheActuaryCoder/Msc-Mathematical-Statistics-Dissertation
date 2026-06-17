@@ -27,7 +27,7 @@ Section~\ref{sec:shapley_results} reports the Shapley-value attribution
 results at the global and high-cost conditional levels;
 Section~\ref{sec:cross_seed_shap} presents the cross-seed Shapley
 attribution stability analysis;
-Section~\ref{sec:shap_interactions} reports the SHAP interaction
+Section~\ref{sec:shap_interactions} reports the \gls{shap} interaction
 analysis; and
 Section~\ref{sec:mc_shapley_integration} examines the correspondence
 between the \gls{mc} distributional findings and the Shapley
@@ -543,7 +543,7 @@ result confirms that the predictive advantage of the \gls{dnn} over
 \gls{xgboost} on this benchmark dataset is marginal once hyperparameter
 tuning is applied.  The \gls{dnn} is nevertheless retained for the
 subsequent \gls{mc} and Shapley analyses on the grounds of its
-differentiability, which enables gradient-based SHAP computation.
+differentiability, which enables gradient-based \gls{shap} computation.
 Tree-based models require permutation-based or kernel-based Shapley
 approximations, which are computationally more expensive for large
 simulation sizes and do not exploit the smooth prediction surface that
@@ -901,7 +901,7 @@ Section~\ref{sec:residual_augmented_results} are not sensitive to the training i
 \label{sec:shapley_results}
 
 Shapley values were computed for all $B = 100\,000$ simulated
-profiles using the gradient-based SHAP explainer described in
+profiles using the gradient-based \gls{shap} explainer described in
 Table~\ref{tab:shap_implementation_settings_ch3}. Dummy-level
 attributions were aggregated to the raw-variable level ($q = 11$)
 using equation~\eqref{eq:raw_variable_shap_aggregation_ch3}.
@@ -934,7 +934,7 @@ reports the numerical values.
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrr}
 \toprule
-\textbf{Variable} & \textbf{Mean signed SHAP} & \textbf{Mean $|\text{SHAP}|$} \\
+\textbf{Variable} & \textbf{Mean signed \gls{shap}} & \textbf{Mean $|\text{SHAP}|$} \\
 \midrule
 \texttt{smoker} & $+0.032$ & $0.578$ \\
 \texttt{coverage\_level} & $+0.022$ & $0.401$ \\
@@ -970,14 +970,14 @@ absolute terms is \texttt{medical\_history} ($-0.031$), reflecting a
 mild directional asymmetry in how the model attributes cost to different
 medical history categories.
 
-\subsubsection{Feature-level SHAP beeswarm}
+\subsubsection{Feature-level \Gls{shap} beeswarm}
 
 The beeswarm plot of all 22 encoded features
 (Figure~\ref{fig:shap_beeswarm_annex},
 Annexure~\ref{annexure:shap_beeswarm}) reveals several patterns
 consistent with the aggregated importance ranking.  The binary
 \texttt{smoker} variable produces a clear bimodal separation, with
-smoker $=$ yes yielding SHAP values of approximately $+0.5$ to $+1.0$
+smoker $=$ yes yielding \gls{shap} values of approximately $+0.5$ to $+1.0$
 and smoker $=$ no yielding $-0.5$ to $-0.7$.  The
 \texttt{coverage\_level\_Premium} dummy exhibits a similar bimodal
 pattern of smaller magnitude ($+0.3$ to $+0.7$).  The Heart disease
@@ -985,7 +985,7 @@ dummies for both \texttt{medical\_history} and
 \texttt{family\_medical\_history} produce the next largest attributions
 ($+0.3$ to $+0.8$).  The continuous variables (\texttt{bmi},
 \texttt{children}, \texttt{age}) display more diffuse distributions
-centred near zero, with individual SHAP magnitudes mostly within
+centred near zero, with individual \gls{shap} magnitudes mostly within
 $\pm 0.15$.
 
 \subsubsection{Training versus \gls{mc} attribution invariance}
@@ -1227,7 +1227,7 @@ covariates.
 \subsubsection{Representative high-cost waterfall decomposition}
 
 A representative high-cost profile at the $\tau_{95}$ threshold
-(predicted cost R24\,249) was decomposed using a SHAP waterfall plot
+(predicted cost R24\,249) was decomposed using a \gls{shap} waterfall plot
 (Figure~\ref{fig:shap_waterfall_annex},
 Annexure~\ref{annexure:shap_waterfall}).  The profile is characterised
 by age~$= 34$, \texttt{bmi}~$= 31.4$, \texttt{children}~$= 0$,
@@ -1260,7 +1260,7 @@ limitation identified in
 Section~\ref{sec:limitations_conclusion}: whether the Shapley
 attributions are sensitive to the stochastic training process.
 
-\subsubsection{Global SHAP stability}
+\subsubsection{Global \Gls{shap} stability}
 
 The global mean $|\text{SHAP}|$ values were computed for each seed and
 compared across all ten pairwise seed combinations.  Detailed
@@ -1288,7 +1288,7 @@ $0.1\%$ for every variable
 magnitude of the attributions, not merely the ranking, is stable across
 seeds.
 
-\subsubsection{Conditional SHAP stability at $\tau_{99}$}
+\subsubsection{Conditional \Gls{shap} stability at $\tau_{99}$}
 
 The conditional Shapley analysis at the $\tau_{99}$ threshold was
 repeated for each seed to assess whether the ranking reversal documented
@@ -1313,26 +1313,26 @@ nearly identical importance magnitudes.  This result establishes that the
 ranking reversal is a robust structural property of the architecture and
 data, not an artefact of a single random initialisation.
 
-\subsubsection{SHAP dependence patterns}
+\subsubsection{\Gls{shap} dependence patterns}
 
-The SHAP dependence plots for the \texttt{smoker} variable and the
+The \gls{shap} dependence plots for the \texttt{smoker} variable and the
 \texttt{bmi}/\texttt{coverage\_level} relationship are presented in
 Annexure~\ref{annexure:multiseed_dependence}
 (Figures~\ref{fig:shap_dependence_smoker_annex}
 and~\ref{fig:shap_dependence_bmi_coverage_annex}).  The binary
 \texttt{smoker} variable produces a clear bimodal attribution pattern
 that is replicated across all five seeds.  The
-BMI-SHAP relationship is near-perfectly linear, and no smoker-BMI
+BMI-\gls{shap} relationship is near-perfectly linear, and no smoker-BMI
 interaction is evident, consistent with the additive structure of the
 benchmark dataset.
 
 
 % =============================================================
-\subsection{SHAP Interaction Analysis}
+\subsection{\Gls{shap} Interaction Analysis}
 \label{sec:shap_interactions}
 
 To assess whether the \gls{dnn} has learned meaningful pairwise interactions
-among the input variables, the SHAP interaction structure was analysed by
+among the input variables, the \gls{shap} interaction structure was analysed by
 computing the pairwise Pearson correlations between all
 $\binom{11}{2} = 55$ pairs of raw-variable Shapley-value vectors across
 the $B = 100\,000$ \gls{mc} profiles.
@@ -1340,7 +1340,7 @@ the $B = 100\,000$ \gls{mc} profiles.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.75\textwidth]{Thesis/Chapter 4/Figures/fig_shap_interaction_heatmap.png}
-\caption{SHAP interaction heatmap: pairwise Pearson correlations of Shapley-value vectors.}
+\caption{\Gls{shap} interaction heatmap: pairwise Pearson correlations of Shapley-value vectors.}
 \label{fig:shap_interaction_heatmap_ch4}
 \end{figure}
 
@@ -1436,7 +1436,7 @@ the global Shapley importance ranking is perfectly preserved across all
 ten pairwise seed combinations ($\rho_{\mathrm{S}} = 1.0000$,
 Figure~\ref{fig:shap_spearman_heatmap_ch4}).  The $\tau_{99}$ ranking
 reversal is replicated in all five seeds
-(Figure~\ref{fig:cond_shap_tail_stability_ch4}), and the SHAP
+(Figure~\ref{fig:cond_shap_tail_stability_ch4}), and the \gls{shap}
 interaction analysis confirms that the \gls{dnn} has learned an essentially
 additive mapping (all pairwise correlations below $|r| = 0.033$,
 Figure~\ref{fig:shap_interaction_heatmap_ch4}).  These convergent

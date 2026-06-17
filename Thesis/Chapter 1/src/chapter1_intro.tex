@@ -293,7 +293,7 @@ game's total payoff that satisfies the axioms of efficiency, symmetry,
 linearity and the null-player property.
 
 In the machine-learning interpretability literature, this decomposition
-has been operationalised through the SHAP framework
+has been operationalised through the \gls{shap} framework
 \citep{lundberg2017unified}, which interprets each prediction as a
 cooperative game in which the ``players'' are input features and the
 ``payoff'' is the predicted value.  Among the available approximation strategies, a gradient-based
@@ -642,7 +642,7 @@ The following delimitations define the boundaries of the study:
           joint distributions are not considered.
 
     \item \textbf{Approximate Shapley values.}  The reported
-          attributions are gradient-based SHAP approximations, not
+          attributions are gradient-based \gls{shap} approximations, not
           exact game-theoretic Shapley values.  They are conditional on
           the fitted network, the background sample, and the explainer
           settings.  Exact Shapley computation is infeasible for the
@@ -704,7 +704,7 @@ This chapter reviews the theoretical and empirical foundations of the
 learning theory and supervised regression, \gls{dnn}
 architectures and their approximation properties, \glspl{glm} as actuarial baselines, health insurance cost prediction with
 machine learning, \gls{mc} simulation methodology, Shapley-value
-attribution theory and the SHAP framework, and conditional
+attribution theory and the \gls{shap} framework, and conditional
 feature-importance analysis.  The chapter concludes with a formal
 identification of the research gap that motivates the present study.
 

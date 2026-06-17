@@ -46,8 +46,8 @@ Plotly            & 5.x              & Interactive 3D surface plots \\
 \begin{itemize}
     \item Processor: Apple Silicon (M-series)
     \item Primary compute device: \gls{mps} via PyTorch
-    \item SHAP compute device: CPU (faster than \gls{mps} for GradientExplainer)
-    \item Fallback: CPU (used when \gls{mps} is unavailable or for SHAP computations)
+    \item \Gls{shap} compute device: CPU (faster than \gls{mps} for GradientExplainer)
+    \item Fallback: CPU (used when \gls{mps} is unavailable or for \gls{shap} computations)
 \end{itemize}
 
 The PyTorch device was selected automatically: \gls{mps} if available on Apple Silicon, CUDA if available on NVIDIA hardware, and CPU as fallback.

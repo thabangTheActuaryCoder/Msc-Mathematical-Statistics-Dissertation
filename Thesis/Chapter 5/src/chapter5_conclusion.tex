@@ -70,7 +70,7 @@ approximately additive data-generating process of the benchmark data.
 The tree-based benchmarks (\gls{rf} and XGBoost) also achieved
 strong performance; after tuning, XGBoost matched the \gls{dnn} to four
 decimal places.  The \gls{dnn} was retained for the subsequent analyses on the
-grounds of its differentiability for gradient-based SHAP computation.
+grounds of its differentiability for gradient-based \gls{shap} computation.
 Full performance comparisons are reported in
 Chapter~\ref{sec:results}.
 
@@ -213,7 +213,7 @@ categorical risk factors.  The multi-seed analysis
 ranking is perfectly preserved across all ten pairwise seed combinations
 (Spearman $\rho_{\mathrm{S}} = 1.0000$), and the $\tau_{99}$ ranking
 reversal is replicated in all five seeds with pairwise conditional
-Spearman correlations between $0.9909$ and $1.0000$.  The SHAP
+Spearman correlations between $0.9909$ and $1.0000$.  The \gls{shap}
 interaction analysis (Section~\ref{sec:shap_interactions}) further
 established that all 55 pairwise Shapley-value correlations fall below
 $|r| = 0.033$, confirming that the \gls{dnn} learned an essentially additive
@@ -448,7 +448,7 @@ that the findings are not artefacts of a single random initialisation.
 The tuned XGBoost benchmark achieves $R^2 = 0.9956$, matching the \gls{dnn}
 ($R^2 = 0.9957$) to within one unit in the fourth decimal place.  This
 parity implies that the \gls{dnn}'s selection over XGBoost for the subsequent
-analyses is motivated by the availability of gradient-based SHAP rather
+analyses is motivated by the availability of gradient-based \gls{shap} rather
 than by a meaningful predictive advantage.  On datasets where
 differentiability is not required, XGBoost may be a more parsimonious
 alternative that achieves equivalent accuracy with less computational
@@ -465,13 +465,13 @@ and low exercise frequency that are rare or absent in the training data.
 The impact of these implausible profiles on the results is mitigated by
 their low probability, but it cannot be excluded entirely.
 
-The reported attributions are gradient-based SHAP approximations, not
+The reported attributions are gradient-based \gls{shap} approximations, not
 exact game-theoretic Shapley values.  The approximation quality depends on
 the smoothness of the fitted prediction function and the adequacy of the
 background sample of $m_0 = 200$ observations.  The exact Shapley values
 would require evaluating the model at all $2^p$ subsets of features, which
 is computationally infeasible for $p = 22$.  The gradient-based
-approximation is the standard approach in the SHAP literature
+approximation is the standard approach in the \gls{shap} literature
 \citep{lundberg2017unified}, but its approximation error has not been
 quantified for this specific setting.
 
@@ -499,7 +499,7 @@ selection.
 
 A further methodological limitation concerns the absence of formal
 uncertainty quantification around the Shapley-value estimates.  The
-gradient-based SHAP implementation produces point estimates of the
+gradient-based \gls{shap} implementation produces point estimates of the
 attributions for each profile, but does not provide confidence intervals or
 posterior distributions for the feature-importance summaries.  In a
 Bayesian framework, one could place posterior distributions over the
@@ -813,15 +813,15 @@ the attribution and interpretation components.
           intermediate thresholds (e.g.\ $\tau_{97.5}$, $\tau_{98}$) to
           trace the transition in the importance ranking more finely.
 
-    \item Comparing the gradient-based SHAP attributions with alternative
-          methods, such as permutation-based SHAP, KernelSHAP or LIME
+    \item Comparing the gradient-based \gls{shap} attributions with alternative
+          methods, such as permutation-based \gls{shap}, KernelSHAP or LIME
           \citep{ribeiro2016should}, would assess the sensitivity of the
           results to the choice of explanation method.  Consistency across
           methods would strengthen the conclusion that the ranking
           reversal is a property of the fitted model rather than an
           artefact of the gradient-based approximation.
 
-    \item The SHAP interaction analysis in
+    \item The \gls{shap} interaction analysis in
           Section~\ref{sec:shap_interactions} established that pairwise
           Shapley-value correlations are negligible on this benchmark
           dataset (all below $|r| = 0.033$), confirming an essentially

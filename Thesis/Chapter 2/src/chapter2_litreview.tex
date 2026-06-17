@@ -672,7 +672,7 @@ This notation separates the input distribution used for \gls{mc} simulation,
 \(\widehat{F}_{X}\), from the background distribution used for Shapley
 evaluation, \(\widehat{F}_{B}\). These distributions may coincide, but they
 need not be identical. The empirical implementation therefore reports the
-background data and the SHAP convention used.
+background data and the \gls{shap} convention used.
 
 \noindent
 The exact Shapley contribution of feature \(j\) for profile \(\mathbf{x}\) is
@@ -2986,7 +2986,7 @@ profiles on which the high-cost interpretability analysis is based.
 Shapley values originate in cooperative game theory and provide a principled axiomatic method for allocating a total payoff among players \citep{shapley1953value}. In machine learning, the players are the input variables and the payoff is the model prediction. The Shapley value of feature \(j\) measures the average marginal contribution of that feature across all possible subsets of features, as formalised in equation~\eqref{eq:shapley_exact}. The Shapley value is the unique solution satisfying four axioms: efficiency (contributions sum to the total prediction shift), symmetry (identically contributing features receive identical values), dummy (a feature that never changes the value receives zero), and additivity \citep{shapley1953value}.
 
 \noindent
-The \gls{shap} framework connects Shapley values to machine learning model interpretation \citep{lundberg2017unified}. The additive decomposition in equation~\eqref{eq:shapley_decomp} provides a local explanation of an individual prediction. \citep{lundberg2017unified} proved that this is the only additive feature attribution method satisfying efficiency, dummy and symmetry simultaneously, which is why it constitutes the theoretical foundation for the \gls{shap} computational framework.  \citep{covert2021explaining} provide a unifying removal-based framework that relates SHAP to other explanation methods, \citep{sundararajan2020many} examine the many distinct Shapley value formulations that arise under different baseline and feature-dependence assumptions, and \citep{lundberg2020local} extend Shapley-based explanations from local to global understanding for tree models.
+The \gls{shap} framework connects Shapley values to machine learning model interpretation \citep{lundberg2017unified}. The additive decomposition in equation~\eqref{eq:shapley_decomp} provides a local explanation of an individual prediction. \citep{lundberg2017unified} proved that this is the only additive feature attribution method satisfying efficiency, dummy and symmetry simultaneously, which is why it constitutes the theoretical foundation for the \gls{shap} computational framework.  \citep{covert2021explaining} provide a unifying removal-based framework that relates \gls{shap} to other explanation methods, \citep{sundararajan2020many} examine the many distinct Shapley value formulations that arise under different baseline and feature-dependence assumptions, and \citep{lundberg2020local} extend Shapley-based explanations from local to global understanding for tree models.
 
 \noindent
 Shapley-based explanations can be interpreted locally or globally. A local explanation focuses on a single policyholder profile and explains why the model assigned a particular predicted cost. A global explanation summarises feature contributions across many observations. A common global importance measure is the mean absolute Shapley value:

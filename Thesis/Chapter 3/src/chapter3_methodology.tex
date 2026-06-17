@@ -2437,11 +2437,11 @@ Shapley values are model attributions rather than causal effects.
 \subsubsection{Implementation settings}
 
 The background data are sampled from the model-ready training partition. The
-primary implementation uses a gradient-based SHAP explainer for the
+primary implementation uses a gradient-based \gls{shap} explainer for the
 differentiable \gls{dnn}. A model-agnostic KernelSHAP calculation may be
 applied to a small validation subset as a computational check if required.
 
-The gradient-based SHAP explainer computes
+The gradient-based \gls{shap} explainer computes
 approximate Shapley values, not exact game-theoretic Shapley
 values.  Exact computation requires evaluating the prediction function at
 all $2^p$ feature subsets, which is computationally infeasible for $p = 22$
@@ -2455,7 +2455,7 @@ approximate attributions rather than exact cooperative-game solutions.
 
 \begin{table}[H]
 \centering
-\caption{SHAP implementation settings.}
+\caption{\Gls{shap} implementation settings.}
 \label{tab:shap_implementation_settings_ch3}
 \small
 \renewcommand{\arraystretch}{1.15}
@@ -2465,7 +2465,7 @@ approximate attributions rather than exact cooperative-game solutions.
 \midrule
 Prediction function & Fitted \gls{dnn} with response de-normalisation \\
 Output scale & Original monetary scale of \texttt{charges} \\
-Explainer & Gradient-based SHAP explainer \\
+Explainer & Gradient-based \gls{shap} explainer \\
 Background data & Sample from the model-ready training partition \\
 Background size & $m_0 = 200$ observations, selected as the largest size that maintains computational feasibility for the gradient-based explainer \\
 Explained profiles & \gls{mc} simulated profiles $\mathbf{z}^{(b)}$ \\
@@ -2677,7 +2677,7 @@ Residual augmentation &
 Residual-augmented simulation is a sensitivity analysis and not a complete predictive uncertainty model \\
 
 A10 &
-SHAP interpretation &
+\Gls{shap} interpretation &
 Shapley values explain the fitted \gls{dnn} predictions and are not causal feature effects \\
 
 A11 &
