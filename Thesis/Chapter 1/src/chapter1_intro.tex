@@ -529,72 +529,7 @@ questions:
 \end{enumerate}
 
 % ---------------------------------------------------------
-% 1.7 RESEARCH GAP
-% ---------------------------------------------------------
-
-\subsection{Research Gap}
-\label{sec:research_gap_intro}
-
-The health insurance prediction literature has grown substantially in
-recent years, driven by the increasing availability of large datasets and
-the development of flexible machine-learning models.  Several studies
-have demonstrated that neural networks and tree-based ensembles can
-outperform classical actuarial models on insurance cost prediction tasks
-\citep{richman2021ai, kuo2019deep}.  These studies typically focus on
-predictive accuracy metrics such as \gls{rmse}, \gls{mae} and \gls{r2}, comparing
-multiple model classes on test-set performance.  While predictive
-performance is an important criterion, the literature has paid less
-attention to the distributional properties of predicted costs under
-population-level input variation.
-
-A separate stream of research has applied \gls{mc} simulation methods
-to insurance and actuarial problems, including loss reserving, ruin
-probability estimation and aggregate claims modelling.  However, the
-use of \gls{mc} simulation to construct a model-implied predicted-cost
-distribution, in which synthetic input profiles are generated from
-fitted marginals and propagated through a trained prediction function,
-has not been presented as a standard component of the insurance
-prediction workflow.  The distinction is important: rather than
-reporting predictions at observed data points only, this approach
-generates a distribution of predicted costs under an explicit input law,
-connecting the prediction model to the simulation-based inference
-tradition.
-
-The explainability literature has similarly expanded, with Shapley-value
-methods becoming a widely adopted tool for model interpretation
-\citep{lundberg2017unified}.  Most applications report global
-feature-importance summaries, typically beeswarm plots or bar charts of
-mean absolute Shapley values, across the full prediction set.  Fewer
-studies examine how feature importance changes conditionally within
-specific regions of the output distribution.  The question of whether the
-variables that drive average predicted costs are the same as those that
-drive extreme predicted costs has not been systematically addressed in
-the health insurance context.
-
-Each of these three components is individually well established in the
-statistical and machine-learning literatures
-\citep{vapnik1998statistical, robert2004monte, lundberg2017unified}.
-The contribution of this dissertation is methodological: the
-conditional Shapley analysis computed within Monte-Carlo-simulated
-high-cost regions constitutes a new analytical capability that none of
-the individual components can provide in isolation.  While deep neural
-network regression, parametric \gls{mc} simulation and
-Shapley-value attribution are each mature tools, their integration
-within a single, reproducible workflow produces a form of
-threshold-conditional feature attribution that has not been presented
-in the health insurance literature.  Specifically, the \gls{mc}
-distribution defines the high-cost regions of interest, and the
-Shapley decomposition within those regions reveals how the
-feature-importance structure changes across the predicted-cost
-distribution.  This integrated methodology extends conventional
-global Shapley summaries by conditioning attributions on actuarially
-relevant subsets of the model-implied distribution.  The gap is
-developed through the reviewed studies in
-Section~\ref{sec:literature_review} and stated formally in
-Section~\ref{sec:research_gap}.
-
-% ---------------------------------------------------------
-% 1.8 METHODOLOGICAL OVERVIEW
+% 1.7 METHODOLOGICAL OVERVIEW
 % ---------------------------------------------------------
 
 \subsection{Methodological Overview}
@@ -684,7 +619,7 @@ underwriting portfolio from a specific insurer.  All conclusions are
 internal to the modelling workflow and the benchmark data.
 
 % ---------------------------------------------------------
-% 1.9 VALIDATION AND ROBUSTNESS STRATEGY
+% 1.8 VALIDATION AND ROBUSTNESS STRATEGY
 % ---------------------------------------------------------
 
 \subsection{Validation and Robustness Strategy}
@@ -738,7 +673,7 @@ chapter (Chapter~\ref{chap:methods_and_data}), and the corresponding
 results are reported in Chapter~\ref{sec:results}.
 
 % ---------------------------------------------------------
-% 1.10 SCOPE AND DELIMITATIONS
+% 1.9 SCOPE AND DELIMITATIONS
 % ---------------------------------------------------------
 
 \subsection{Scope and Delimitations}
@@ -809,7 +744,7 @@ The following delimitations define the boundaries of the study:
 \end{itemize}
 
 % ---------------------------------------------------------
-% 1.11 ETHICAL CONSIDERATIONS
+% 1.10 ETHICAL CONSIDERATIONS
 % ---------------------------------------------------------
 
 \subsection{Ethical Considerations}
@@ -843,7 +778,7 @@ independent researchers with access to the same dataset and software
 environment.
 
 % ---------------------------------------------------------
-% 1.12 DEFINITION OF KEY TERMS
+% 1.11 DEFINITION OF KEY TERMS
 % ---------------------------------------------------------
 
 \subsection{Definition of Key Terms}
@@ -857,7 +792,7 @@ sensitivity analysis, are provided in
 Annexure~\ref{annexure:glossary}.
 
 % ---------------------------------------------------------
-% 1.13 DISSERTATION OUTLINE
+% 1.12 DISSERTATION OUTLINE
 % ---------------------------------------------------------
 
 \subsection{Dissertation Outline}
