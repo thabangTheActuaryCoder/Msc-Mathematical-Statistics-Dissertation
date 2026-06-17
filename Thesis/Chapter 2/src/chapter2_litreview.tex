@@ -189,16 +189,34 @@ their study does not consider.
 Taken together, these studies establish that \gls{dnn}-based prediction and
 \gls{shap}-based attribution are individually well supported in the health
 insurance cost-prediction literature, and that the choice of a \gls{dnn} for
-the prediction layer is justified by recent evidence. What is not yet
-standard, however, is the integrated treatment of a fitted neural network,
-\gls{mc} simulation over a synthetic policyholder population and Shapley
-attribution at the level of high-cost simulated profiles within a single
-workflow, and it is this combination that the proposed framework places at
-the centre of the analysis.
-
+the prediction layer is justified by recent evidence.  The integration of
+these components into a single simulation-based workflow has, however,
+received limited attention in the insurance pricing domain.
 
 \noindent
-A related three-stage structure combining \gls{mc} simulation, machine-learning prediction and Shapley-based attribution has been proposed in other applied domains. \citep{santos2023explainable} implement such a sequence in an earned-value project-control setting: \gls{mc} simulation is used to generate a large synthetic sample of input configurations representing plausible project states, a machine-learning model is fitted to approximate the relationship between those inputs and a continuous project-performance outcome, and Shapley-based explanations attribute the resulting predictions to individual input variables. Although their empirical context is project management rather than insurance pricing, the workflow is methodologically similar: simulation over a synthetic input space, nonlinear prediction, and post-hoc feature-level attribution. The framework adopted here applies the same three-stage logic to health insurance cost prediction: \gls{mc} simulation generates synthetic policyholder profiles from parametric distributions fitted to the observed training attributes, the fitted \gls{dnn} maps each profile to a predicted cost, and Shapley values decompose those predictions into feature-level contributions, with particular attention given to the high-cost region of the simulated predicted-cost distribution. This adaptation remains subject to the benchmark-data limitations stated above, namely that the conclusions are internal to the modelling workflow and are not direct evidence of real-world pricing practice.
+The closest methodological precedent appears in an applied
+project-management context.  \citet{santos2023explainable} implement a
+three-stage structure combining \gls{mc} simulation, machine-learning
+prediction and Shapley-based attribution in an earned-value
+project-control setting: \gls{mc} simulation generates a large synthetic
+sample of input configurations representing plausible project states, a
+machine-learning model approximates the relationship between those inputs
+and a continuous project-performance outcome, and Shapley-based
+explanations attribute the resulting predictions to individual input
+variables.  The framework adopted here applies the same three-stage logic
+to health insurance cost prediction: \gls{mc} simulation generates
+synthetic policyholder profiles from parametric distributions fitted to the
+observed training attributes, the fitted \gls{dnn} maps each profile to a
+predicted cost, and Shapley values decompose those predictions into
+feature-level contributions, with particular attention given to the
+high-cost region of the simulated predicted-cost distribution.  The primary
+difference is the empirical domain and the choice of prediction model: the
+present study uses a \gls{dnn} rather than a general machine-learning
+regressor and applies the workflow to policyholder-level health insurance
+cost data rather than project-performance metrics.  This adaptation remains
+subject to the benchmark-data limitations stated above, namely that the
+conclusions are internal to the modelling workflow and are not direct
+evidence of real-world pricing practice.
 
 \noindent
 Figure~\ref{fig:integrated_framework} summarises the framework. The predictive
