@@ -34,7 +34,7 @@ framework are stated.
 \label{sec:classical_actuarial}
 
 The statistical modelling of insurance costs has a long history.
-\Glspl{glm} (GLMs) have served as the standard framework
+\Glspl{glm} have served as the standard framework
 for actuarial pricing since the seminal work of
 \citep{nelder1972generalized} and their subsequent adoption by the
 insurance profession.  In health insurance, the Gamma distribution with
@@ -52,10 +52,10 @@ structure of the log-link allows each coefficient to be interpreted as a
 relative risk factor: exponentiating $\beta_j$ yields the multiplicative
 effect of a unit increase in the $j$-th covariate on the expected cost,
 holding all other covariates constant.  This interpretive simplicity has
-made GLMs the dominant modelling tool in actuarial practice for several
+made \glspl{glm} the dominant modelling tool in actuarial practice for several
 decades.
 
-Despite their advantages, GLMs impose a pre-specified linear predictor
+Despite their advantages, \glspl{glm} impose a pre-specified linear predictor
 structure that restricts the functional form of the relationship between
 covariates and the response.  Interaction effects must be specified
 manually, and nonlinear relationships can only be captured through
@@ -75,28 +75,28 @@ distributional assumptions can mitigate this concern, the fundamental
 limitation of the linear predictor structure remains.  As
 \citep{goodfellow2016deep} note, the capacity of a model class to
 approximate a target function is determined by the richness of the
-hypothesis space, and the hypothesis space of a GLM is inherently
+hypothesis space, and the hypothesis space of a \gls{glm} is inherently
 constrained by its additive structure.
 
-Between the constrained linear predictor of the GLM and the fully
+Between the constrained linear predictor of the \gls{glm} and the fully
 flexible hidden-layer representations of a \gls{dnn} lie
 tree-based ensemble methods, which approximate nonlinear relationships
 through collections of decision trees.  \Glspl{rf}
 \citep{breiman2001random} aggregate predictions across independently
 grown trees, each trained on a bootstrap sample with a random feature
 subset at each split, reducing variance while capturing interactions
-that the GLM cannot represent.  Gradient-boosted trees, exemplified by
+that the \gls{glm} cannot represent.  Gradient-boosted trees, exemplified by
 the XGBoost implementation \citep{chen2016xgboost}, construct an
 additive ensemble of shallow trees sequentially, with each new tree
 fitted to the residuals of the preceding ensemble.  Both methods offer
-greater flexibility than the GLM but remain fundamentally
+greater flexibility than the \gls{glm} but remain fundamentally
 piecewise-constant approximators: unlike neural networks, they do not
 learn smooth, continuous mappings through differentiable transformations.
-Including a \gls{rf} and an XGBoost benchmark alongside the GLM and
+Including a \gls{rf} and an XGBoost benchmark alongside the \gls{glm} and
 DNN provides a graded comparison across model classes of increasing
-flexibility.  The core comparison remains the actuarial-standard GLM
+flexibility.  The core comparison remains the actuarial-standard \gls{glm}
 against the DNN, since this dissertation is situated within an actuarial
-modelling context where the GLM is the established industry baseline and
+modelling context where the \gls{glm} is the established industry baseline and
 the DNN represents the class of model whose behaviour the \gls{mc}
 and Shapley analyses are designed to examine.  The tree-based benchmarks
 complement this pairing by establishing where piecewise-constant
@@ -105,7 +105,7 @@ nonlinear methods fall on the performance spectrum.
 \subsubsection{\Glspl{dnn} for insurance regression}
 \label{sec:dnn_intro}
 
-\Glspl{dnn} provide a flexible alternative to the GLM framework.
+\Glspl{dnn} provide a flexible alternative to the \gls{glm} framework.
 The universal approximation theorem
 \citep{hornik1989multilayer, cybenko1989approximation} establishes that a
 sufficiently wide feed-forward network with a non-polynomial activation
@@ -124,7 +124,7 @@ adoption of neural networks in insurance applications.  Studies by
 \citep{richman2021ai} and \citep{kuo2019deep} have demonstrated that
 neural networks can achieve predictive improvements over classical
 actuarial models on insurance cost prediction tasks, particularly when
-the data contain nonlinear covariate-response relationships that the GLM
+the data contain nonlinear covariate-response relationships that the \gls{glm}
 cannot capture.  The feed-forward architecture, in which each layer
 computes $\mathbf{h}^{(\ell)} = \sigma(\mathbf{W}^{(\ell)}
 \mathbf{h}^{(\ell-1)} + \mathbf{b}^{(\ell)})$ for an activation function
@@ -326,7 +326,7 @@ attributes to predicted costs.  A Gamma \gls{glm} with a
 logarithmic link, a \gls{rf} regressor and an XGBoost
 gradient-boosted tree regressor are fitted alongside the network to
 provide benchmarks spanning three alternative model classes.  The
-primary comparison is between the actuarial-standard GLM and the DNN,
+primary comparison is between the actuarial-standard \gls{glm} and the DNN,
 with the tree-based models serving as intermediate reference points.
 The output of this stage is a validated prediction function with
 documented out-of-sample performance across all four models.
@@ -607,9 +607,9 @@ Three benchmark models are fitted to contextualise the network's
 predictive performance: a Gamma \gls{glm} with a
 logarithmic link function, a \gls{rf} regressor with 500 trees, and
 an XGBoost gradient-boosted tree regressor with 1\,000 boosting rounds
-and early stopping.  The GLM serves as the actuarial-standard baseline,
+and early stopping.  The \gls{glm} serves as the actuarial-standard baseline,
 while the two tree-based models occupy an intermediate position between
-the linear GLM and the fully flexible DNN.  Hyperparameters for the GLM
+the linear \gls{glm} and the fully flexible DNN.  Hyperparameters for the \gls{glm}
 and tree-based models are set to standard defaults rather than tuned, so
 that the comparison isolates model-class differences.  All four models
 are evaluated on a held-out test set that is never used during training
@@ -692,7 +692,7 @@ five-phase hyperparameter comparison uses validation-set performance as
 the selection criterion, while the final performance metrics are reported
 on the held-out test set that is never used for model selection.  Third,
 the comparison of training-set and test-set performance metrics for both
-the DNN and the GLM provides evidence on the presence or absence of
+the DNN and the \gls{glm} provides evidence on the presence or absence of
 overfitting.
 
 At the simulation stage, the validation strategy addresses the central
@@ -743,7 +743,7 @@ The following delimitations define the boundaries of the study:
           noisier and covariate-response relationships are more complex.
 
     \item \textbf{Focused model comparison.}  Three benchmark models (a
-          Gamma GLM, a \gls{rf} and an XGBoost gradient-boosted
+          Gamma \gls{glm}, a \gls{rf} and an XGBoost gradient-boosted
           tree) are included to contextualise the predictive performance
           of the \gls{dnn} across model classes of increasing
           flexibility.  However, the dissertation does not attempt an
@@ -864,7 +864,7 @@ identification of the research gap that motivates the present study.
 This chapter describes the benchmark dataset, the data preprocessing and
 encoding procedure, the exploratory data analysis, the network
 architecture and training protocol, the five-phase hyperparameter
-comparison, the predictive and structural diagnostics, the GLM and
+comparison, the predictive and structural diagnostics, the \gls{glm} and
 tree-based benchmark specifications, the \gls{mc} simulation design
 and input-distribution validation, the residual-augmented sensitivity
 analysis, and the Shapley-value implementation.  All methodological
@@ -874,7 +874,7 @@ consolidated table of modelling assumptions is provided.
 \subsubsection*{Chapter~\ref{sec:results}: Results}
 This chapter presents the empirical results of the three-stage workflow.
 The chapter reports the hyperparameter comparison outcomes, the
-four-model benchmark comparison (GLM, \gls{rf}, XGBoost and DNN),
+four-model benchmark comparison (\gls{glm}, \gls{rf}, XGBoost and DNN),
 the \gls{mc} predicted-cost distribution and its convergence
 diagnostics, the joint-distribution validation results, the
 residual-augmented sensitivity analysis, the global and conditional

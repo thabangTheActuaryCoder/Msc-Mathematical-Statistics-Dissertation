@@ -55,7 +55,7 @@ into a concrete empirical workflow applied to the Kaggle Insurance Data
 for Machine Learning benchmark dataset \citep{kaggleInsuranceDataML},
 containing one million policyholder records.  The chapter specified the
 data preprocessing, the DNN architecture and five-phase hyperparameter
-comparison, the three benchmark models (Gamma GLM, \gls{rf},
+comparison, the three benchmark models (Gamma \gls{glm}, \gls{rf},
 XGBoost), the \gls{mc} simulation design and the validation
 diagnostics (see Table~\ref{tab:modelling_assumptions_ch3} for the
 consolidated modelling assumptions).
@@ -65,7 +65,7 @@ value of the integrated framework.  The five-phase sequential
 hyperparameter comparison selected the final DNN configuration, which
 achieved test-set $R^2 = 0.9957$ with near-identical training and test
 metrics ruling out overfitting.  The DNN substantially outperformed the
-Gamma GLM, whose log-link multiplicative structure does not match the
+Gamma \gls{glm}, whose log-link multiplicative structure does not match the
 approximately additive data-generating process of the benchmark data.
 The tree-based benchmarks (\gls{rf} and XGBoost) also achieved
 strong performance; after tuning, XGBoost matched the DNN to four
@@ -113,19 +113,19 @@ gradient-boosted tree in predicting health insurance costs on a benchmark
 dataset?
 
 The DNN achieves a test-set $R^2$ of $0.9957$, a test MAE of R251 and a
-test RMSE of R290.  The Gamma GLM (log-link) achieves a test-set $R^2$ of
+test RMSE of R290.  The Gamma \gls{glm} (log-link) achieves a test-set $R^2$ of
 $0.9571$, a test MAE of R624 and a test RMSE of R913.  The DNN therefore
-outperforms the GLM on every metric, reducing the test RMSE by $68.2\%$
+outperforms the \gls{glm} on every metric, reducing the test RMSE by $68.2\%$
 and the test MAE by $59.8\%$.  The two tree-based benchmarks narrow the
 gap: the \gls{rf} achieves $R^2 = 0.9899$ and XGBoost reaches
 $R^2 = 0.9955$, approaching the DNN's accuracy.  All four models show
 near-identical training and test performance, ruling out overfitting.
-The GLM's performance gap is attributable to the log-link's
+The \gls{glm}'s performance gap is attributable to the log-link's
 multiplicative mean structure, which introduces systematic model
 misspecification on this benchmark dataset where the charges variable is
 constructed as an approximately additive function of the input features.
 The tree-based models, which are not constrained by a multiplicative
-link, recover most of this gap, confirming that the GLM's disadvantage
+link, recover most of this gap, confirming that the \gls{glm}'s disadvantage
 is structural rather than a general property of simpler model classes.
 The five-phase sequential hyperparameter comparison selected the final
 DNN configuration from among 16 candidate settings, documented in full
@@ -360,7 +360,7 @@ These diagnostics address specific threats to validity that are not
 routinely checked in the machine-learning interpretability literature,
 where Shapley values are often reported without assessing their
 sensitivity to the input distribution or the residual structure of the
-fitted model.  Finally, the three benchmark models (Gamma GLM, \gls{rf} and
+fitted model.  Finally, the three benchmark models (Gamma \gls{glm}, \gls{rf} and
 XGBoost) contextualise the DNN's performance across the model-class
 spectrum, establishing that the predictive superiority reflects genuine
 advantages of smooth nonlinear function approximation rather than
@@ -412,16 +412,16 @@ reflects this structure and should not be extrapolated to real-world
 insurance portfolios, where data are noisier, relationships between
 covariates and costs are more complex, and the data-generating process
 may be multiplicative rather than additive.  The additive structure of the
-benchmark data favours the DNN over the log-link GLM, because the
+benchmark data favours the DNN over the log-link \gls{glm}, because the
 log-link's multiplicative structure introduces systematic
 misspecification.  On a dataset with a genuinely multiplicative
-data-generating process, the GLM's relative performance would likely
+data-generating process, the \gls{glm}'s relative performance would likely
 improve, and the DNN's advantage might be smaller.  The benchmark data
 serves the purpose of demonstrating the methodology on a controlled,
 reproducible dataset, but the specific numerical results are properties of
 this dataset and not of health insurance cost prediction in general.
 
-The study compares the DNN against a Gamma/log-link GLM, a \gls{rf}
+The study compares the DNN against a Gamma/log-link \gls{glm}, a \gls{rf}
 and an XGBoost gradient-boosted tree regressor.  While these benchmarks
 span three major model classes (parametric, bagging and boosting), ensemble
 methods such as stacking, Bayesian neural networks and other advanced
@@ -533,18 +533,18 @@ broader field of statistical methodology, subject to the limitations
 identified above.
 
 \subsubsection*{Implications for actuarial practice}
-The substantial performance advantage of the DNN over the Gamma GLM on
+The substantial performance advantage of the DNN over the Gamma \gls{glm} on
 this benchmark dataset illustrates the potential of flexible
 machine-learning models to improve upon the classical pricing framework,
 at least on datasets where the data-generating process does not conform to
 the log-link's multiplicative structure.  The tree-based benchmarks
 reinforce this conclusion: both the \gls{rf} and XGBoost
-substantially outperform the GLM, with XGBoost approaching the DNN's
-accuracy, confirming that the GLM's limitation on this dataset is
+substantially outperform the \gls{glm}, with XGBoost approaching the DNN's
+accuracy, confirming that the \gls{glm}'s limitation on this dataset is
 structural rather than a general feature of simpler models.  For
 actuarial practitioners, these results motivate the evaluation of
 tree-based ensembles and neural networks as supplementary or alternative
-pricing models alongside existing GLM-based tariffs, particularly in
+pricing models alongside existing \gls{glm}-based tariffs, particularly in
 settings where the relationship between covariates and costs may be
 additive, nonlinear or interactive in ways that the log-link cannot
 capture.  The conditional Shapley analysis has direct relevance to
@@ -663,10 +663,10 @@ Response distribution
     & Continuous
     & Poisson \\
 Models compared
-    & GLM, \Gls{rf}, XGBoost, DNN
+    & \Gls{glm}, \Gls{rf}, XGBoost, DNN
     & FCN, ICEnet \\
 Best test-set result
-    & DNN $R^2 = 0.9957$; GLM $0.9571$;
+    & DNN $R^2 = 0.9957$; \gls{glm} $0.9571$;
       RF $0.9899$; XGBoost $0.9955$
     & ICEnet deviance $= 0.2388$;
       FCN $0.2387$ \\
@@ -700,7 +700,7 @@ Because the response variables differ (count data versus continuous
 monetary charges) and the evaluation metrics differ (Poisson deviance
 versus $R^2$), these figures are not directly comparable and no
 cross-study ranking of accuracy is claimed.  Both studies, however,
-demonstrate that \glspl{dnn} improve upon GLM baselines within
+demonstrate that \glspl{dnn} improve upon \gls{glm} baselines within
 their respective insurance domains.
 
 \noindent

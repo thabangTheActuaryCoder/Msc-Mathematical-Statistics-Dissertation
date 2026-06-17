@@ -958,14 +958,14 @@ A classical actuarial benchmark is provided by a \gls{glm}
 (\gls{glm}) with a gamma distribution and logarithmic link function
 \citep{dobson2008introduction, denuit2007actuarial}.  For a policyholder with
 model-ready input vector $\mathbf{z}_i \in \mathbb{R}^{22}$ (the same encoded
-predictors used by the \gls{dnn}), the GLM assumes
+predictors used by the \gls{dnn}), the \gls{glm} assumes
 \begin{equation}
     Y_i \sim \text{Gamma}(\mu_i, \phi),
     \qquad
     \log(\mu_i) = \beta_0 + \sum_{j=1}^{22} \beta_j z_{ij},
     \label{eq:glm_specification}
 \end{equation}
-\equationlistentry{GLM specification with gamma distribution and log link}
+\equationlistentry{\Gls{glm} specification with gamma distribution and log link}
 where $\mu_i = \mathbb{E}[Y_i \mid \mathbf{z}_i]$ and $\phi$ is the
 dispersion parameter.  The gamma distribution is a natural choice for
 positive, continuous, right-skewed monetary outcomes such as insurance
@@ -994,7 +994,7 @@ log-likelihood for the gamma \gls{glm} is
     \right],
     \label{eq:glm_loglikelihood}
 \end{equation}
-\equationlistentry{Gamma GLM log-likelihood}
+\equationlistentry{Gamma \gls{glm} log-likelihood}
 where $\mu_i = \exp(\mathbf{z}_i^{\top}\boldsymbol{\beta})$ and
 $\boldsymbol{\beta} = (\beta_0, \beta_1, \ldots, \beta_{22})^{\top}$.
 The parameter vector $\boldsymbol{\beta}$ is estimated by \gls{irls}, which solves the score equations
@@ -1009,7 +1009,7 @@ The parameter vector $\boldsymbol{\beta}$ is estimated by \gls{irls}, which solv
     \qquad j = 0, 1, \ldots, 22,
     \label{eq:glm_score}
 \end{equation}
-\equationlistentry{GLM score equations}
+\equationlistentry{\Gls{glm} score equations}
 where $\eta_i = \log(\mu_i)$ is the linear predictor and
 $\mathrm{Var}(Y_i) = \phi\,\mu_i^{2}$ under the gamma family.  Each \gls{irls}
 iteration computes a weighted least squares regression of an adjusted
@@ -1019,7 +1019,7 @@ values \citep{dobson2008introduction}.
 
 Algorithm~\ref{tab:glm_algorithm_annex} formalises the fitting procedure.
 
-The GLM is fitted via \gls{irls},
+The \gls{glm} is fitted via \gls{irls},
 which computes working weights and adjusted dependent variables at each
 iteration until convergence.  The dispersion parameter
 $\widehat{\phi}$ is estimated from the Pearson residuals, and
@@ -1029,7 +1029,7 @@ inverse link $\widehat{y}_i = \exp(\mathbf{z}_i^{\top}
 presented in Algorithm~\ref{tab:glm_algorithm_annex}
 (Annexure~\ref{annexure:glm_algorithm}).
 
-No hyperparameter tuning is applied to the GLM; its role as a benchmark
+No hyperparameter tuning is applied to the \gls{glm}; its role as a benchmark
 was motivated in Section~\ref{sec:statistical_learning_supervised_regression}.
 
 \subsubsection{Tree-Based Benchmarks}
