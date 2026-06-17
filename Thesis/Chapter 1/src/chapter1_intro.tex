@@ -39,8 +39,16 @@ for actuarial pricing since the seminal work of
 \citep{nelder1972generalized} and their subsequent adoption by the
 insurance profession.  In health insurance, the Gamma distribution with
 a logarithmic link function is commonly used to model the right-skewed,
-positive-valued distribution of claim amounts.  Under this
-specification, the conditional mean of the response is given by
+positive-valued distribution of claim amounts.  The Gamma family is
+well suited to this setting because it is supported on the positive
+real line, matching the strictly positive nature of insurance costs,
+and its variance increases with the mean, accommodating the greater
+dispersion typically observed among larger claims.  The logarithmic
+link function complements this distributional choice by ensuring that
+predicted mean costs remain strictly positive and by inducing a
+multiplicative tariff structure in which each covariate enters as a
+proportional adjustment to the base cost.  Under this specification,
+the conditional mean of the response is given by
 \begin{equation}
 \label{eq:glm_log_link_intro}
 \log \mu_i = \mathbf{x}_i^\top \boldsymbol{\beta},
