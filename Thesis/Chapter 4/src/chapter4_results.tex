@@ -132,7 +132,7 @@ $(\beta_1, \beta_2) = (0.95, 0.999)$ was retained.
 Figure~\ref{fig:validation_loss_overview_annex}
 (Annexure~\ref{annexure:hyperparameters}) presents the best validation
 loss achieved by each configuration across all five phases.
-The selected configuration (CELU, $\eta = 0.0005$,
+The selected configuration (\gls{celu}, $\eta = 0.0005$,
 $|\mathcal{B}| = 256$, NAdam, $\beta_1 = 0.95$) achieves the lowest
 validation loss among all evaluated configurations.
 Table~\ref{tab:final_hyperparameters_ch4} records the final training
@@ -148,7 +148,7 @@ configuration.
 \toprule
 \textbf{Phase} & \textbf{Candidates} & \textbf{Selected} \\
 \midrule
-1. Activation function & CELU, GELU, Tanh & CELU \\
+1. Activation function & \gls{celu}, GELU, Tanh & \gls{celu} \\
 2. Learning rate & 0.01, 0.001, 0.0005, 0.0001 & 0.0005 \\
 3. Batch size & 64, 128, 256, 512 & 256 \\
 4. Optimiser & Adam, NAdam & NAdam \\
@@ -1091,7 +1091,7 @@ values.
 \toprule
 \textbf{Variable} & \textbf{Global} & $\boldsymbol{\tau_{90}}$ &
 $\boldsymbol{\tau_{95}}$ & $\boldsymbol{\tau_{99}}$ &
-\textbf{95\% CI at $\boldsymbol{\tau_{99}}$} \\
+\textbf{95\% \gls{ci} at $\boldsymbol{\tau_{99}}$} \\
 \midrule
 \texttt{smoker} & 0.578 & 0.593 & 0.585 & 0.563 & $[0.559,\; 0.568]$ \\
 \texttt{coverage\_level} & 0.401 & 0.511 & 0.536 & 0.595 & $[0.585,\; 0.604]$ \\
@@ -1204,14 +1204,14 @@ progressive concentration:
     profiles are smokers.
 
     \item \textbf{Coverage level:} The proportion of Premium-tier
-    policyholders rises from approximately $33\%$ (full MC) to $75\%$
+    policyholders rises from approximately $33\%$ (full \gls{mc}) to $75\%$
     at $\tau_{90}$, $80\%$ at $\tau_{95}$ and approximately $90\%$ at
     $\tau_{99}$. Basic-tier policyholders are nearly absent from the
     extreme tail.
 
     \item \textbf{Medical history:} Heart disease dominates the
     high-cost sets: its proportion increases from approximately $25\%$
-    (full MC) to $68\%$ at $\tau_{90}$, $77\%$ at $\tau_{95}$ and
+    (full \gls{mc}) to $68\%$ at $\tau_{90}$, $77\%$ at $\tau_{95}$ and
     approximately $85\%$ at $\tau_{99}$. Profiles with no medical
     history condition are progressively excluded from the upper tail.
 \end{itemize}

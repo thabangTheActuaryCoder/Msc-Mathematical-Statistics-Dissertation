@@ -17,7 +17,7 @@ The Gamma \gls{glm} with log-link serves as the actuarial benchmark against whic
 \Require Raw feature matrices $\mathbf{X}_{\mathrm{train}}, \mathbf{X}_{\mathrm{val}}, \mathbf{X}_{\mathrm{test}}$ (unstandardised), response vectors $\mathbf{y}_{\mathrm{train}}, \mathbf{y}_{\mathrm{val}}, \mathbf{y}_{\mathrm{test}}$
 \Ensure Comparison metrics (\gls{r2}, \gls{rmse}, \gls{mae}) for \gls{glm}, \gls{rf}, XGBoost and \gls{dnn} on all partitions
 \State Prepend intercept column to each feature matrix
-\State Fit Gamma \gls{glm} with log-link on $(\mathbf{X}_{\mathrm{train}}, \mathbf{y}_{\mathrm{train}})$ via IRLS
+\State Fit Gamma \gls{glm} with log-link on $(\mathbf{X}_{\mathrm{train}}, \mathbf{y}_{\mathrm{train}})$ via \gls{irls}
 \State Extract coefficient table: $\hat{\boldsymbol{\beta}}$, standard errors, $z$-values, $p$-values
 \For{each partition $\mathcal{P} \in \{\mathrm{train}, \mathrm{val}, \mathrm{test}\}$}
     \State $\hat{\mathbf{y}}_{\mathrm{GLM}} \gets \exp(\mathbf{X}_{\mathcal{P}} \hat{\boldsymbol{\beta}})$
