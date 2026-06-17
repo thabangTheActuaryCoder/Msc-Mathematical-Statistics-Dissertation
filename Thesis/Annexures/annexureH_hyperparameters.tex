@@ -27,7 +27,7 @@ Each configuration was trained with early stopping (patience of 10 validation ch
 \footnotesize
 \begin{tabular}{llrrr}
 \toprule
-\textbf{Phase} & \textbf{Configuration} & \textbf{Best Epoch} & \textbf{Val $R^2$} & \textbf{Time (s)} \\
+\textbf{Phase} & \textbf{Configuration} & \textbf{Best Epoch} & \textbf{Val \gls{r2}} & \textbf{Time (s)} \\
 \midrule
 \multirow{3}{*}{Phase 1: Activation}
   & CELU  & 100 & 0.995682 & 556.7 \\
@@ -62,13 +62,13 @@ Each configuration was trained with early stopping (patience of 10 validation ch
 \subsection{Phase Comparison Figures}
 \label{annexure:phase_figures}
 
-The following figures present the validation MSE loss and validation $R^2$
+The following figures present the validation \gls{mse} loss and validation \gls{r2}
 trajectories for each phase of the sequential hyperparameter comparison.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_phase1_activation_comparison.png}
-\caption{Phase~1: validation MSE loss (left) and validation $R^2$
+\caption{Phase~1: validation \gls{mse} loss (left) and validation \gls{r2}
 (right) by activation function over training epochs.}
 \label{fig:phase1_activation_annex}
 \end{figure}
@@ -76,7 +76,7 @@ trajectories for each phase of the sequential hyperparameter comparison.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_phase2_lr_comparison.png}
-\caption{Phase~2: validation MSE loss (left) and validation $R^2$
+\caption{Phase~2: validation \gls{mse} loss (left) and validation \gls{r2}
 (right) by learning rate.}
 \label{fig:phase2_lr_annex}
 \end{figure}
@@ -84,7 +84,7 @@ trajectories for each phase of the sequential hyperparameter comparison.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_phase3_batchsize_comparison.png}
-\caption{Phase~3: validation MSE loss (left) and validation $R^2$
+\caption{Phase~3: validation \gls{mse} loss (left) and validation \gls{r2}
 (right) by batch size.}
 \label{fig:phase3_batchsize_annex}
 \end{figure}
@@ -92,7 +92,7 @@ trajectories for each phase of the sequential hyperparameter comparison.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_phase4_optimiser_comparison.png}
-\caption{Phase~4: validation MSE loss (left) and validation $R^2$
+\caption{Phase~4: validation \gls{mse} loss (left) and validation \gls{r2}
 (right) by optimiser.}
 \label{fig:phase4_optimiser_annex}
 \end{figure}
@@ -100,7 +100,7 @@ trajectories for each phase of the sequential hyperparameter comparison.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_phase5_momentum_comparison.png}
-\caption{Phase~5: validation MSE loss (left) and validation $R^2$
+\caption{Phase~5: validation \gls{mse} loss (left) and validation \gls{r2}
 (right) by first momentum coefficient $\beta_1$.}
 \label{fig:phase5_momentum_annex}
 \end{figure}
@@ -108,7 +108,7 @@ trajectories for each phase of the sequential hyperparameter comparison.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Thesis/Chapter 4/Figures/fig_validation_loss_hyperparameters.png}
-\caption{Best validation MSE loss across Phases~1 to~5.}
+\caption{Best validation \gls{mse} loss across Phases~1 to~5.}
 \label{fig:validation_loss_overview_annex}
 \end{figure}
 
@@ -124,7 +124,7 @@ A \gls{gp} surrogate with a Mat\'{e}rn $\nu = 5/2$ kernel was fitted to the obse
 
 \begin{table}[htbp]
 \centering
-\caption{Best hyperparameter configuration selected for the final DNN model.}
+\caption{Best hyperparameter configuration selected for the final \gls{dnn} model.}
 \label{tab:best_hyperparams}
 \begin{tabular}{ll}
 \toprule
@@ -140,7 +140,7 @@ $\beta_2$       & 0.999 \\
 Bias            & False (all layers) \\
 Max epochs      & 100 \\
 Early stopping  & 10 checks (every 5 epochs) \\
-Loss function   & MSE (on normalised scale) \\
+Loss function   & \gls{mse} (on normalised scale) \\
 \bottomrule
 \end{tabular}
 \end{table}

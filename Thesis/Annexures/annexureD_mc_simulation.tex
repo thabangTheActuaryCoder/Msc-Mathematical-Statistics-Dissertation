@@ -43,7 +43,7 @@ coverage\_level         & Multinomial & 3 levels, estimated proportions \\
 \caption{Parametric \gls{mc} simulation.}
 \label{alg:mc_simulation}
 \begin{algorithmic}[1]
-\Require Fitted marginals, trained DNN $f_{\boldsymbol{\theta}^*}$, standardisation parameters, sample size $B = 100\,000$
+\Require Fitted marginals, trained \gls{dnn} $f_{\boldsymbol{\theta}^*}$, standardisation parameters, sample size $B = 100\,000$
 \Ensure Predicted-cost vector $\hat{\mathbf{y}}_{\mathrm{MC}} \in \mathbb{R}^B$
 \State Initialise random number generator with seed 42
 \For{$i = 1, \ldots, B$}
@@ -79,7 +79,7 @@ where $\varepsilon_i$ is drawn with replacement from the centred residual vector
 The same reference-category encoding scheme described in Annexure~\ref{annexure:encoding} was applied to the \gls{mc} profiles, producing an $B \times 22$ feature matrix that matches the trained model's input specification.
 
 % -------------------------------------------------------------
-\subsection{DNN Scoring}
+\subsection{\Gls{dnn} Scoring}
 \label{annexure:mc_score}
 
-Each encoded profile is standardised using the training-set parameters ($\boldsymbol{\mu}_X$, $\boldsymbol{\sigma}_X$), passed through the trained DNN in a single forward pass (with gradients disabled), and de-normalised to the original Rand scale using the training-set response parameters ($\mu_y$, $\sigma_y$).
+Each encoded profile is standardised using the training-set parameters ($\boldsymbol{\mu}_X$, $\boldsymbol{\sigma}_X$), passed through the trained \gls{dnn} in a single forward pass (with gradients disabled), and de-normalised to the original Rand scale using the training-set response parameters ($\mu_y$, $\sigma_y$).

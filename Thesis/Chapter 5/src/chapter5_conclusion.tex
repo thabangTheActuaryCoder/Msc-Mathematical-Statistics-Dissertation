@@ -54,7 +54,7 @@ Chapter~\ref{chap:methods_and_data} translated the conceptual framework
 into a concrete empirical workflow applied to the Kaggle Insurance Data
 for Machine Learning benchmark dataset \citep{kaggleInsuranceDataML},
 containing one million policyholder records.  The chapter specified the
-data preprocessing, the DNN architecture and five-phase hyperparameter
+data preprocessing, the \gls{dnn} architecture and five-phase hyperparameter
 comparison, the three benchmark models (Gamma \gls{glm}, \gls{rf},
 XGBoost), the \gls{mc} simulation design and the validation
 diagnostics (see Table~\ref{tab:modelling_assumptions_ch3} for the
@@ -62,14 +62,14 @@ consolidated modelling assumptions).
 
 The empirical results in Chapter~\ref{sec:results} demonstrated the
 value of the integrated framework.  The five-phase sequential
-hyperparameter comparison selected the final DNN configuration, which
+hyperparameter comparison selected the final \gls{dnn} configuration, which
 achieved test-set $R^2 = 0.9957$ with near-identical training and test
-metrics ruling out overfitting.  The DNN substantially outperformed the
+metrics ruling out overfitting.  The \gls{dnn} substantially outperformed the
 Gamma \gls{glm}, whose log-link multiplicative structure does not match the
 approximately additive data-generating process of the benchmark data.
 The tree-based benchmarks (\gls{rf} and XGBoost) also achieved
-strong performance; after tuning, XGBoost matched the DNN to four
-decimal places.  The DNN was retained for the subsequent analyses on the
+strong performance; after tuning, XGBoost matched the \gls{dnn} to four
+decimal places.  The \gls{dnn} was retained for the subsequent analyses on the
 grounds of its differentiability for gradient-based SHAP computation.
 Full performance comparisons are reported in
 Chapter~\ref{sec:results}.
@@ -112,13 +112,13 @@ classical \gls{glm}, a \gls{rf} and an XGBoost
 gradient-boosted tree in predicting health insurance costs on a benchmark
 dataset?
 
-The DNN achieves a test-set $R^2$ of $0.9957$, a test MAE of R251 and a
-test RMSE of R290.  The Gamma \gls{glm} (log-link) achieves a test-set $R^2$ of
-$0.9571$, a test MAE of R624 and a test RMSE of R913.  The DNN therefore
-outperforms the \gls{glm} on every metric, reducing the test RMSE by $68.2\%$
-and the test MAE by $59.8\%$.  The two tree-based benchmarks narrow the
+The \gls{dnn} achieves a test-set \gls{r2} of $0.9957$, a test \gls{mae} of R251 and a
+test \gls{rmse} of R290.  The Gamma \gls{glm} (log-link) achieves a test-set \gls{r2} of
+$0.9571$, a test \gls{mae} of R624 and a test \gls{rmse} of R913.  The \gls{dnn} therefore
+outperforms the \gls{glm} on every metric, reducing the test \gls{rmse} by $68.2\%$
+and the test \gls{mae} by $59.8\%$.  The two tree-based benchmarks narrow the
 gap: the \gls{rf} achieves $R^2 = 0.9899$ and XGBoost reaches
-$R^2 = 0.9955$, approaching the DNN's accuracy.  All four models show
+$R^2 = 0.9955$, approaching the \gls{dnn}'s accuracy.  All four models show
 near-identical training and test performance, ruling out overfitting.
 The \gls{glm}'s performance gap is attributable to the log-link's
 multiplicative mean structure, which introduces systematic model
@@ -128,21 +128,21 @@ The tree-based models, which are not constrained by a multiplicative
 link, recover most of this gap, confirming that the \gls{glm}'s disadvantage
 is structural rather than a general property of simpler model classes.
 The five-phase sequential hyperparameter comparison selected the final
-DNN configuration from among 16 candidate settings, documented in full
+\gls{dnn} configuration from among 16 candidate settings, documented in full
 in Annexure~\ref{annexure:hyperparameters}.  When the tree-based
 benchmarks were subsequently tuned via randomised search with
 cross-validation, the tuned \gls{rf} reached $R^2 = 0.9924$ and
-the tuned XGBoost matched the DNN at $R^2 = 0.9956$.  The DNN retains
+the tuned XGBoost matched the \gls{dnn} at $R^2 = 0.9956$.  The \gls{dnn} retains
 a marginal advantage ($R^2 = 0.9957$), but the practical gap is
-negligible; the DNN was retained for its differentiability rather than
+negligible; the \gls{dnn} was retained for its differentiability rather than
 for predictive superiority.  Multi-seed replication across five random
-initialisations confirmed that the DNN's test $R^2$ varies by only
+initialisations confirmed that the \gls{dnn}'s test \gls{r2} varies by only
 $1.28 \times 10^{-5}$ (Table~\ref{tab:multiseed_test_performance_ch4}),
 establishing that the reported performance is robust to the stochastic
 training process.  This finding is consistent with the broader
 health-cost prediction literature
 \citep{dreweboss2022deep, samiuddin2023health, kaushik2022machine},
-although the unusually high $R^2$ reflects the clean, structured nature
+although the unusually high \gls{r2} reflects the clean, structured nature
 of the benchmark data and should not be extrapolated to real-world
 insurance portfolios.
 
@@ -155,7 +155,7 @@ The distribution is approximately symmetric, unimodal, and centred near
 the mean of the observed training charges
 (Figure~\ref{fig:mc_predicted_vs_actual_ch4}).  As noted in
 Section~\ref{sec:mc_intro}, this close agreement is expected given the
-near-perfect DNN fit and the use of training-data marginals; the Monte
+near-perfect \gls{dnn} fit and the use of training-data marginals; the Monte
 Carlo stage therefore functions primarily to define the conditioning
 regions for the Shapley analysis.  Convergence diagnostics confirmed
 adequate simulation size, and the multi-seed replication established
@@ -183,7 +183,7 @@ perturbation from the fitted model?
 
 The predicted-cost distribution is robust to residual perturbation.
 Both empirical-residual augmentation and fixed perturbation bands
-retained the same location, spread and shape.  The DNN's residuals on
+retained the same location, spread and shape.  The \gls{dnn}'s residuals on
 this benchmark dataset are sufficiently small
 ($\hat{\sigma}_{\varepsilon} \approx \text{R}290$) that their addition
 does not alter the distributional conclusions; this finding is consistent
@@ -216,7 +216,7 @@ reversal is replicated in all five seeds with pairwise conditional
 Spearman correlations between $0.9909$ and $1.0000$.  The SHAP
 interaction analysis (Section~\ref{sec:shap_interactions}) further
 established that all 55 pairwise Shapley-value correlations fall below
-$|r| = 0.033$, confirming that the DNN learned an essentially additive
+$|r| = 0.033$, confirming that the \gls{dnn} learned an essentially additive
 mapping and that the main-effect Shapley summaries capture the full
 attribution structure.
 
@@ -341,7 +341,7 @@ analyst to study the range, dispersion and tail behaviour of the
 predictions as statistical quantities in their own right.
 
 The multi-seed robustness analysis represents a further contribution.
-By retraining the DNN under five independent random seeds and
+By retraining the \gls{dnn} under five independent random seeds and
 replicating the entire \gls{mc} and Shapley pipeline for each seed,
 the dissertation demonstrates that the predictive performance, the
 model-implied cost distribution, the global Shapley ranking, and the
@@ -361,7 +361,7 @@ routinely checked in the machine-learning interpretability literature,
 where Shapley values are often reported without assessing their
 sensitivity to the input distribution or the residual structure of the
 fitted model.  Finally, the three benchmark models (Gamma \gls{glm}, \gls{rf} and
-XGBoost) contextualise the DNN's performance across the model-class
+XGBoost) contextualise the \gls{dnn}'s performance across the model-class
 spectrum, establishing that the predictive superiority reflects genuine
 advantages of smooth nonlinear function approximation rather than
 artefacts of the benchmark data.
@@ -412,42 +412,42 @@ reflects this structure and should not be extrapolated to real-world
 insurance portfolios, where data are noisier, relationships between
 covariates and costs are more complex, and the data-generating process
 may be multiplicative rather than additive.  The additive structure of the
-benchmark data favours the DNN over the log-link \gls{glm}, because the
+benchmark data favours the \gls{dnn} over the log-link \gls{glm}, because the
 log-link's multiplicative structure introduces systematic
 misspecification.  On a dataset with a genuinely multiplicative
 data-generating process, the \gls{glm}'s relative performance would likely
-improve, and the DNN's advantage might be smaller.  The benchmark data
+improve, and the \gls{dnn}'s advantage might be smaller.  The benchmark data
 serves the purpose of demonstrating the methodology on a controlled,
 reproducible dataset, but the specific numerical results are properties of
 this dataset and not of health insurance cost prediction in general.
 
-The study compares the DNN against a Gamma/log-link \gls{glm}, a \gls{rf}
+The study compares the \gls{dnn} against a Gamma/log-link \gls{glm}, a \gls{rf}
 and an XGBoost gradient-boosted tree regressor.  While these benchmarks
 span three major model classes (parametric, bagging and boosting), ensemble
 methods such as stacking, Bayesian neural networks and other advanced
 alternatives were not evaluated.  The existing literature suggests that
 gradient-boosted trees often perform competitively with neural networks on
 tabular data \citep{richman2021ai}, and indeed the XGBoost benchmark
-achieves near-DNN accuracy on this dataset.  A broader model-selection
+achieves near-\gls{dnn} accuracy on this dataset.  A broader model-selection
 study including additional architectures and datasets would further
 strengthen the conclusions.
 
 The \gls{mc} and Shapley analyses were initially conditional on a
 single trained network with a fixed random seed.  The multi-seed
 robustness analysis (Section~\ref{sec:multiseed_dnn}) subsequently
-addressed this limitation by retraining the DNN under five independent
+addressed this limitation by retraining the \gls{dnn} under five independent
 seeds and replicating the full simulation and attribution pipeline.  The
 cross-seed variability proved negligible across all stages: the test
-$R^2$ standard deviation is $1.28 \times 10^{-5}$, the \gls{mc} mean
+\gls{r2} standard deviation is $1.28 \times 10^{-5}$, the \gls{mc} mean
 varies by R15, and the global Shapley ranking is perfectly preserved
 ($\rho_{\mathrm{S}} = 1.0000$).  While five seeds do not constitute an
 exhaustive exploration of the initialisation space, the convergent
 results across these independent replications provide strong evidence
 that the findings are not artefacts of a single random initialisation.
 
-The tuned XGBoost benchmark achieves $R^2 = 0.9956$, matching the DNN
+The tuned XGBoost benchmark achieves $R^2 = 0.9956$, matching the \gls{dnn}
 ($R^2 = 0.9957$) to within one unit in the fourth decimal place.  This
-parity implies that the DNN's selection over XGBoost for the subsequent
+parity implies that the \gls{dnn}'s selection over XGBoost for the subsequent
 analyses is motivated by the availability of gradient-based SHAP rather
 than by a meaningful predictive advantage.  On datasets where
 differentiability is not required, XGBoost may be a more parsimonious
@@ -533,13 +533,13 @@ broader field of statistical methodology, subject to the limitations
 identified above.
 
 \subsubsection*{Implications for actuarial practice}
-The substantial performance advantage of the DNN over the Gamma \gls{glm} on
+The substantial performance advantage of the \gls{dnn} over the Gamma \gls{glm} on
 this benchmark dataset illustrates the potential of flexible
 machine-learning models to improve upon the classical pricing framework,
 at least on datasets where the data-generating process does not conform to
 the log-link's multiplicative structure.  The tree-based benchmarks
 reinforce this conclusion: both the \gls{rf} and XGBoost
-substantially outperform the \gls{glm}, with XGBoost approaching the DNN's
+substantially outperform the \gls{glm}, with XGBoost approaching the \gls{dnn}'s
 accuracy, confirming that the \gls{glm}'s limitation on this dataset is
 structural rather than a general feature of simpler models.  For
 actuarial practitioners, these results motivate the evaluation of
@@ -663,15 +663,15 @@ Response distribution
     & Continuous
     & Poisson \\
 Models compared
-    & \Gls{glm}, \Gls{rf}, XGBoost, DNN
+    & \Gls{glm}, \Gls{rf}, XGBoost, \gls{dnn}
     & FCN, ICEnet \\
 Best test-set result
-    & DNN $R^2 = 0.9957$; \gls{glm} $0.9571$;
-      RF $0.9899$; XGBoost $0.9955$
+    & \Gls{dnn} $R^2 = 0.9957$; \gls{glm} $0.9571$;
+      \gls{rf} $0.9899$; XGBoost $0.9955$
     & ICEnet deviance $= 0.2388$;
       FCN $0.2387$ \\
 Evaluation metric
-    & $R^2$, RMSE, MAE
+    & \gls{r2}, \gls{rmse}, \gls{mae}
     & Poisson deviance \\
 Dataset
     & Kaggle ($n = 1\,000\,000$)
@@ -694,11 +694,11 @@ unconstrained network, a difference of $0.0001$.  When monotonicity
 constraints are applied alone, the out-of-sample deviance improves
 slightly to $0.2382$, suggesting that these constraints act as a
 regulariser; the smoothness constraints account for the small overall
-performance decline.  In the present dissertation, the unconstrained DNN
-achieves a test-set $R^2$ of $0.9957$ on a continuous cost outcome.
+performance decline.  In the present dissertation, the unconstrained \gls{dnn}
+achieves a test-set \gls{r2} of $0.9957$ on a continuous cost outcome.
 Because the response variables differ (count data versus continuous
 monetary charges) and the evaluation metrics differ (Poisson deviance
-versus $R^2$), these figures are not directly comparable and no
+versus \gls{r2}), these figures are not directly comparable and no
 cross-study ranking of accuracy is claimed.  Both studies, however,
 demonstrate that \glspl{dnn} improve upon \gls{glm} baselines within
 their respective insurance domains.
@@ -741,7 +741,7 @@ the attribution and interpretation components.
           Such comparisons would clarify whether the Shapley attribution
           patterns documented here are model-dependent or model-invariant,
           and whether more complex architectures offer further predictive
-          gains beyond the DNN and XGBoost benchmarks already evaluated.
+          gains beyond the \gls{dnn} and XGBoost benchmarks already evaluated.
 
     \item Replacing the product-marginal input distribution with a
           copula-based joint distribution would allow the simulation to
@@ -795,7 +795,7 @@ the attribution and interpretation components.
           with feature-level explainability.  The smoothness and
           monotonicity constraints of the ICEnet
           \citep{richman2024icenet} could be incorporated into the
-          DNN's loss function, and Shapley-value attribution could then
+          \gls{dnn}'s loss function, and Shapley-value attribution could then
           be applied to the constrained model to verify that the imposed
           constraints do not distort the feature-importance ranking in
           the upper tail.  This extension would also permit an empirical

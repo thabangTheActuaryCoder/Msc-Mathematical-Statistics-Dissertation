@@ -170,14 +170,14 @@ $R^2$ (equation~\eqref{eq:r_squared}).
 
 \begin{table}[H]
 \centering
-\caption{Predictive performance of the final DNN on the original
+\caption{Predictive performance of the final \gls{dnn} on the original
 monetary scale.}
 \label{tab:final_model_performance_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrrr}
 \toprule
-\textbf{Partition} & \textbf{MAE (R)} & \textbf{RMSE (R)} & $\boldsymbol{R^2}$ \\
+\textbf{Partition} & \textbf{\gls{mae} (R)} & \textbf{\gls{rmse} (R)} & $\boldsymbol{R^2}$ \\
 \midrule
 Training ($n = 524\,288$) & 251 & 291 & 0.9957 \\
 Test ($n = 237\,856$) & 251 & 290 & 0.9957 \\
@@ -186,13 +186,13 @@ Test ($n = 237\,856$) & 251 & 290 & 0.9957 \\
 \end{table}
 
 \noindent
-The near-identical performance across partitions (MAE = R251 on both;
-RMSE within R290 to R291; $R^2 = 0.9957$ on both) confirms that the
+The near-identical performance across partitions (\gls{mae} = R251 on both;
+\gls{rmse} within R290 to R291; \gls{r2} $= 0.9957$ on both) confirms that the
 fitted model generalises to unseen data without overfitting.  The
 training-set response statistics used for standardisation are
 $\overline{y}_{\mathrm{train}} = \text{R16\,744}$ and
 $s_{y,\mathrm{train}} = \text{R4\,419}$.  On the standardised scale,
-the validation MSE at the selected epoch $e^{*} = 85$ is $0.00432$
+the validation \gls{mse} at the selected epoch $e^{*} = 85$ is $0.00432$
 (Figure~\ref{fig:validation_loss_overview_annex}), and the
 original-scale residuals range from approximately $-600$ to $+600$ as
 characterised in the residual diagnostics of
@@ -225,8 +225,8 @@ the original monetary scale.}
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{llrrr}
 \toprule
-\textbf{Model} & \textbf{Partition} & \textbf{MAE (R)} &
-\textbf{RMSE (R)} & $\boldsymbol{R^2}$ \\
+\textbf{Model} & \textbf{Partition} & \textbf{\gls{mae} (R)} &
+\textbf{\gls{rmse} (R)} & $\boldsymbol{R^2}$ \\
 \midrule
 \gls{glm} (Gamma, log-link)
     & Training   & 623 & 911 & 0.9574 \\
@@ -298,7 +298,7 @@ inverse-link therefore introduces systematic model misspecification.
 The \gls{rf} and \gls{xgboost} close the gap substantially, with \gls{xgboost}
 nearly matching the \gls{dnn}.  The \gls{dnn} learns the additive
 structure directly through its flexible hidden-layer representations and
-achieves the highest test $R^2$ and lowest test RMSE and MAE.
+achieves the highest test $R^2$ and lowest test \gls{rmse} and \gls{mae}.
 
 \begin{figure}[H]
 \centering
@@ -362,7 +362,7 @@ Section~\ref{sec:comparison_constrained_nn}.
 
 
 % =============================================================
-\subsection{Multi-Seed DNN Training Robustness}
+\subsection{Multi-Seed \Gls{dnn} Training Robustness}
 \label{sec:multiseed_dnn}
 
 The results reported above are conditional on a single trained network
@@ -401,7 +401,7 @@ random seeds (original monetary scale).}
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrrr}
 \toprule
-\textbf{Seed} & \textbf{MAE (R)} & \textbf{RMSE (R)} & $\boldsymbol{R^2}$ \\
+\textbf{Seed} & \textbf{\gls{mae} (R)} & \textbf{\gls{rmse} (R)} & $\boldsymbol{R^2}$ \\
 \midrule
 42  & 251 & 291 & 0.99566 \\
 123 & 251 & 291 & 0.99565 \\
@@ -463,7 +463,7 @@ hyperparameters (test set, original monetary scale).}
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrrr}
 \toprule
-\textbf{Configuration} & \textbf{MAE (R)} & \textbf{RMSE (R)} &
+\textbf{Configuration} & \textbf{\gls{mae} (R)} & \textbf{\gls{rmse} (R)} &
 $\boldsymbol{R^2}$ \\
 \midrule
 Default & 358 & 443 & 0.9899 \\
@@ -493,7 +493,7 @@ Table~\ref{tab:tuned_xgb_ch4} compares the default and tuned
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrrr}
 \toprule
-\textbf{Configuration} & \textbf{MAE (R)} & \textbf{RMSE (R)} &
+\textbf{Configuration} & \textbf{\gls{mae} (R)} & \textbf{\gls{rmse} (R)} &
 $\boldsymbol{R^2}$ \\
 \midrule
 Default & 255 & 297 & 0.9955 \\
@@ -523,7 +523,7 @@ configurations (original monetary scale).}
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrrr}
 \toprule
-\textbf{Model} & \textbf{MAE (R)} & \textbf{RMSE (R)} &
+\textbf{Model} & \textbf{\gls{mae} (R)} & \textbf{\gls{rmse} (R)} &
 $\boldsymbol{R^2}$ \\
 \midrule
 \gls{glm} (Gamma, log-link) & 624 & 913 & 0.9571 \\
@@ -786,7 +786,7 @@ for the conditional Shapley analysis that follows.
 \label{sec:cross_seed_mc_ch4}
 
 To assess whether the \gls{mc} predicted-cost distribution is
-sensitive to the DNN training seed, the $B = 100\,000$ simulation was
+sensitive to the \gls{dnn} training seed, the $B = 100\,000$ simulation was
 repeated using each of the five trained networks from
 Section~\ref{sec:multiseed_dnn}.  The cross-seed \gls{mc}
 diagnostics are presented in
@@ -804,7 +804,7 @@ the canonical $\mathcal{O}(B^{-1/2})$ rate in all five seeds, dropping
 from approximately R200 at $B = 500$ to approximately R43 at
 $B = 10\,000$ (Figure~\ref{fig:mc_convergence_rate_annex}).  These
 results confirm that the model-implied predicted-cost distribution is
-invariant to the DNN training seed.
+invariant to the \gls{dnn} training seed.
 
 \subsubsection{Comparison with observed training charges}
 
@@ -885,7 +885,7 @@ that follows.
 \label{sec:cross_seed_residual_ch4}
 
 The residual-augmented sensitivity analysis was repeated for all five
-DNN seeds.  Figure~\ref{fig:residual_augmented_mc_annex}
+\gls{dnn} seeds.  Figure~\ref{fig:residual_augmented_mc_annex}
 (Annexure~\ref{annexure:multiseed_residual}) compares the base and
 augmented distributions with cross-seed dispersion.  The residual
 standard deviation $\hat{\sigma}_{\varepsilon} \approx \text{R}290$ is
@@ -1297,7 +1297,7 @@ in Section~\ref{sec:highcost_conditional_results} is reproducible.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{Thesis/Chapter 4/Figures/fig_cond_shap_tail_stability.png}
-\caption{Conditional mean $|\text{SHAP}|$ values at $\tau_{99}$ across five DNN seeds.}
+\caption{Conditional mean $|\text{SHAP}|$ values at $\tau_{99}$ across five \gls{dnn} seeds.}
 \label{fig:cond_shap_tail_stability_ch4}
 \end{figure}
 
@@ -1331,7 +1331,7 @@ benchmark dataset.
 \subsection{SHAP Interaction Analysis}
 \label{sec:shap_interactions}
 
-To assess whether the DNN has learned meaningful pairwise interactions
+To assess whether the \gls{dnn} has learned meaningful pairwise interactions
 among the input variables, the SHAP interaction structure was analysed by
 computing the pairwise Pearson correlations between all
 $\binom{11}{2} = 55$ pairs of raw-variable Shapley-value vectors across
@@ -1354,7 +1354,7 @@ Figure~\ref{fig:shap_interaction_pairs_annex}
 (Annexure~\ref{annexure:multiseed_interactions}), confirm that no pair
 exhibits a correlation exceeding $|r| = 0.033$.
 
-This finding has two implications.  First, it confirms that the DNN has
+This finding has two implications.  First, it confirms that the \gls{dnn} has
 learned an essentially additive mapping from the input features to the
 predicted cost, consistent with the additive data-generating process of
 the benchmark dataset.  Second, it validates the use of main-effect
@@ -1428,7 +1428,7 @@ regime or residual noise.
 
 The multi-seed robustness analyses of
 Sections~\ref{sec:multiseed_dnn} to~\ref{sec:shap_interactions} provide a
-further layer of validation.  The DNN's test $R^2$ varies by only
+further layer of validation.  The \gls{dnn}'s test $R^2$ varies by only
 $1.28 \times 10^{-5}$ across five random seeds
 (Table~\ref{tab:multiseed_test_performance_ch4}); the \gls{mc} mean
 predicted cost varies by R15 (Section~\ref{sec:cross_seed_mc_ch4}); and
@@ -1437,7 +1437,7 @@ ten pairwise seed combinations ($\rho_{\mathrm{S}} = 1.0000$,
 Figure~\ref{fig:shap_spearman_heatmap_ch4}).  The $\tau_{99}$ ranking
 reversal is replicated in all five seeds
 (Figure~\ref{fig:cond_shap_tail_stability_ch4}), and the SHAP
-interaction analysis confirms that the DNN has learned an essentially
+interaction analysis confirms that the \gls{dnn} has learned an essentially
 additive mapping (all pairwise correlations below $|r| = 0.033$,
 Figure~\ref{fig:shap_interaction_heatmap_ch4}).  These convergent
 findings establish that the entire chain of results, from predictive

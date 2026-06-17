@@ -14,7 +14,7 @@ Approximate Shapley values were computed using the SHAP library's GradientExplai
 \caption{Batch Shapley-value computation with dummy-to-raw aggregation.}
 \label{alg:shap_computation}
 \begin{algorithmic}[1]
-\Require Trained DNN $f_{\boldsymbol{\theta}^*}$ (CPU copy), standardised training data $\mathbf{X}_{\mathrm{train}}$, standardised MC profiles $\mathbf{X}_{\mathrm{MC}}$, batch size $B_s = 2\,000$
+\Require Trained \gls{dnn} $f_{\boldsymbol{\theta}^*}$ (CPU copy), standardised training data $\mathbf{X}_{\mathrm{train}}$, standardised \gls{mc} profiles $\mathbf{X}_{\mathrm{MC}}$, batch size $B_s = 2\,000$
 \Ensure Raw-variable Shapley matrix $\boldsymbol{\Phi} \in \mathbb{R}^{B \times 11}$
 \State Sample 200 background rows from $\mathbf{X}_{\mathrm{train}}$ (seed 42)
 \State Initialise GradientExplainer with $f_{\boldsymbol{\theta}^*}$ and background data

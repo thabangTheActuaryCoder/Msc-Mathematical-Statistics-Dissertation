@@ -101,11 +101,11 @@ greater flexibility than the \gls{glm} but remain fundamentally
 piecewise-constant approximators: unlike neural networks, they do not
 learn smooth, continuous mappings through differentiable transformations.
 Including a \gls{rf} and an XGBoost benchmark alongside the \gls{glm} and
-DNN provides a graded comparison across model classes of increasing
+\gls{dnn} provides a graded comparison across model classes of increasing
 flexibility.  The core comparison remains the actuarial-standard \gls{glm}
-against the DNN, since this dissertation is situated within an actuarial
+against the \gls{dnn}, since this dissertation is situated within an actuarial
 modelling context where the \gls{glm} is the established industry baseline and
-the DNN represents the class of model whose behaviour the \gls{mc}
+the \gls{dnn} represents the class of model whose behaviour the \gls{mc}
 and Shapley analyses are designed to examine.  The tree-based benchmarks
 complement this pairing by establishing where piecewise-constant
 nonlinear methods fall on the performance spectrum.
@@ -171,7 +171,7 @@ feature attribution}
 \label{sec:beyond_point_prediction}
 
 Prediction accuracy alone provides an incomplete picture of model
-behaviour.  A test-set metric such as $R^2$ or RMSE summarises average
+behaviour.  A test-set metric such as \gls{r2} or \gls{rmse} summarises average
 predictive performance but does not reveal how the predicted cost varies
 across the input space, what the distributional shape of predicted costs
 looks like under population-level input variation, or which variables are
@@ -350,7 +350,7 @@ attributes to predicted costs.  A Gamma \gls{glm} with a
 logarithmic link, a \gls{rf} regressor and an XGBoost
 gradient-boosted tree regressor are fitted alongside the network to
 provide benchmarks spanning three alternative model classes.  The
-primary comparison is between the actuarial-standard \gls{glm} and the DNN,
+primary comparison is between the actuarial-standard \gls{glm} and the \gls{dnn},
 with the tree-based models serving as intermediate reference points.
 The output of this stage is a validated prediction function with
 documented out-of-sample performance across all four models.
@@ -550,7 +550,7 @@ the development of flexible machine-learning models.  Several studies
 have demonstrated that neural networks and tree-based ensembles can
 outperform classical actuarial models on insurance cost prediction tasks
 \citep{richman2021ai, kuo2019deep}.  These studies typically focus on
-predictive accuracy metrics such as RMSE, MAE and $R^2$, comparing
+predictive accuracy metrics such as \gls{rmse}, \gls{mae} and \gls{r2}, comparing
 multiple model classes on test-set performance.  While predictive
 performance is an important criterion, the literature has paid less
 attention to the distributional properties of predicted costs under
@@ -633,7 +633,7 @@ logarithmic link function, a \gls{rf} regressor with 500 trees, and
 an XGBoost gradient-boosted tree regressor with 1\,000 boosting rounds
 and early stopping.  The \gls{glm} serves as the actuarial-standard baseline,
 while the two tree-based models occupy an intermediate position between
-the linear \gls{glm} and the fully flexible DNN.  Hyperparameters for the \gls{glm}
+the linear \gls{glm} and the fully flexible \gls{dnn}.  Hyperparameters for the \gls{glm}
 and tree-based models are set to standard defaults rather than tuned, so
 that the comparison isolates model-class differences.  All four models
 are evaluated on a held-out test set that is never used during training
@@ -716,7 +716,7 @@ five-phase hyperparameter comparison uses validation-set performance as
 the selection criterion, while the final performance metrics are reported
 on the held-out test set that is never used for model selection.  Third,
 the comparison of training-set and test-set performance metrics for both
-the DNN and the \gls{glm} provides evidence on the presence or absence of
+the \gls{dnn} and the \gls{glm} provides evidence on the presence or absence of
 overfitting.
 
 At the simulation stage, the validation strategy addresses the central
@@ -774,7 +774,7 @@ The following delimitations define the boundaries of the study:
           exhaustive model-selection study.  Bayesian methods, support
           vector machines, other neural-network architectures and
           stacked-ensemble approaches are not evaluated.  The comparison
-          is designed to position the DNN within a spectrum from linear
+          is designed to position the \gls{dnn} within a spectrum from linear
           to piecewise-constant to smooth nonlinear models, rather than
           to identify the globally optimal model class.
 
@@ -876,7 +876,7 @@ The remainder of this dissertation is organised as follows.
 
 \subsubsection*{Chapter~\ref{sec:literature_review}: Literature Review}
 This chapter reviews the theoretical and empirical foundations of the
-DNN, \gls{mc} and Shapley framework.  The review covers statistical
+\gls{dnn}, \gls{mc} and Shapley framework.  The review covers statistical
 learning theory and supervised regression, \gls{dnn}
 architectures and their approximation properties, \glspl{glm} as actuarial baselines, health insurance cost prediction with
 machine learning, \gls{mc} simulation methodology, Shapley-value
@@ -898,7 +898,7 @@ consolidated table of modelling assumptions is provided.
 \subsubsection*{Chapter~\ref{sec:results}: Results}
 This chapter presents the empirical results of the three-stage workflow.
 The chapter reports the hyperparameter comparison outcomes, the
-four-model benchmark comparison (\gls{glm}, \gls{rf}, XGBoost and DNN),
+four-model benchmark comparison (\gls{glm}, \gls{rf}, XGBoost and \gls{dnn}),
 the \gls{mc} predicted-cost distribution and its convergence
 diagnostics, the joint-distribution validation results, the
 residual-augmented sensitivity analysis, the global and conditional

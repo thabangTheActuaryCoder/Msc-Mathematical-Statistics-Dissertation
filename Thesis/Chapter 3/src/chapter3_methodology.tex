@@ -6,7 +6,7 @@
 \label{chap:methods_and_data}
 
 \noindent
-This chapter translates the conceptual DNN, \gls{mc} and Shapley framework
+This chapter translates the conceptual \gls{dnn}, \gls{mc} and Shapley framework
 of Chapter~\ref{sec:literature_review} into a concrete empirical workflow.  The analysis uses a publicly available health insurance benchmark dataset containing one
 million policyholder records, eleven raw predictors, and a continuous
 response variable, \texttt{charges}.  The chapter proceeds sequentially:
@@ -495,7 +495,7 @@ Figure~\ref{fig:interaction_coverage_gender_ch3} shows that males have
 slightly higher median charges than females at every coverage tier, with
 the gender gap widening modestly from Basic (approximately R1\,000) to
 Premium (approximately R1\,500). The interaction effects visible in
-Figure~\ref{fig:interaction_effects_ch3} support the use of a flexible DNN
+Figure~\ref{fig:interaction_effects_ch3} support the use of a flexible \gls{dnn}
 architecture capable of capturing nonlinear and interaction-based
 relationships.
 
@@ -609,7 +609,7 @@ standardised response,
     \widehat{\widetilde{y}}_i = f_{\widehat{\theta}}(\mathbf{z}_i),
     \label{eq:dnn_prediction_standardised_ch3}
 \end{equation}
-\equationlistentry{DNN prediction on standardised scale}
+\equationlistentry{\Gls{dnn} prediction on standardised scale}
 which is subsequently de-normalised to the original monetary scale via
 equation~\eqref{eq:response_denormalisation_ch3}.
 
@@ -752,7 +752,7 @@ therefore not restrictive.  The total number of trainable parameters is
     &= 49\,168.
     \label{eq:dnn_parameter_count_ch3}
 \end{align}
-\equationlistentry{DNN total trainable parameter count}
+\equationlistentry{\Gls{dnn} total trainable parameter count}
 
 \subsubsection{Forward and Backward Propagation}
 \label{sec:propagation_mechanics}
@@ -854,7 +854,7 @@ architecture and training configuration.
 
 \begin{table}[H]
 \centering
-\caption{Feed-forward DNN architecture and training configuration.}
+\caption{Feed-forward \gls{dnn} architecture and training configuration.}
 \label{tab:dnn_architecture_training_ch3}
 \small
 \renewcommand{\arraystretch}{1.15}
@@ -873,7 +873,7 @@ Output activation & Identity mapping \\
 Training response & Standardised \texttt{charges} \\
 Prediction scale & De-normalised to the original monetary scale \\
 Training objective & \Gls{mse} on the standardised response scale \\
-Secondary evaluation metrics & MAE, RMSE and \gls{r2} on the original response scale \\
+Secondary evaluation metrics & \gls{mae}, \gls{rmse} and \gls{r2} on the original response scale \\
 Optimiser & NAdam \citep{dozat2016incorporating} \\
 Momentum parameters & $(\beta_1,\beta_2)$ selected by validation comparison from $\{(0.90,0.999),\ (0.95,0.999),\ (0.99,0.999)\}$ \\
 Learning rate & Selected by validation comparison from $\{0.01, 0.001, 0.0005, 0.0001\}$ \\
@@ -1387,18 +1387,18 @@ partition.
 \begin{subfigure}[b]{\textwidth}
     \centering
     \includegraphics[width=0.90\textwidth]{Thesis/Chapter 3/Figures/fig_train_val_losses_epochs.png}
-    \caption{Training and validation MSE losses over epochs for the final model.}
+    \caption{Training and validation \gls{mse} losses over epochs for the final model.}
     \label{fig:train_val_losses_ch3}
 \end{subfigure}
-\caption{Learning curves for the fitted DNN.}
+\caption{Learning curves for the fitted \gls{dnn}.}
 \label{fig:learning_curves_combined_ch3}
 \end{figure}
 
 \noindent
 Figure~\ref{fig:learning_curves_ch3} presents the learning curves for the
-fitted DNN. In the left panel, the training MSE loss drops sharply from
+fitted \gls{dnn}. In the left panel, the training \gls{mse} loss drops sharply from
 approximately 0.014 at the first epoch to roughly 0.005 by epoch~5, after
-which it decreases gradually and stabilises near 0.0043. The validation MSE
+which it decreases gradually and stabilises near 0.0043. The validation \gls{mse}
 loss tracks the training loss closely throughout, with no visible
 divergence between the two curves. The selected epoch $e^{*} = 85$ (green
 dashed line) falls in the region where both losses have plateaued. In the
@@ -1472,7 +1472,7 @@ training set (left panel, $R^2 = 0.9957$), the actual (blue) and predicted
 the bulk of density concentrated between approximately R10\,000 and
 R25\,000, and the dashed median lines fall at approximately the same level
 near R16\,700. The predicted violin is marginally narrower at the extreme
-tails, indicating that the DNN compresses the most extreme values slightly,
+tails, indicating that the \gls{dnn} compresses the most extreme values slightly,
 which is consistent with the smoothing behaviour of a regression model. The
 test set (right panel, $R^2 = 0.9956$) displays the same pattern, with the
 actual and predicted distributions virtually mirroring each other. The
@@ -1506,7 +1506,7 @@ residual-augmented \gls{mc} sensitivity analysis described later.
 \begin{subfigure}[b]{\textwidth}
     \centering
     \includegraphics[width=0.90\textwidth]{Thesis/Chapter 3/Figures/fig_residual_diagnostics.png}
-    \caption{Residual diagnostic panels for the fitted DNN.}
+    \caption{Residual diagnostic panels for the fitted \gls{dnn}.}
     \label{fig:residual_diagnostics_ch3}
 \end{subfigure}
 
@@ -1518,7 +1518,7 @@ residual-augmented \gls{mc} sensitivity analysis described later.
     \caption{Violin plots of residuals on the training and test sets.}
     \label{fig:violin_residuals_ch3}
 \end{subfigure}
-\caption{Residual diagnostics for the fitted DNN.}
+\caption{Residual diagnostics for the fitted \gls{dnn}.}
 \label{fig:residual_analysis_ch3}
 \end{figure}
 
@@ -1535,14 +1535,14 @@ of standardised residuals. The central portion follows the theoretical
 reference line closely, while both tails exhibit slight compression,
 indicating that the residual distribution has slightly lighter tails than a
 Gaussian distribution. This mild platykurtic behaviour is not a concern for
-the DNN, which does not assume normality of residuals. Panel~(d) plots
+the \gls{dnn}, which does not assume normality of residuals. Panel~(d) plots
 residuals against observation index: the points are scattered randomly
 around zero with no discernible sequential pattern.
 Figure~\ref{fig:violin_residuals_ch3} compares the residual distributions
 across partitions. Both the training and test violins are centred at zero
 and are nearly identical in width, spread and symmetry, confirming that the
 residual error does not systematically differ between the training and test
-data and that the fitted DNN does not overfit the training partition.
+data and that the fitted \gls{dnn} does not overfit the training partition.
 
 \subsubsection{Principal component structural diagnostics}
 \label{sec:pca_structural_diagnostics}
@@ -1655,7 +1655,7 @@ axes. The colour gradient, representing charges from approximately R5\,000
 with higher charges (yellow-green) tending to appear at specific regions
 within the layered structure. The predicted-target colouring
 (Figure~\ref{fig:pca_train_predicted_ch3}) is virtually indistinguishable
-from the actual-target version, confirming that the fitted DNN has captured
+from the actual-target version, confirming that the fitted \gls{dnn} has captured
 the dominant target structure visible in the first two principal component
 directions. The test set
 (Figures~\ref{fig:pca_test_actual_ch3}
@@ -1760,13 +1760,13 @@ largest positive correlation with actual charges (bright green-yellow),
 followed by \texttt{coverage\_level\_Premium},
 \texttt{medical\_history\_Heart\_disease} and \texttt{bmi}. The predicted
 version (Figure~\ref{fig:heatmap_train_predicted_ch3}) displays a virtually
-identical target row, confirming that the fitted DNN has preserved the
+identical target row, confirming that the fitted \gls{dnn} has preserved the
 linear association structure. The test set
 (Figures~\ref{fig:heatmap_test_actual_ch3}
 and~\ref{fig:heatmap_test_predicted_ch3}) reproduces the same patterns,
 with the target-correlation rows near-identical across both the actual and
 predicted versions. These consistency findings complete the diagnostic
-verification; the fitted DNN is therefore ready to serve as the prediction
+verification; the fitted \gls{dnn} is therefore ready to serve as the prediction
 surface for the \gls{mc} and Shapley-value analyses that follow.
 
 
@@ -1971,7 +1971,7 @@ Median & Checks central distributional stability \\
 \end{tabular}
 \end{table}
 
-\subsubsection{Base DNN \gls{mc} scoring}
+\subsubsection{Base \gls{dnn} \gls{mc} scoring}
 
 For each simulated raw profile, the preprocessing map $T(\cdot)$ produces
 the model-ready input vector $\mathbf{z}^{(b)}$.  The fitted \gls{dnn} then
@@ -1988,13 +1988,13 @@ equation~\eqref{eq:mc_predictions_framework}:
     b=1,\ldots,B.
     \label{eq:base_mc_prediction_ch3}
 \end{equation}
-\equationlistentry{Base \gls{mc} DNN prediction}
+\equationlistentry{Base \gls{mc} \gls{dnn} prediction}
 The resulting collection
 $\{\widehat{Y}^{(1)},\ldots,\widehat{Y}^{(B)}\}$
 forms the base model-implied predicted-cost distribution introduced in
 equation~\eqref{eq:mc_predictions_framework}.  The generated input profiles are also summarised
 before interpreting the predicted-cost outputs, to confirm what type of
-simulated input space produced the DNN predictions.
+simulated input space produced the \gls{dnn} predictions.
 
 \begin{table}[H]
 \centering
@@ -2351,7 +2351,7 @@ augmentation:
     \label{eq:fixed_residual_perturbation_ch3}
 \end{equation}
 \equationlistentry{Fixed residual perturbation sensitivity band}
-This is a deterministic sensitivity band around the fitted DNN predictions,
+This is a deterministic sensitivity band around the fitted \gls{dnn} predictions,
 not a probabilistic uncertainty interval. The residual-augmented simulation is
 interpreted as a sensitivity analysis based on fitted residual variability. It
 does not account for parameter uncertainty, model uncertainty or
@@ -2463,7 +2463,7 @@ approximate attributions rather than exact cooperative-game solutions.
 \toprule
 \textbf{Item} & \textbf{Specification} \\
 \midrule
-Prediction function & Fitted DNN with response de-normalisation \\
+Prediction function & Fitted \gls{dnn} with response de-normalisation \\
 Output scale & Original monetary scale of \texttt{charges} \\
 Explainer & Gradient-based SHAP explainer \\
 Background data & Sample from the model-ready training partition \\
@@ -2574,8 +2574,8 @@ important across all simulated profiles or specifically important in the
 high-cost region. For the residual-augmented simulation, a separate high-cost
 set can be defined using the residual-augmented outputs to examine whether the
 profiles classified as high cost change when fitted residual variability is
-introduced. Since the residual component is added after the fitted DNN
-prediction, Shapley values explain the fitted DNN component
+introduced. Since the residual component is added after the fitted \gls{dnn}
+prediction, Shapley values explain the fitted \gls{dnn} component
 $\widehat{m}(\mathbf{z}^{(b)})$ rather than the residual addition.
 
 \subsubsection{Bootstrap confidence intervals for conditional Shapley values}
@@ -2626,7 +2626,7 @@ those regions.
 The empirical framework depends on the modelling assumptions stated in
 Table~\ref{tab:modelling_assumptions_ch3}. These assumptions define the
 boundary of the empirical claims: the analysis can support statements about
-how the fitted DNN behaves on the benchmark dataset and under the stated Monte
+how the fitted \gls{dnn} behaves on the benchmark dataset and under the stated Monte
 Carlo input assumptions, but cannot, without external validation, support
 causal claims about healthcare expenditure.
 
@@ -2649,7 +2649,7 @@ Training-set preprocessing &
 Encoding, numerical scaling and response scaling are estimated from the training set and applied unchanged elsewhere \\
 
 A3 &
-Bias-free DNN &
+Bias-free \gls{dnn} &
 The constrained architecture is assessed empirically through validation and test diagnostics \\
 
 A4 &
@@ -2670,7 +2670,7 @@ The Shapley attributions are shown to be invariant to whether input profiles pre
 
 A8 &
 Base MC interpretation &
-The base simulated output distribution represents DNN fitted predictions under the stated input assumptions, not realised healthcare costs \\
+The base simulated output distribution represents \gls{dnn} fitted predictions under the stated input assumptions, not realised healthcare costs \\
 
 A9 &
 Residual augmentation &
@@ -2678,7 +2678,7 @@ Residual-augmented simulation is a sensitivity analysis and not a complete predi
 
 A10 &
 SHAP interpretation &
-Shapley values explain the fitted DNN predictions and are not causal feature effects \\
+Shapley values explain the fitted \gls{dnn} predictions and are not causal feature effects \\
 
 A11 &
 High-cost definition &

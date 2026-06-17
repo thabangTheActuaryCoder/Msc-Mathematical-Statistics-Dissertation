@@ -22,7 +22,7 @@ relevant literature in a sequence that mirrors the framework itself: from
 prediction to simulation and then to explanation.
 
 \noindent
-The review begins with the integrated DNN, \gls{mc} and Shapley framework
+The review begins with the integrated \gls{dnn}, \gls{mc} and Shapley framework
 (Section~\ref{sec:integrating_dnn_mc_shapley}), establishing why prediction
 accuracy alone provides only a partial account of model behaviour and why
 distributional analysis and feature-level attribution are needed as
@@ -45,7 +45,7 @@ Section~\ref{sec:research_gap}.
 % 2.2  DNN-\gls{mc}-Shapley Framework
 % =============================================================
 
-\subsection{DNN-\gls{mc}-Shapley Framework}
+\subsection{\Gls{dnn}-\gls{mc}-Shapley Framework}
 \label{sec:integrating_dnn_mc_shapley}
 
 \noindent
@@ -323,14 +323,14 @@ conditional Shapley summaries.
             {Preprocessing and splitting};
 
         \node[process] (train) at (\colA, \rowThree)
-            {DNN training};
+            {\gls{dnn} training};
 
         \node[result] (fitted) at (\colA, \rowFour)
             {Fitted model\\[2pt]
              $\widehat{m}(\mathbf{x})=f_{\widehat{\theta}}(\mathbf{x})$};
 
         \node[output] (metrics) at (\colA, \rowFive)
-            {RMSE, MAE, $R^{2}$};
+            {\gls{rmse}, \gls{mae}, \gls{r2}};
 
         \draw[arrow] (dataset) -- (preproc);
         \draw[arrow] (preproc) -- (train);
@@ -508,7 +508,7 @@ parameter vector \(\theta\) is fitted to approximate \(m(\cdot)\), yielding
     =
     f_{\widehat{\theta}}(\mathbf{x}).
 \end{equation}
-\equationlistentry{Fitted DNN prediction function}
+\equationlistentry{Fitted \gls{dnn} prediction function}
 For a feed-forward network with \(L\) hidden layers, the parameter vector
 \(\theta\) collects all weight matrices
 \(\mathbf{W}^{(1)},\ldots,\mathbf{W}^{(L+1)}\) and, where included, bias
@@ -843,7 +843,7 @@ profile.
 \label{sec:statistical_learning_supervised_regression}
 
   \noindent
-  The predictive component of the DNN-\gls{mc}-Shapley workflow is a
+  The predictive component of the \gls{dnn}-\gls{mc}-Shapley workflow is a
   supervised statistical-learning problem. Statistical learning concerns the
   estimation of relationships between observed variables for purposes such as
   prediction, interpretation and model assessment
@@ -1206,7 +1206,7 @@ The fitted prediction for observation \(i\) is therefore
     =
     a^{(L)}_{i1},
 \end{equation}
-\equationlistentry{Fitted DNN prediction for observation $i$}
+\equationlistentry{Fitted \gls{dnn} prediction for observation $i$}
 where \(a^{(L)}_{i1}\) is the single output activation. A linear output is
 appropriate because the response is a continuous monetary variable rather than a
 probability or class label. Classification tasks would instead use logistic or
