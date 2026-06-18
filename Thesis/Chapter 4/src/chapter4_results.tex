@@ -934,7 +934,7 @@ reports the numerical values.
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrr}
 \toprule
-\textbf{Variable} & \textbf{Mean signed \gls{shap}} & \textbf{Mean $|\text{SHAP}|$} \\
+\textbf{Variable} & \textbf{Mean signed Shapley} & \textbf{Mean $|\text{SHAP}|$} \\
 \midrule
 \texttt{smoker} & $+0.032$ & $0.578$ \\
 \texttt{coverage\_\allowbreak{}level} & $+0.022$ & $0.401$ \\
@@ -1257,7 +1257,7 @@ limitation identified in
 Section~\ref{sec:limitations_conclusion}: whether the Shapley
 attributions are sensitive to the stochastic training process.
 
-\subsubsection{Global SHAP stability}
+\subsubsection{Global Shapley stability}
 
 The global mean $|\text{SHAP}|$ values were computed for each seed and
 compared across all ten pairwise seed combinations.  Detailed
@@ -1285,7 +1285,7 @@ $0.1\%$ for every variable
 magnitude of the attributions, not merely the ranking, is stable across
 seeds.
 
-\subsubsection{Conditional SHAP stability at $\tau_{99}$}
+\subsubsection{Conditional Shapley stability at $\tau_{99}$}
 
 The conditional Shapley analysis at the $\tau_{99}$ threshold was
 repeated for each seed to assess whether the ranking reversal documented
