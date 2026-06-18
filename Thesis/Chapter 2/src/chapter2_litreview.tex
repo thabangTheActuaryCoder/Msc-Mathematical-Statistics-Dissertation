@@ -35,6 +35,24 @@ variables, with particular attention to profiles in the upper tail of the
 predicted-cost distribution.
 
 \noindent
+The fitted prediction function maps a policyholder profile to a predicted
+cost.  It is interpreted as a statistical learning function fitted to the
+preprocessed benchmark data, not as a causal model of healthcare expenditure and
+not as evidence of real-world insurer pricing rules.  A \gls{dnn} is useful
+in this setting because it can represent nonlinearities and interactions among
+policyholder attributes without requiring all interaction terms to be specified
+manually, as would be necessary in a \gls{glm} or polynomial
+regression \citep{goodfellow2016deep, hastie2009elements}.  Such flexibility is
+relevant where predicted costs depend on combinations of demographic,
+behavioural and health-related variables rather than on isolated predictors
+alone \citep{orji2024explainable, samiuddin2023health}.  However, the use of a
+\gls{dnn} does not imply that neural networks are automatically superior to
+\glspl{glm}, tree-based models or other actuarial models for
+tabular insurance data \citep{richman2021ai}.  Its role is to provide a nonlinear
+fitted prediction surface that can be evaluated, simulated and interpreted
+within the proposed framework.
+
+\noindent
 The research gap that motivates the dissertation follows from the limited
 integration of these components in the existing literature.  This gap is
 developed through the reviewed studies in
@@ -45,7 +63,7 @@ Section~\ref{sec:research_gap}.
 % 2.2  DNN-\gls{mc}-Shapley Framework
 % =============================================================
 
-\subsection{\Gls{dnn}-\gls{mc}-Shapley Framework}
+\subsection{DNN-MC-Shapley Framework}
 \label{sec:integrating_dnn_mc_shapley}
 
 \noindent
@@ -58,7 +76,7 @@ supplies a flexible nonlinear regression function for modelling the
 relationship between policyholder attributes and cost
 \citep{goodfellow2016deep, hornik1989multilayer, richman2021ai,
 samiuddin2023health}.  The use of a \gls{dnn} in this role is motivated by
-the universal approximation property: feedforward neural networks with
+the universal approximation property: \glspl{dnn} with
 suitable activation functions can approximate broad classes of continuous
 functions \citep{hornik1989multilayer, goodfellow2016deep}, so that the
 nonlinear relationship between policyholder attributes and cost does not
@@ -173,7 +191,7 @@ is \citep{samiuddin2023health}, who fit \gls{ann} and \gls{dnn} models to the
 same family of attributes used here, namely age, gender, \gls{bmi}, number of
 children, smoking behaviour and region, and report predictive performance
 comparable to benchmark regression models on held-out data. Their results
-support the use of a feed-forward neural network as a viable prediction
+support the use of a \gls{dnn} as a viable prediction
 function for health insurance cost on policyholder-level attributes, which is
 consistent with the role assigned to the \gls{dnn} in the predictive layer of
 the framework adopted here. The point of departure is the scope of the
@@ -532,40 +550,23 @@ parameter vector \(\theta\) is fitted to approximate \(m(\cdot)\), yielding
     f_{\widehat{\theta}}(\mathbf{x}).
 \end{equation}
 \equationlistentry{Fitted \gls{dnn} prediction function}
-For a feed-forward network with \(L\) hidden layers, the parameter vector
+For a \gls{dnn} with \(L\) hidden layers, the parameter vector
 \(\theta\) collects all weight matrices
 \(\mathbf{W}^{(1)},\ldots,\mathbf{W}^{(L+1)}\) and, where included, bias
 vectors \(\mathbf{b}^{(1)},\ldots,\mathbf{b}^{(L+1)}\) across the layers
 \citep{goodfellow2016deep}. The total number of trainable parameters depends
-on the layer widths and on whether bias terms are included. Under a bias-free
-architecture, \(\theta\) reduces to the weight matrices alone and does not
-include additive layer-bias parameters. This architectural meaning of bias is
+on the layer widths and on whether bias terms are included. In this
+dissertation, bias vectors are omitted from every layer
+(see Table~\ref{tab:dnn_architecture_training_ch3}), so \(\theta\) reduces
+to the weight matrices alone. This architectural meaning of bias is
 distinct from statistical bias in the bias-variance trade-off
 \citep{hastie2009elements} and from data bias arising from the dataset,
 sampling mechanism or preprocessing procedure.
 
-\noindent
-The fitted function \(\widehat{m}\) maps a policyholder profile to a predicted
-cost. It is interpreted as a statistical learning function fitted to the
-preprocessed benchmark data, not as a causal model of healthcare expenditure and
-not as evidence of real-world insurer pricing rules. A \gls{dnn} is useful
-in this setting because it can represent nonlinearities and interactions among
-policyholder attributes without requiring all interaction terms to be specified
-manually, as would be necessary in a \gls{glm} or polynomial
-regression \citep{goodfellow2016deep, hastie2009elements}. Such flexibility is
-relevant where predicted costs depend on combinations of demographic,
-behavioural and health-related variables rather than on isolated predictors
-alone \citep{orji2024explainable, samiuddin2023health}. However, the use of a
-\gls{dnn} does not imply that neural networks are automatically superior to
-\glspl{glm}, tree-based models or other actuarial models for
-tabular insurance data \citep{richman2021ai}. Its role is to provide a nonlinear
-fitted prediction surface that can be evaluated, simulated and interpreted
-within the proposed framework.
-
 % --------------------------------------------------------
-% 2.2.2 \gls{mc} Simulation
+% 2.2.2 MC Simulation
 % --------------------------------------------------------
-\subsubsection{\gls{mc} Simulation}
+\subsubsection{MC Simulation}
 \label{montecarlo_propagation}
 
 \noindent
@@ -843,12 +844,11 @@ profile.
   The interpretation of high-cost Shapley summaries remains model-based. A large
   value of \(\widehat{A}_{j,u}\) means that feature \(j\) has a large average
   model-attributed contribution among simulated profiles satisfying
-  \(\widehat{Y}^{(\ell)}>u\). It does not mean that the variable causally
-  determines real-world healthcare expenditure, nor that it is necessarily used in
-  actual insurance underwriting. Similarly, a positive value of
-  \(\widehat{\Phi}_{j,u}\) indicates that the fitted model tends to associate the
-  feature with higher predictions in the simulated high-cost region, not that the
-  feature is a causal pricing factor.
+  \(\widehat{Y}^{(\ell)}>u\), and a positive \(\widehat{\Phi}_{j,u}\) indicates
+  that the fitted model tends to associate the feature with higher predictions in
+  the simulated high-cost region.  As noted in the delimitations
+  (Section~\ref{sec:scope_delimitations}), these attributions do not establish
+  causal relationships.
 
   \noindent
   The scope of the conclusions is determined by the data source, fitted model,
@@ -970,7 +970,9 @@ Regression methods are evaluated on a continuous scale using prediction-error me
   may have high training and test error, which corresponds to underfitting. The
   bias-variance trade-off formalises this tension between systematic
   approximation error and sensitivity to the training sample
-  \citep{james2021introduction,hastie2009elements}.   \noindent
+  \citep{james2021introduction,hastie2009elements}.
+
+  \noindent
   Classical regression models provide important reference points for actuarial and
   insurance applications. Ordinary least squares regression represents the
   conditional mean through a linear predictor,
@@ -1038,10 +1040,8 @@ Regression methods are evaluated on a continuous scale using prediction-error me
 % --------------------------------------------------------
 \noindent
 The methodological role of the \gls{dnn} rests on two properties. First,
-multilayer feedforward neural networks have strong function-approximation
-guarantees \citep{hornik1989multilayer}, and modern deep-learning methods learn
-nonlinear mappings through compositions of transformations and activation
-functions \citep{goodfellow2016deep}. Secondly, neural networks have been used
+\glspl{dnn} possess the universal approximation property
+discussed in Section~\ref{sec:integrating_dnn_mc_shapley}. Secondly, neural networks have been used
 in actuarial science as efficient surrogate models for computationally demanding
 valuation and prediction problems \citep{hejazi2016neural}. These properties
 make a \gls{dnn} suitable for estimating a fitted prediction function
@@ -1141,7 +1141,7 @@ interpreted.
 % 2.4  \Glspl{dnn} for Regression
 % =============================================================
 
-\subsection{\Glspl{dnn} for Regression}
+\subsection{DNNs for Regression}
 \label{sec:dnn_regression}
 
 \noindent
@@ -1160,7 +1160,7 @@ a health insurance charge or premium.
 \noindent
 Let \(\mathbf{x}_i\in\mathbb{R}^{p}\) denote the preprocessed input vector for
 observation \(i\), and let \(y_i\in\mathbb{R}_{+}\) denote the corresponding
-observed insurance cost. A feed-forward neural network constructs a sequence of
+observed insurance cost. A \gls{dnn} constructs a sequence of
 layer activations from this input. Let \(d_0=p\) denote the input dimension, let
 \(d_l\) denote the number of nodes in layer \(l\), and let \(d_L=1\) for a
 single continuous regression output. For observation \(i\), the input layer is
@@ -1334,7 +1334,7 @@ The \gls{relu} is defined by
     \max\{0,z\}.
 \end{equation}
 \equationlistentry{\Gls{relu}}
-The \gls{relu} is widely used in feed-forward neural networks because it is
+The \gls{relu} is widely used in \glspl{dnn} because it is
 simple, computationally efficient and less prone to the saturation behaviour
 associated with some bounded activation functions
 \citep{nair2010rectified,goodfellow2016deep}. Its limitation is that negative
@@ -1611,7 +1611,7 @@ also the model-implied predicted-cost distribution and the feature-attribution
 summaries derived later in the framework.
 
 \noindent
-The empirical application considers a feed-forward \gls{dnn} architecture for
+The empirical application considers a \gls{dnn} architecture for
 health insurance cost prediction. After categorical variables are encoded and
 numerical variables are standardised, the model-ready input dimension is
 \(d_0=p\). Under the preprocessing design used here, this dimension is
@@ -1621,7 +1621,7 @@ Figure~\ref{fig:dnn_architecture}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{Thesis/Chapter 2/Figures/nn_architecture (1).png}
-    \caption{Candidate feed-forward neural network architecture.}
+    \caption{Candidate \gls{dnn} architecture.}
     \label{fig:dnn_architecture}
 \end{figure}
 
@@ -2184,14 +2184,13 @@ vary across simulated profiles and which variables the model attributes to the
 upper tail of the predicted-cost distribution.
 
 \noindent
-The interpretation remains model-based. The \gls{mc} distribution describes
-variation in fitted predictions under the selected input distribution, not the
-full population distribution of realised healthcare expenditure. Similarly,
+The interpretation remains model-based: the \gls{mc} distribution describes
+variation in fitted predictions under the selected input distribution, and
 Shapley values explain the fitted \gls{dnn}'s predictions relative to the
-chosen background distribution; they do not establish causal determinants of
-healthcare costs or provide evidence of actual insurer pricing rules. The health
-insurance application is therefore used as an actuarially motivated setting in
-which prediction, simulation and explanation can be combined while keeping the
+chosen background distribution.  The causal and scope delimitations stated in
+Section~\ref{sec:scope_delimitations} apply throughout.  The health insurance
+application is therefore used as an actuarially motivated setting in which
+prediction, simulation and explanation can be combined while keeping the
 empirical claims within the limits of the data.
 
 
@@ -2299,7 +2298,7 @@ heavy-tailed or potentially unsuitable for simple symmetric distributional
 assumptions.
 
 \noindent
-The response variable \text{charges} is also subject to diagnostic analysis,
+The response variable \texttt{charges} is also subject to diagnostic analysis,
 even though \gls{mc} input simulation focuses primarily on the predictors.
 Insurance cost variables often display right-skewness, heterogeneity and
 upper-tail behaviour \citep{denuit2007actuarial}. If the response is strongly
@@ -2569,19 +2568,11 @@ vectors are drawn to form the simulation design matrix.
 \label{fig:input_law_construction}
 \end{figure}
 
-\noindent
-Each column of \(\mathcal{X}_{\mathrm{train}}\) is fitted independently to a
-parametric marginal distribution, whose shape is illustrated beneath the
-corresponding label in Figure~\ref{fig:input_law_construction}. The product of
-these marginals defines \(\widehat{F}_{X}\), from which \(M\) synthetic input
-vectors are drawn to form the simulation design matrix
-\(\mathcal{X}_{\mathrm{sim}} \in \mathbb{R}^{M \times p}\).
-
 % =============================================================
 % 2.8  Foundations of \gls{mc}
 % =============================================================
 
-\subsection{Foundations of \gls{mc}}
+\subsection{Foundations of MC}
 \label{sec:monte_carlo_foundations}
 
 \noindent
@@ -3117,12 +3108,8 @@ insurance cost prediction with an added simulation and attribution layer.
 \noindent
 The framework addresses this gap by connecting the three components
 within a single empirical workflow (Figure~\ref{fig:integrated_framework}).
-The concrete methodological workflow, distributional choices and
-implementation details are specified in Chapter~\ref{chap:methods_and_data}.
-
-The conceptual framework, theoretical foundations and research gap developed
-in this chapter provide the basis for the empirical methodology that follows.
-Chapter~\ref{chap:methods_and_data} translates these components into a
-concrete methodological workflow, specifying the benchmark dataset, preprocessing
+Chapter~\ref{chap:methods_and_data} translates the conceptual framework and
+theoretical foundations developed in this chapter into a concrete
+methodological workflow, specifying the benchmark dataset, preprocessing
 protocol, network architecture, \gls{mc} simulation design and
 Shapley-value implementation.

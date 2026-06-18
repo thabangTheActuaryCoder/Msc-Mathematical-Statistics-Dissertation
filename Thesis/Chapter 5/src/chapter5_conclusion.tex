@@ -120,13 +120,11 @@ and the test \gls{mae} by $59.8\%$.  The two tree-based benchmarks narrow the
 gap: the \gls{rf} achieves $R^2 = 0.9899$ and \gls{xgboost} reaches
 $R^2 = 0.9955$, approaching the \gls{dnn}'s accuracy.  All four models show
 near-identical training and test performance, ruling out overfitting.
-The \gls{glm}'s performance gap is attributable to the log-link's
-multiplicative mean structure, which introduces systematic model
-misspecification on this benchmark dataset where the charges variable is
-constructed as an approximately additive function of the input features.
-The tree-based models, which are not constrained by a multiplicative
-link, recover most of this gap, confirming that the \gls{glm}'s disadvantage
-is structural rather than a general property of simpler model classes.
+The \gls{glm}'s performance gap is attributable to the log-link
+misspecification discussed in Section~\ref{sec:four_model_comparison_ch4}:
+the benchmark data's additive structure does not match the \gls{glm}'s
+multiplicative mean function.  The tree-based models, unconstrained by a
+multiplicative link, recover most of this gap.
 The five-phase sequential hyperparameter comparison selected the final
 \gls{dnn} configuration from among 16 candidate settings, documented in full
 in Annexure~\ref{annexure:hyperparameters}.  When the tree-based
@@ -134,8 +132,7 @@ benchmarks were subsequently tuned via randomised search with
 cross-validation, the tuned \gls{rf} reached $R^2 = 0.9924$ and
 the tuned \gls{xgboost} matched the \gls{dnn} at $R^2 = 0.9956$.  The \gls{dnn} retains
 a marginal advantage ($R^2 = 0.9957$), but the practical gap is
-negligible; the \gls{dnn} was retained for its differentiability rather than
-for predictive superiority.  Multi-seed replication across five random
+negligible.  Multi-seed replication across five random
 initialisations confirmed that the \gls{dnn}'s test \gls{r2} varies by only
 $1.28 \times 10^{-5}$ (Table~\ref{tab:multiseed_test_performance_ch4}),
 establishing that the reported performance is robust to the stochastic
@@ -225,42 +222,18 @@ What explains any differences between the global and conditional
 feature-importance rankings in the upper tail?
 
 The ranking reversal at $\tau_{99}$ is explained by the compositional
-structure of the extreme upper-tail profiles.  At $\tau_{99}$, the
-proportion of smokers reaches $99\%$, the proportion of Premium-tier
-policyholders reaches approximately $90\%$, and the proportion of
-profiles reporting Heart disease reaches approximately $85\%$.  When
-smoking status is near-universal, it contributes a near-constant positive
-attribution with reduced variability and therefore ceases to
-differentiate among high-cost profiles.  It is important to distinguish
-two components of this effect.  The first is mechanical: a binary
-feature that is near-constant within a conditioning set necessarily
-produces near-constant Shapley values, regardless of any deeper
-structural relationship.  This variance-collapse component is a
-statistical artefact of the conditioning and would arise for any
-near-degenerate binary variable.  The second component is substantive:
-the monotonic increase in the conditional importance of coverage level,
-medical history and family medical history across successive thresholds
-is not explained by variance collapse alone, because these variables
-retain meaningful variation within the $\tau_{99}$ set.  Their rising
-importance reflects genuine structure in the fitted model's attribution
-surface.  The residual variation in predicted costs within the
-$\tau_{99}$ set is therefore attributable to coverage tier, medical
-history and family medical history.
-To illustrate this with a concrete example: consider two profiles in the
-$\tau_{99}$ set, both smokers with high \gls{bmi}.  One holds Premium coverage
-with a family history of Heart disease; the other holds Standard coverage
-with no family medical history.  Despite their identical smoking status,
-the first profile receives substantially higher predicted costs, and the
-Shapley decomposition attributes this difference to the coverage and
-family history variables rather than to smoking.  The decline of
-smoking status in the conditional ranking thus reflects both the
-mechanical variance collapse of a near-constant feature and the
-genuine explanatory role of the remaining variables.  Separating
-these two components is essential before drawing broader
-conclusions: the mechanical component is an inherent property of
-conditional analysis on any near-degenerate variable, while the
-substantive component provides information about the model's
-attribution structure in the upper tail.
+structure of the extreme upper-tail profiles
+(Section~\ref{sec:highcost_conditional_results}).  When smoking status is
+near-universal ($99\%$ of profiles), it contributes a near-constant
+attribution and ceases to differentiate among high-cost profiles.
+Two components underlie this effect: a mechanical variance-collapse
+component (any near-degenerate binary variable produces near-constant
+Shapley values within a conditioning set) and a substantive component
+(coverage level, medical history and family medical history retain
+meaningful variation and their rising conditional importance reflects
+genuine structure in the fitted model's attribution surface).
+Separating these two components is essential before drawing broader
+conclusions, as discussed in Section~\ref{sec:highcost_conditional_results}.
 
 % ---------------------------------------------------------
 % 5.3 CONTRIBUTIONS
@@ -302,12 +275,11 @@ for long-term life insurance valuations, while the present study extends
 the deep-learning approach to health insurance cost prediction with an
 added simulation and attribution layer.  This dissertation demonstrates
 that the integration produces insight that none of the three components
-could provide in isolation.  The \gls{mc} distribution defines the regions of
-interest for the Shapley analysis, and the conditional Shapley analysis
-decomposes the model behaviour within those regions.  Each component
-produces outputs that serve as inputs to the next, creating a connected
-framework in which the fitted model, the simulated input population and the
-feature attributions are jointly analysed.
+could provide in isolation (see Section~\ref{sec:integration_contribution}).
+The sequential dependence among the three stages means that the \gls{mc}
+output defines the conditioning regions for the Shapley stage, producing a
+connected analytical chain from fitted model through simulated population
+to feature attribution.
 
 The conditional feature-importance summaries at high-cost thresholds
 represent the most distinctive contribution.  The existing health
@@ -406,20 +378,15 @@ methodological choices made in this dissertation; others reflect the
 constraints of the benchmark data.
 
 All results are conditional on the Kaggle Insurance Data for
-Machine Learning benchmark dataset \citep{kaggleInsuranceDataML}, which has a strong simulated
-structure.  The unusually high predictive performance ($R^2 = 0.9957$)
-reflects this structure and should not be extrapolated to real-world
-insurance portfolios, where data are noisier, relationships between
-covariates and costs are more complex, and the data-generating process
-may be multiplicative rather than additive.  The additive structure of the
-benchmark data favours the \gls{dnn} over the log-link \gls{glm}, because the
-log-link's multiplicative structure introduces systematic
-misspecification.  On a dataset with a genuinely multiplicative
-data-generating process, the \gls{glm}'s relative performance would likely
-improve, and the \gls{dnn}'s advantage might be smaller.  The benchmark data
-serves the purpose of demonstrating the methodology on a controlled,
-reproducible dataset, but the specific numerical results are properties of
-this dataset and not of health insurance cost prediction in general.
+Machine Learning benchmark dataset \citep{kaggleInsuranceDataML}, whose
+clean, additive structure produces unusually high predictive performance
+($R^2 = 0.9957$) that should not be extrapolated to real-world insurance
+portfolios.  This structure also favours the \gls{dnn} over the log-link
+\gls{glm}, whose multiplicative misspecification is discussed in
+Section~\ref{sec:four_model_comparison_ch4}.  The benchmark data serves
+to demonstrate the methodology on a controlled, reproducible dataset, but
+the specific numerical results are properties of this dataset and not of
+health insurance cost prediction in general.
 
 The study compares the \gls{dnn} against a Gamma/log-link \gls{glm}, a \gls{rf}
 and an \gls{xgboost} gradient-boosted tree regressor.  While these benchmarks
@@ -513,12 +480,10 @@ characterise the distribution of Shapley attributions under parameter
 uncertainty.  This extension is noted as a direction for future research
 in Section~\ref{sec:future_research}.
 
-Finally, the Shapley decomposition identifies variables to which the
-fitted model assigns large contributions; it does not establish causal
-relationships between input variables and healthcare expenditure.  All
-interpretations are conditional on the fitted model and benchmark data,
-and should not be read as causal claims about the determinants of health
-insurance costs.
+Finally, the causal delimitation stated in
+Section~\ref{sec:scope_delimitations} applies throughout: Shapley
+attributions identify model-attributed contributions, not causal
+determinants of healthcare expenditure.
 
 % ---------------------------------------------------------
 % 5.6 IMPLICATIONS FOR ACTUARIAL PRACTICE AND STATISTICAL METHODOLOGY
@@ -569,11 +534,9 @@ reserve adequacy assessment, risk capital calculations and scenario
 analysis.  The ability to generate a distributional characterisation of
 the model's output landscape, rather than relying on point predictions at
 observed data points, provides a richer basis for actuarial decision
-making.  However, these implications must be qualified by the limitations
-of the benchmark data.  The unusually clean structure of the Kaggle
-dataset \citep{kaggleInsuranceDataML} produces predictive performance that would be unattainable on most
-real-world insurance portfolios.  The methodology is transferable, but the
-specific performance figures are not.
+making.  The benchmark-data qualifications noted in
+Section~\ref{sec:limitations_conclusion} apply: the methodology is
+transferable, but the specific performance figures are not.
 
 \subsubsection*{Implications for statistical methodology}
 From a statistical-methodological perspective, the dissertation
@@ -581,17 +544,12 @@ illustrates how the tools of simulation-based inference can be applied
 to the outputs of fitted machine-learning models.  The construction of
 a model-implied predicted-cost distribution by propagating \gls{mc}
 inputs through a trained network is conceptually analogous to studying a
-sampling distribution through \gls{mc} experiments.  An important
-qualification applies to this particular dataset: because the input
-marginals are fitted to the same data on which the network was trained,
-and because the network achieves near-perfect predictive accuracy, the
-model-implied distribution recovers the empirical charge distribution
-almost by construction.  The \gls{mc} stage therefore serves
-primarily to define the high-cost conditioning regions for the Shapley
-analysis, rather than to reveal novel distributional properties.  On
-datasets with more complex dependence structures, residual model error
-or distribution shift between training and deployment populations, the
-simulation stage would carry greater independent inferential value.
+sampling distribution through \gls{mc} experiments.  The circularity caveat noted in Section~\ref{sec:mc_intro} applies:
+on this benchmark dataset the \gls{mc} stage serves primarily to define the
+high-cost conditioning regions for the Shapley analysis rather than to
+reveal novel distributional properties.  On datasets with greater model
+error or distribution shift, the simulation stage would carry greater
+independent inferential value.
 The conditional Shapley analysis extends the standard global summary by
 partitioning the predicted-cost distribution into regions of interest
 and examining how the attribution structure changes within those

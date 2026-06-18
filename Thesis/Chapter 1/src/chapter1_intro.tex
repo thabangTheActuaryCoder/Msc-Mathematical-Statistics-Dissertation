@@ -110,13 +110,13 @@ and Shapley analyses are designed to examine.  The tree-based benchmarks
 complement this pairing by establishing where piecewise-constant
 nonlinear methods fall on the performance spectrum.
 
-\subsubsection{\Glspl{dnn} for insurance regression}
+\subsubsection{DNNs for insurance regression}
 \label{sec:dnn_intro}
 
 \Glspl{dnn} provide a flexible alternative to the \gls{glm} framework.
 The universal approximation theorem
 \citep{hornik1989multilayer, cybenko1989approximation} establishes that a
-sufficiently wide feed-forward network with a non-polynomial activation
+sufficiently wide \gls{dnn} with a non-polynomial activation
 function can approximate any continuous function on a compact set to
 arbitrary precision.  In formal terms, for any continuous
 $f: [0,1]^p \to \mathbb{R}$ and any $\varepsilon > 0$, there exists a
@@ -145,7 +145,7 @@ adoption of neural networks in insurance applications.  Studies by
 neural networks can achieve predictive improvements over classical
 actuarial models on insurance cost prediction tasks, particularly when
 the data contain nonlinear covariate-response relationships that the \gls{glm}
-cannot capture.  The feed-forward architecture, in which each layer
+cannot capture.  The \gls{dnn} architecture, in which each layer
 computes $\mathbf{h}^{(\ell)} = \sigma(\mathbf{W}^{(\ell)}
 \mathbf{h}^{(\ell-1)} + \mathbf{b}^{(\ell)})$ for an activation function
 $\sigma$, weight matrix $\mathbf{W}^{(\ell)}$ and bias vector
@@ -239,7 +239,7 @@ designed to navigate this trade-off by selecting the configuration that
 minimises validation-set error, while the held-out test set provides an
 unbiased estimate of the generalisation performance.
 
-\subsubsection{\gls{mc} simulation in statistical inference}
+\subsubsection{MC simulation in statistical inference}
 \label{sec:mc_intro}
 
 The simulation component uses parametric \gls{mc} methods, one of the
@@ -279,18 +279,12 @@ the Shapley analysis operates.
 The explanation component applies Shapley-value decomposition, a concept
 originating in cooperative game theory \citep{shapley1953value}, to
 attribute fitted predictions to individual input variables.  In a
-cooperative game with $p$ players and a characteristic function $v$ that
-maps each coalition $S \subseteq \{1, \ldots, p\}$ to a real-valued
-payoff, the Shapley value of player $j$ is defined as
-\begin{equation}
-\label{eq:shapley_intro}
-\phi_j(v) = \sum_{S \subseteq \{1,\ldots,p\} \setminus \{j\}}
-\frac{|S|!\,(p - |S| - 1)!}{p!}
-\bigl[v(S \cup \{j\}) - v(S)\bigr].
-\end{equation}
-The Shapley value provides the unique additive decomposition of the
-game's total payoff that satisfies the axioms of efficiency, symmetry,
-linearity and the null-player property.
+cooperative game with $p$ players, the Shapley value assigns each
+player a share of the total payoff by averaging the player's marginal
+contribution across all possible coalitions.  It is the unique additive
+decomposition satisfying the axioms of efficiency, symmetry, linearity
+and the null-player property.  The formal definition and equation are
+presented in Section~\ref{sec:explainability_shapley_shap}.
 
 In the machine-learning interpretability literature, this decomposition
 has been operationalised through the \gls{shap} framework
@@ -636,10 +630,10 @@ The following delimitations define the boundaries of the study:
 
     \item \textbf{Independent marginals.}  The \gls{mc} input
           distribution is constructed as a product of independent fitted
-          marginals.  This is a deliberate modelling choice that
-          broadens the simulated input space but does not reproduce
-          the dependence structure of the observed data.  Copula-based
-          joint distributions are not considered.
+          marginals; copula-based joint distributions are not considered.
+          The rationale and empirical justification for this choice are
+          discussed in Sections~\ref{sec:input_simulation_uncertainty_dependence}
+          and~\ref{sec:simulated_input_validation_ch4}.
 
     \item \textbf{Approximate Shapley values.}  The reported
           attributions are gradient-based \gls{shap} approximations, not

@@ -4,7 +4,7 @@
 \section{\Gls{dnn} Architecture and Training Procedure}
 \label{annexure:dnn_training}
 
-The FunnelDNN model uses a feed-forward architecture with monotonically decreasing hidden layer widths: $22 \to 256 \to 128 \to 64 \to 32 \to 16 \to 1$. All layers are bias-free, and the \gls{celu} activation function is applied after each hidden layer. The output layer is linear with no activation.
+The FunnelDNN model uses a \gls{dnn} architecture with monotonically decreasing hidden layer widths: $22 \to 256 \to 128 \to 64 \to 32 \to 16 \to 1$. All layers are bias-free, and the \gls{celu} activation function is applied after each hidden layer. The output layer is linear with no activation.
 
 % -------------------------------------------------------------
 \subsection{Training Procedure}
@@ -58,7 +58,7 @@ During training, the dot-product \gls{r2} (squared correlation between predicted
 \subsection{Checkpoint Contents}
 \label{annexure:final_model}
 
-The final trained model is saved as \texttt{chapter3\_final\_model.pth}, a PyTorch checkpoint containing:
+The final trained model is saved as \texttt{chapter3\_final\_\allowbreak{}model.pth}, a PyTorch checkpoint containing:
 \begin{itemize}
     \item Model weight tensors (state dictionary).
     \item Architecture specification (layer widths, activation, bias setting).
@@ -77,13 +77,13 @@ Section~\ref{sec:dnn_specification_training}.
 
 \begin{table}[H]
 \centering
-\caption{Feed-forward \gls{dnn} training and model selection algorithm.}
+\caption{\Gls{dnn} training and model selection algorithm.}
 \label{tab:dnn_training_algorithm_annex}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{p{0.92\textwidth}}
 \toprule
-\textbf{Algorithm C.1: Feed-forward \gls{dnn} training and model selection} \\
+\textbf{Algorithm C.1: \Gls{dnn} training and model selection} \\
 \midrule
 \textbf{Input:} model-ready training data
 $\{(\mathbf{z}_i, \widetilde{y}_i)\}_{i \in \mathcal{D}_{\mathrm{train}}}$,

@@ -58,9 +58,9 @@ The PyTorch device was selected automatically: \gls{mps} if available on Apple S
 
 Fixed random seed of 42:
 \begin{itemize}
-    \item PyTorch weight initialisation (\texttt{torch.manual\_seed(42)})
+    \item PyTorch weight initialisation (\texttt{torch.manual\_\allowbreak{}seed(42)})
     \item NumPy random operations (\texttt{np.random.seed(42)})
-    \item NumPy Generator objects (\texttt{np.random.default\_rng(42)})
+    \item NumPy Generator objects (\texttt{np.random.default\_\allowbreak{}rng(42)})
     \item scikit-learn train/test split (\texttt{random\_state=42})
     \item \Gls{rf} fitting (\texttt{random\_state=42})
     \item \Gls{xgboost} fitting (\texttt{seed=42})
@@ -72,11 +72,11 @@ Fixed random seed of 42:
 \label{annexure:data_files}
 
 \begin{itemize}
-    \item \texttt{insurance\_dataset.csv}: 1\,000\,000 rows, 12 columns (age, gender, bmi, children, smoker, region, medical\_history, family\_medical\_history, exercise\_frequency, occupation, coverage\_level, charges). Benchmark dataset sourced from Kaggle \citep{kaggleInsuranceDataML}.
+    \item \texttt{insurance\_\allowbreak{}dataset.csv}: 1\,000\,000 rows, 12 columns (age, gender, bmi, children, smoker, region, medical\_history, family\_medical\_history, exercise\_frequency, occupation, coverage\_level, charges). Benchmark dataset sourced from Kaggle \citep{kaggleInsuranceDataML}.
 
-    \item \texttt{chapter3\_final\_model.pth}: PyTorch checkpoint containing the trained FunnelDNN model state, architecture specification, hyperparameters, standardisation parameters, feature names and evaluation metrics.
+    \item \texttt{chapter3\_final\_\allowbreak{}model.pth}: PyTorch checkpoint containing the trained FunnelDNN model state, architecture specification, hyperparameters, standardisation parameters, feature names and evaluation metrics.
 
-    \item \texttt{model\_ready\_charges\_train\_20260517\_115748.csv}: reference-category encoded training partition (60\% of the dataset, 22 features + charges).
+    \item \texttt{model\_ready\_charges\_\allowbreak{}train\_\allowbreak{}20260517\_115748.csv}: reference-category encoded training partition (60\% of the dataset, 22 features + charges).
 \end{itemize}
 
 % -------------------------------------------------------------
