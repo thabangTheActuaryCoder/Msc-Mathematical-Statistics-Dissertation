@@ -1153,7 +1153,12 @@ conditions under which \glspl{dnn} are competitive with tree-based
 models on tabular data, finding that well-tuned simple networks can match
 complex architectures \citep{kadra2021welltuned} and that the relative advantage
 of deep learning over gradient boosting depends on dataset characteristics such
-as sample size and feature cardinality \citep{shwartzziv2022tabular}. In the empirical application, the
+as sample size and feature cardinality \citep{shwartzziv2022tabular}.
+Understanding deep learning generalization remains an active research area;
+\citet{zhang2021understanding} demonstrate that conventional statistical
+learning theory, which predicts poor generalization for overparameterized
+models, requires rethinking in the deep learning context where networks with
+more parameters than training examples can still generalize well. In the empirical application, the
 input vector consists of encoded policyholder characteristics and the response is
 a health insurance charge or premium.
 

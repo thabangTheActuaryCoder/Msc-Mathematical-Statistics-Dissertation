@@ -607,9 +607,6 @@ de-normalised to the original monetary scale.
 
 The simulated inputs were validated following the joint-distribution
 diagnostic protocol in Section~\ref{sec:mc_input_validation}.
-
-\subsubsection*{Joint distribution validation}
-
 The bivariate and multivariate dependence structure of the training data
 was compared with that of the \gls{mc} sample using five complementary
 diagnostics (detailed figures in
@@ -1283,7 +1280,9 @@ The coefficient of variation of the mean $|\text{SHAP}|$ values is below
 $0.1\%$ for every variable
 (Figure~\ref{fig:shap_cross_seed_dispersion_annex}), confirming that the
 magnitude of the attributions, not merely the ranking, is stable across
-seeds.
+seeds. This result is invariant of the seed, indicating that the model
+converges to a consistent attribution structure in each case despite
+differences in random initialization.
 
 \subsubsection{Conditional Shapley stability at $\tau_{99}$}
 
