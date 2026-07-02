@@ -36,9 +36,9 @@ framework are stated.
 The statistical modelling of insurance costs has a long history.
 \Glspl{glm} have served as the standard framework
 for actuarial pricing since the seminal work of
-\citep{nelder1972generalized} and their subsequent adoption by the
-insurance profession.  In health insurance, the Gamma distribution with
-a logarithmic link function is commonly used \citep{mccullagh1989generalized, denuit2007actuarial} to model the right-skewed,
+\citet{nelder1972generalized} and the framework's subsequent adoption
+by the insurance profession.  In health insurance, the Gamma distribution with
+a logarithmic link function is commonly used \citep{mccullagh1989generalized, wuthrich2023statistical} to model the right-skewed,
 positive-valued distribution of claim amounts.  The Gamma family is
 well suited to this setting because it is supported on the positive
 real line, matching the strictly positive nature of insurance costs,
@@ -118,34 +118,24 @@ The universal approximation theorem
 \citep{hornik1989multilayer, cybenko1989approximation} establishes that a
 sufficiently wide \gls{dnn} with a non-polynomial activation
 function can approximate any continuous function on a compact set to
-arbitrary precision.  In formal terms, for any continuous
-$f: [0,1]^p \to \mathbb{R}$ and any $\varepsilon > 0$, there exists a
-single-hidden-layer network $F$ such that
-$\sup_{\mathbf{x}} |F(\mathbf{x}) - f(\mathbf{x})| < \varepsilon$.
-The domain $[0,1]^p$ requires that every input variable is confined
-to a finite, closed range.  The specific choice of $[0,1]$ rather
-than some other interval is a notational convention: any bounded range
-$[a,b]$ can be mapped to $[0,1]$ by a simple linear rescaling, so the
-theorem applies equally to any compact input domain.  What matters is
-not the particular endpoints but the fact that the inputs cannot grow
-without bound; if they could, no fixed-size network would be able to
-track the target function everywhere.  In this dissertation the
-condition is met naturally: all numerical inputs are rescaled to a
-bounded interval during preprocessing and all categorical inputs are
-coded as zero-one indicators, so the network always operates within a
-bounded input space.  In
+arbitrary precision; the formal statement and its conditions are
+presented in Section~\ref{sec:dnn_regression}.  The compactness
+condition is met naturally in this dissertation: all numerical inputs
+are rescaled to a bounded interval during preprocessing and all
+categorical inputs are coded as zero-one indicators, so the network
+always operates within a bounded input space.  In
 practice, modern deep networks with multiple hidden layers and nonlinear
 activations learn hierarchical representations that capture complex
 interactions without requiring the modeller to enumerate them in advance
 \citep{goodfellow2016deep}.
 
 This capacity for automatic feature interaction has led to increasing
-adoption of neural networks in insurance applications.  Studies by
-\citet{richman2021ai} and \citet{kuo2019deep} have demonstrated that
-neural networks can achieve predictive improvements over classical
-actuarial models on insurance cost prediction tasks, particularly when
-the data contain nonlinear covariate-response relationships that the \gls{glm}
-cannot capture.  The \gls{dnn} architecture, in which each layer
+adoption of neural networks in insurance applications.  The survey by
+\citet{richman2021ai} and applications such as the deep loss-reserving
+model of \citet{kuo2019deep} demonstrate that neural networks can
+improve upon classical actuarial models across pricing and reserving
+tasks, particularly when the data contain nonlinear covariate-response
+relationships that the \gls{glm} cannot capture.  The \gls{dnn} architecture, in which each layer
 computes $\mathbf{h}^{(\ell)} = \sigma(\mathbf{W}^{(\ell)}
 \mathbf{h}^{(\ell-1)} + \mathbf{b}^{(\ell)})$ for an activation function
 $\sigma$, weight matrix $\mathbf{W}^{(\ell)}$ and bias vector
@@ -282,22 +272,18 @@ attribute fitted predictions to individual input variables.  In a
 cooperative game with $p$ players, the Shapley value assigns each
 player a share of the total payoff by averaging the player's marginal
 contribution across all possible coalitions.  It is the unique additive
-decomposition satisfying the axioms of efficiency, symmetry, linearity
-and the null-player property.  The formal definition and equation are
-presented in Section~\ref{sec:explainability_shapley_shap}.
+decomposition satisfying four fairness axioms; the formal definition,
+the axioms and the equation are presented in
+Section~\ref{sec:explainability_shapley_shap}.
 
 In the machine-learning interpretability literature, this decomposition
 has been operationalised through the \gls{shap} framework
 \citep{lundberg2017unified}, which interprets each prediction as a
 cooperative game in which the ``players'' are input features and the
-``payoff'' is the predicted value.  Among the available approximation strategies, a gradient-based
-implementation is adopted in this dissertation because it exploits the
-differentiability of the neural network to compute Shapley-value
-estimates without repeated model re-evaluation, making it
-computationally tractable for the large simulated samples considered
-here.  Permutation-based alternatives, while model-agnostic, require
-a combinatorial number of forward passes that would be prohibitive at
-the sample sizes used in this analysis.
+``payoff'' is the predicted value.  A gradient-based implementation is
+adopted in this dissertation; the computational considerations behind
+this choice are set out in
+Section~\ref{sec:shapley_attribution_simulated_profiles}.
 
 A terminological note is warranted.  Throughout this dissertation,
 ``Shapley values'' refers to the theoretical decomposition from
@@ -574,6 +560,13 @@ results are not sensitive to the choice of input regime and that the
 \gls{mc} input distribution produces attributions consistent with
 those obtained from observed data.
 
+A final validation layer spans all three stages: the network is
+retrained under five independent random seeds and the complete
+simulation and attribution pipeline is replicated for each, so that
+the predictive metrics, the predicted-cost distribution and the
+Shapley rankings can be checked for sensitivity to the stochastic
+training process.
+
 The details of each validation component are documented in the methods
 chapter (Chapter~\ref{chap:methods_and_data}), and the corresponding
 results are reported in Chapter~\ref{sec:results}.
@@ -623,12 +616,16 @@ The following delimitations define the boundaries of the study:
           to piecewise-constant to smooth nonlinear models, rather than
           to identify the globally optimal model class.
 
-    \item \textbf{Single fitted network.}  The \gls{mc} and Shapley
-          analyses are applied to a single trained network with a fixed
-          random seed.  The predicted-cost distribution and feature
-          attributions are conditional on this particular fitted model and
-          its estimated parameters.  Variability across random
-          initialisations is not quantified.
+    \item \textbf{Single primary network.}  The main \gls{mc} and
+          Shapley analyses are applied to a network trained with a fixed
+          random seed, so the reported predicted-cost distribution and
+          feature attributions are conditional on that fitted model.
+          Sensitivity to the stochastic training process is assessed
+          through a five-seed robustness analysis
+          (Chapter~\ref{sec:results}), which retrains the network under
+          independent initialisations and replicates the simulation and
+          attribution pipeline; an exhaustive exploration of the
+          initialisation space is not attempted.
 
     \item \textbf{Independent marginals.}  The \gls{mc} input
           distribution is constructed as a product of independent fitted
@@ -694,8 +691,8 @@ environment.
 
 The remainder of this dissertation is organised as follows.
 
-\subsubsection*{Chapter~\ref{sec:literature_review}: Literature Review}
-This chapter reviews the theoretical and empirical foundations of the
+Chapter~\ref{sec:literature_review} (Literature Review)
+reviews the theoretical and empirical foundations of the
 \gls{dnn}, \gls{mc} and Shapley framework.  The review covers statistical
 learning theory and supervised regression, \gls{dnn}
 architectures and their approximation properties, \glspl{glm} as actuarial baselines, health insurance cost prediction with
@@ -704,8 +701,8 @@ attribution theory and the \gls{shap} framework, and conditional
 feature-importance analysis.  The chapter concludes with a formal
 identification of the research gap that motivates the present study.
 
-\subsubsection*{Chapter~\ref{chap:methods_and_data}: Methods and Data}
-This chapter describes the benchmark dataset, the data preprocessing and
+Chapter~\ref{chap:methods_and_data} (Methods and Data)
+describes the benchmark dataset, the data preprocessing and
 encoding procedure, the exploratory data analysis, the network
 architecture and training protocol, the five-phase hyperparameter
 comparison, the predictive and structural diagnostics, the \gls{glm} and
@@ -715,18 +712,20 @@ analysis, and the Shapley-value implementation.  All methodological
 choices are documented with their statistical justification, and a
 consolidated table of modelling assumptions is provided.
 
-\subsubsection*{Chapter~\ref{sec:results}: Results}
-This chapter presents the empirical results of the three-stage workflow.
+Chapter~\ref{sec:results} (Results)
+presents the empirical results of the three-stage workflow.
 The chapter reports the hyperparameter comparison outcomes, the
-four-model benchmark comparison (\gls{glm}, \gls{rf}, \gls{xgboost} and \gls{dnn}),
-the \gls{mc} predicted-cost distribution and its convergence
+benchmark comparison against the \gls{glm}, \gls{rf} and \gls{xgboost}
+models in both default and tuned configurations, the multi-seed
+robustness analyses of the \gls{dnn} and the benchmark models, the
+\gls{mc} predicted-cost distribution and its convergence
 diagnostics, the joint-distribution validation results, the
 residual-augmented sensitivity analysis, the global and conditional
 Shapley-value attributions, the feature-importance ranking reversal in
-the upper tail, and the Shapley attribution invariance check.
+the upper tail, the Shapley attribution invariance check, and the
+\gls{shap} interaction analysis.
 
-\subsubsection*{Chapter~\ref{sec:conclusion}: Conclusion}
-The final chapter summarises the key findings in relation to each
+Chapter~\ref{sec:conclusion} (Conclusion), the final chapter, summarises the key findings in relation to each
 research question, states the contributions and strengths of the study,
 discusses limitations, examines implications for actuarial practice and
 statistical methodology, and identifies directions for future research.

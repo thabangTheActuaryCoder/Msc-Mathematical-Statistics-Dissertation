@@ -1,7 +1,7 @@
 % =============================================================
 % Annexure C: DNN Architecture and Training Procedure
 % =============================================================
-\section{\Gls{dnn} Architecture and Training Procedure}
+\section{DNN Architecture and Training Procedure}
 \label{annexure:dnn_training}
 
 The FunnelDNN model uses a \gls{dnn} architecture with monotonically decreasing hidden layer widths: $22 \to 256 \to 128 \to 64 \to 32 \to 16 \to 1$. All layers are bias-free, and the \gls{celu} activation function is applied after each hidden layer. The output layer is linear with no activation.
@@ -68,7 +68,7 @@ The final trained model is saved as \texttt{chapter3\_final\_\allowbreak{}model.
 \end{itemize}
 
 % -------------------------------------------------------------
-\subsection{\Gls{dnn} Training Algorithm (Detailed)}
+\subsection{DNN Training Algorithm (Detailed)}
 \label{annexure:dnn_algorithm_detailed}
 
 The following table presents the complete \gls{dnn} training and model
@@ -126,7 +126,7 @@ training history, selected epoch $e^{*}$. \\[3pt]
 \end{table}
 
 % -------------------------------------------------------------
-\subsection{\Gls{glm} Fitting Algorithm}
+\subsection{GLM Fitting Algorithm}
 \label{annexure:glm_algorithm}
 
 \begin{table}[H]
@@ -180,7 +180,7 @@ $\widehat{\phi}$. \\[3pt]
 \end{table}
 
 % -------------------------------------------------------------
-\subsection{\Gls{rf} Training Algorithm}
+\subsection{RF Training Algorithm}
 \label{annexure:rf_algorithm}
 
 \begin{table}[H]
@@ -230,7 +230,7 @@ $\{T_1, \ldots, T_B\}$. \\[3pt]
 \end{table}
 
 % -------------------------------------------------------------
-\subsection{\Gls{xgboost} Training Algorithm}
+\subsection{XGBoost Training Algorithm}
 \label{annexure:xgb_algorithm}
 
 \begin{table}[H]

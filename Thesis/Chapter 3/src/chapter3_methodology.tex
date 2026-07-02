@@ -7,9 +7,10 @@
 
 \noindent
 This chapter translates the conceptual \gls{dnn}, \gls{mc} and Shapley framework
-of Chapter~\ref{sec:literature_review} into a concrete empirical workflow.  The analysis uses the Kaggle Insurance Data for Machine Learning benchmark dataset \citep{kaggleInsuranceDataML}, containing one
-million policyholder records, eleven raw predictors, and a continuous
-response variable, \texttt{charges}.  The chapter proceeds sequentially:
+of Chapter~\ref{sec:literature_review} into a concrete empirical workflow
+applied to the Kaggle Insurance Data for Machine Learning benchmark
+dataset \citep{kaggleInsuranceDataML}, described in
+Section~\ref{sec:data_source_variable_structure}.  The chapter proceeds sequentially:
 it first describes the data and the exploratory diagnostics that motivate
 the main modelling choices; it then specifies the architecture and
 training protocol of the \gls{dnn} that serves as
@@ -171,8 +172,11 @@ training:
     \label{eq:response_standardisation_ch3}
 \end{equation}
 \equationlistentry{Response standardisation}
-where $\widehat{\mu}_{Y,\mathrm{train}} \approx 16\,740$ and
-$\widehat{\sigma}_{Y,\mathrm{train}} \approx 4\,416$.  Predictions are
+where $\widehat{\mu}_{Y,\mathrm{train}} \approx 16\,744$ and
+$\widehat{\sigma}_{Y,\mathrm{train}} \approx 4\,419$ on the training
+partition (the full-data descriptive values in
+Table~\ref{tab:numeric_eda_summary} differ marginally because they are
+computed over all one million records).  Predictions are
 mapped back to the original monetary scale by
 \begin{equation}
     \widehat{y}_{i}
@@ -227,9 +231,9 @@ Additionally, no variable derived from \texttt{charges} is used as an
 input feature, preventing target leakage.  Duplicate observations were
 checked during the data audit (Section~\ref{sec:feature_encoding_input_standardisation}),
 and no exact duplicate records were found.  The unusually high predictive
-performance ($R^2 = 0.9957$) is attributable to the strong simulated
-structure of the Kaggle benchmark dataset rather than to any leakage
-pathway.  These protocols ensure that every reported performance metric
+performance reported in Chapter~\ref{sec:results} is attributable to the
+strong simulated structure of the Kaggle benchmark dataset rather than to
+any leakage pathway.  These protocols ensure that every reported performance metric
 reflects genuine out-of-sample predictive ability.  The preprocessing
 procedure is audited in Annexure~G.
 
@@ -736,9 +740,9 @@ differentiability across its entire domain, avoiding the dead-unit
 problem associated with \gls{relu} while maintaining a linear positive
 branch that preserves gradient flow in deep architectures.  The output
 layer uses an identity mapping, as required for continuous regression.  The full five-hidden-layer depth,
-including the final 16-unit layer, is retained because the validation
-diagnostics (Section~\ref{sec:model_validation_diagnostics}) showed no
-evidence that removing it would improve out-of-sample performance.
+including the final 16-unit layer, is retained; its adequacy is assessed
+through the validation diagnostics of
+Section~\ref{sec:model_validation_diagnostics}.
 
 The network is constructed without bias vectors.  As discussed in
 Chapter~\ref{sec:literature_review}, when all numerical inputs and the response are standardised the
@@ -839,8 +843,8 @@ criterion.  The selected epoch is
 \end{equation}
 \equationlistentry{Validation $R^2$ epoch selection criterion}
 Training stops early if the validation \gls{r2} does not improve for $P = 10$
-consecutive validation checks; the retained model is the checkpoint with
-the highest validation \gls{r2} observed.  The test set is reserved
+consecutive validation checks \citep{prechelt2012early}; the retained
+model is the checkpoint with the highest validation \gls{r2} observed.  The test set is reserved
 exclusively for final out-of-sample evaluation.
 
 On the original monetary scale, the standard
@@ -913,7 +917,8 @@ prediction surface are compared sequentially:
 \end{enumerate}
 
 At each stage the best choice is carried forward and all other factors are
-held constant.  Explicit $\mathcal{L}_1$, $\mathcal{L}_2$, and dropout regularisation are not
+held constant.  Explicit $\mathcal{L}_1$, $\mathcal{L}_2$, and dropout
+\citep{srivastava2014dropout} regularisation are not
 included; the adequacy of this design is assessed through validation
 curves, out-of-sample error metrics, and structural diagnostics\footnote{In this context, $\mathcal{L}_1$ and $\mathcal{L}_2$
 regularisation refer to adding penalty terms to the training objective. If
@@ -965,7 +970,7 @@ Algorithm~\ref{tab:dnn_training_algorithm_annex}
 
 A classical actuarial benchmark is provided by a \gls{glm}
 with a gamma distribution and logarithmic link function
-\citep{dobson2008introduction, denuit2007actuarial}.  For a policyholder with
+\citep{dobson2008introduction, mccullagh1989generalized}.  For a policyholder with
 model-ready input vector $\mathbf{z}_i \in \mathbb{R}^{22}$ (the same encoded
 predictors used by the \gls{dnn}), the \gls{glm} assumes
 \begin{equation}
@@ -976,11 +981,10 @@ predictors used by the \gls{dnn}), the \gls{glm} assumes
 \end{equation}
 \equationlistentry{\Gls{glm} specification with gamma distribution and log link}
 where $\mu_i = \mathbb{E}[Y_i \mid \mathbf{z}_i]$ and $\phi$ is the
-dispersion parameter.  The gamma distribution is a natural choice for
-positive, continuous, right-skewed monetary outcomes such as insurance
-charges, and the logarithmic link function ensures that the predicted
-mean $\mu_i = \exp(\beta_0 + \sum_j \beta_j z_{ij})$ is always positive
-\citep{denuit2007actuarial}.
+dispersion parameter.  The distributional and link-function rationale
+for this specification was set out in
+Section~\ref{sec:classical_actuarial}; under the log link the predicted
+mean $\mu_i = \exp(\beta_0 + \sum_j \beta_j z_{ij})$ is always positive.
 
 The model includes no interaction terms or non-linear transformations.  It
 is fitted to the training partition by maximum likelihood estimation.  The
@@ -1051,7 +1055,7 @@ same 22 encoded features and 60/20/20 partition as the \gls{dnn} and
 
 % ----- \Gls{rf} -----
 
-\subsubsection*{\Gls{rf}}
+\subsubsection{RF Benchmark}
 A \gls{rf} regressor \citep{breiman2001random} is fitted with 500 trees,
 maximum depth unrestricted, minimum samples per leaf of 5, and
 \texttt{random\_state=42}.  \gls{rf} aggregates predictions across
@@ -1117,16 +1121,9 @@ predictor subset, the \gls{rf} reduces $\rho$ below the value obtained by
 standard bagging (which uses all $p$ predictors at every split), yielding
 a lower ensemble variance \citep{hastie2009elements}.
 
-The training procedure grows $B = 500$ unpruned trees on bootstrap
-samples, with $m = \lfloor p/3 \rfloor$ candidate predictors evaluated
-at each split.  The split criterion minimises the weighted residual sum
-of squares (equation~\eqref{eq:rf_split_criterion}), and splitting
-continues until each terminal node contains at most $n_{\min} = 5$
-observations.  The ensemble prediction is the average across all trees.
-The complete algorithm is presented in
+The complete training procedure is presented in
 Algorithm~\ref{tab:rf_algorithm_annex}
-(\ref{annexure:rf_algorithm}).
-
+(\ref{annexure:rf_algorithm}), and
 Table~\ref{tab:rf_hyperparameters_ch3} summarises the \gls{rf}
 configuration.
 
@@ -1155,7 +1152,7 @@ Implementation & \texttt{scikit-learn} \texttt{Random\allowbreak{}Forest\allowbr
 
 % ----- XGBoost -----
 
-\subsubsection*{\Gls{xgboost}}
+\subsubsection{XGBoost Benchmark}
 A gradient-boosted tree regressor is fitted using the \gls{xgboost}
 implementation \citep{chen2016xgboost} with 1\,000 boosting rounds, a
 learning rate of 0.05, maximum depth of 8, and early stopping on the
@@ -1288,18 +1285,9 @@ split is made only if $\mathrm{Gain} > 0$; the regularisation parameter
 $\gamma$ acts as a minimum-gain threshold that prunes unprofitable splits
 \citep{chen2016xgboost}.
 
-The training procedure begins with a constant initialisation and
-iteratively adds depth-limited regression trees, each fitted to the
-gradient and Hessian statistics of the current residuals
-(equation~\eqref{eq:xgb_gradient_hessian}).  Splits are selected to
-maximise the gain (equation~\eqref{eq:xgb_split_gain}), and the
-optimal leaf weights are computed in closed form
-(equation~\eqref{eq:xgb_optimal_leaf}).  Validation-based early
-stopping with patience $P = 50$ rounds terminates training when the
-validation loss ceases to improve.  The complete algorithm is presented
-in Algorithm~\ref{tab:xgb_algorithm_annex}
-(\ref{annexure:xgb_algorithm}).
-
+The complete training procedure is presented in
+Algorithm~\ref{tab:xgb_algorithm_annex}
+(\ref{annexure:xgb_algorithm}), and
 Table~\ref{tab:xgb_hyperparameters_ch3} summarises the \gls{xgboost}
 configuration.
 
@@ -1329,12 +1317,17 @@ Implementation & \texttt{xgboost} \texttt{XGBRegressor} \\
 \end{tabular}
 \end{table}
 
-Hyperparameters for both tree-based models are set to commonly recommended
-defaults rather than tuned via cross-validation, paralleling the no-tuning
-treatment of the \gls{glm}.  This ensures that the comparison isolates
-model-class differences rather than tuning effort.  All four models are
-evaluated using $R^2$, \gls{rmse} and \gls{mae} on the original monetary
-scale across all three partitions.
+In the primary comparison, hyperparameters for both tree-based models are
+set to commonly recommended defaults rather than tuned via
+cross-validation, paralleling the no-tuning treatment of the \gls{glm};
+this isolates model-class differences from tuning effort.  As a
+complementary analysis, both tree-based models are subsequently re-fitted
+with tuned hyperparameters selected by randomised search with five-fold
+cross-validation on the training partition, quantifying how much of any
+remaining performance gap is attributable to tuning rather than to the
+model class itself (results in Section~\ref{sec:tuned_benchmarks}).  All
+models are evaluated using $R^2$, \gls{rmse} and \gls{mae} on the
+original monetary scale across all three partitions.
 
 % =============================================================
 \subsection{Predictive and Structural Diagnostics}
@@ -2042,8 +2035,8 @@ affects the Shapley-value attributions derived from the simulated profiles.
 
 \subsubsection{Joint distribution diagnostics}
 
-\subsubsection*{Correlation matrix difference}
-The Pearson correlation matrix is computed separately for the $q = 11$
+The first diagnostic examines the difference between correlation
+matrices.  The Pearson correlation matrix is computed separately for the $q = 11$
 raw predictor variables on the training partition and on the parametric
 \gls{mc} sample. The element-wise difference
 \begin{equation}
@@ -2073,8 +2066,8 @@ are absent from the simulation.
 \label{fig:correlation_difference_heatmap_ch3}
 \end{figure}
 
-\subsubsection*{Cram\'{e}r's $V$ pairwise association for categorical variables}
-For multi-level categorical predictors the strength of association is
+The second diagnostic addresses the categorical predictors.  For
+multi-level categorical predictors the strength of pairwise association is
 measured using Cram\'{e}r's $V$ statistic \citep{cramer1946mathematical}.
 For each pair of categorical variables, $V$ is computed on the training
 partition and on the parametric \gls{mc} sample. All pairwise values of
@@ -2090,7 +2083,7 @@ materially differ from the training data.
 \label{fig:cramers_v_comparison_ch3}
 \end{figure}
 
-\subsubsection*{\Gls{pca} overlay of the joint input space}
+The third diagnostic is a \gls{pca} overlay of the joint input space.
 A principal component projection provides a visual comparison of the joint
 input structure. The first two principal components are computed from the
 standardised training inputs (using the eigenvectors from
@@ -2427,8 +2420,7 @@ simulated model-ready profile $\mathbf{z}^{(b)}$, the fitted prediction is
 decomposed following equation~\eqref{eq:shapley_decomp}, with $p = 22$
 encoded features. The baseline prediction $\phi_0$ and the feature-level
 contributions $\phi_j(\mathbf{z}^{(b)})$ are defined exactly as in
-Section~\ref{sec:explainability_shapley_shap}.  As discussed there,
-Shapley values are model attributions rather than causal effects.
+Section~\ref{sec:explainability_shapley_shap}.
 
 \subsubsection{Implementation settings}
 
@@ -2587,7 +2579,7 @@ At $\tau_{99}$ the conditioning set contains only $|\mathcal{H}_{0.99}| = 0.01B$
     \item The 95\% bootstrap confidence interval for $I_{j,\tau}$ is the interval $\bigl[I_{j,\tau}^{*(0.025)},\; I_{j,\tau}^{*(0.975)}\bigr]$, where $I_{j,\tau}^{*(\alpha)}$ is the $\alpha$-quantile of the bootstrap distribution $\{I_{j,\tau}^{*(1)}, \ldots, I_{j,\tau}^{*(R)}\}$.
 \end{enumerate}
 
-This percentile bootstrap is reported alongside the conditional importance values at $\tau_{99}$ to assess the reliability of the ranking reversal discussed in Chapter~\ref{sec:results}.
+This percentile bootstrap is reported alongside the conditional importance values at $\tau_{99}$ in Chapter~\ref{sec:results}.
 
 \begin{table}[H]
 \centering
@@ -2608,11 +2600,6 @@ Base versus residual high-cost sets & Checks whether residual augmentation chang
 \bottomrule
 \end{tabular}
 \end{table}
-
-The attribution analysis is interpreted jointly with the \gls{mc}
-distribution. \gls{mc} simulation identifies the distributional regions of
-interest, and Shapley values decompose the fitted model behaviour within
-those regions.
 
 
 % =============================================================

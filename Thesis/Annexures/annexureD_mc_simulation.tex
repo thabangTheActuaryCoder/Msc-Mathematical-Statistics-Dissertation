@@ -1,7 +1,7 @@
 % =============================================================
 % Annexure D: \gls{mc} Simulation Procedure
 % =============================================================
-\section{\gls{mc} Simulation Procedure}
+\section{MC Simulation Procedure}
 \label{annexure:mc_simulation}
 
 The parametric \gls{mc} simulation generates $B = 100\,000$ synthetic policyholder profiles from marginal distributions estimated on the full dataset. Each profile is encoded, standardised and scored through the trained FunnelDNN to produce a model-implied predicted-cost distribution.
@@ -79,7 +79,7 @@ where $\varepsilon_i$ is drawn with replacement from the centred residual vector
 The same reference-category encoding scheme described in \ref{annexure:encoding} was applied to the \gls{mc} profiles, producing an $B \times 22$ feature matrix that matches the trained model's input specification.
 
 % -------------------------------------------------------------
-\subsection{\Gls{dnn} Scoring}
+\subsection{DNN Scoring}
 \label{annexure:mc_score}
 
 Each encoded profile is standardised using the training-set parameters ($\boldsymbol{\mu}_X$, $\boldsymbol{\sigma}_X$), passed through the trained \gls{dnn} in a single forward pass (with gradients disabled), and de-normalised to the original Rand scale using the training-set response parameters ($\mu_y$, $\sigma_y$).

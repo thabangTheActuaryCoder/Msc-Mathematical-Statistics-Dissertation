@@ -263,9 +263,10 @@ The two tree-based benchmarks narrow the gap considerably.  The \gls{rf}
 achieves a test $R^2$ of $0.9899$, reducing the \gls{glm}'s test
 \gls{rmse} from R913 to R443 ($51.5\%$) and its \gls{mae} from R624 to
 R358 ($42.6\%$).  However, its training $R^2$ of $0.9946$ versus its
-test $R^2$ of $0.9899$ indicates a degree of overfitting despite the
-\texttt{max\_depth}~$= 30$ constraint, suggesting that the ensemble
-memorises some training-set noise.  \gls{xgboost} performs substantially
+test $R^2$ of $0.9899$ indicates a degree of overfitting: with
+unrestricted depth (Table~\ref{tab:rf_hyperparameters_ch3}), the
+unpruned trees memorise some training-set noise that the
+minimum-leaf-size constraint of five observations does not remove.  \gls{xgboost} performs substantially
 better, achieving a test $R^2$ of $0.9955$ with a test \gls{rmse} of
 R297 and a test \gls{mae} of R255.  Its training-to-test gap is
 negligible ($R^2_{\mathrm{train}} = 0.9959$ versus
@@ -333,7 +334,11 @@ Kaggle benchmark dataset's \citep{kaggleInsuranceDataML} algorithmically generat
 \gls{glm} is the model an actuary would deploy as a first approach and
 \gls{xgboost} represents the current state of the art for tabular data,
 the comparison provides practical benchmark context that situates the
-\gls{dnn} within the actuarial modelling landscape.
+\gls{dnn} within the actuarial modelling landscape.  The scope of both
+claims is bounded by the data: the deterministic cost formula underlying
+the benchmark \citep{kaggleInsuranceDataML} produces a strong,
+noise-free covariate-response structure, so the relative model ranking
+holds within this setting rather than universally.
 
 The finding that a \gls{dnn} outperforms a classical \gls{glm}
 on this benchmark is consistent with the broader health-cost prediction
@@ -344,8 +349,7 @@ similarly observe that neural-network architectures improve upon
 traditional regression baselines for insurance cost estimation.  As noted
 in Section~\ref{sec:integrating_dnn_mc_shapley}, however, this
 superiority is not universal across all tabular insurance datasets
-\citep{richman2021ai}, and the present comparison is conducted on a
-benchmark dataset \citep{kaggleInsuranceDataML} whose deterministic cost formula produces a strong, noise-free covariate-response structure.
+\citep{richman2021ai}.
 
 A related line of actuarial research applies explicit shape constraints
 to neural networks during training.  \citet{richman2024icenet} develop
@@ -443,8 +447,8 @@ The baseline comparison in
 Section~\ref{sec:four_model_comparison_ch4} used the \gls{rf} and
 \gls{xgboost} benchmarks with default hyperparameter settings.  To
 ensure a fair comparison, both tree-based models were subsequently tuned
-using randomised search with 5-fold cross-validation on the training
-partition.
+using the randomised-search protocol specified in
+Section~\ref{sec:tree_benchmarks_methods}.
 
 \subsubsection{Tuned RF}
 
@@ -540,11 +544,8 @@ result confirms that the predictive advantage of the \gls{dnn} over
 \gls{xgboost} on this benchmark dataset is marginal once hyperparameter
 tuning is applied.  The \gls{dnn} is nevertheless retained for the
 subsequent \gls{mc} and Shapley analyses on the grounds of its
-differentiability, which enables gradient-based \gls{shap} computation.
-Tree-based models require permutation-based or kernel-based Shapley
-approximations, which are computationally more expensive for large
-simulation sizes and do not exploit the smooth prediction surface that
-gradient-based methods leverage.
+differentiability, which enables gradient-based \gls{shap} computation
+(Section~\ref{sec:shapley_attribution_simulated_profiles}).
 
 
 % =============================================================
@@ -1146,11 +1147,8 @@ increase in the conditional importance of
 \texttt{family\_medical\_\allowbreak{}history} as the threshold moves from the global
 level through $\tau_{90}$ and $\tau_{95}$ to $\tau_{99}$. In contrast,
 \texttt{smoker} shows a marked decline in conditional importance at the
-most extreme threshold ($0.563$ at $\tau_{99}$ versus $0.578$ globally).
-This decline reflects the same ceiling effect described above for the
-$\tau_{99}$ ranking reversal: nearly all extreme-tail profiles are
-smokers, so the binary variable contributes a near-constant attribution
-while the remaining features differentiate among high-cost profiles.
+most extreme threshold ($0.563$ at $\tau_{99}$ versus $0.578$ globally),
+consistent with the compositional evidence discussed above.
 
 The second tier of variables (\texttt{occupation},
 \texttt{exercise\_\allowbreak{}frequency}, \texttt{gender}, \texttt{bmi},
@@ -1161,17 +1159,10 @@ contribute a consistent baseline attribution regardless of the cost
 region.
 
 The ranking reversal at $\tau_{99}$ directly addresses the research gap
-identified in Section~\ref{sec:research_gap}: existing health-cost
-prediction studies typically report global feature importance on observed
-data only \citep{kaushik2022machine, rozemberczki2022shapley}, without
-conditioning attributions on specific regions of the predicted-cost
-distribution.  The conditional Shapley analysis demonstrates that global
-importance rankings can be misleading when the interest lies in the
-upper tail, because a variable that dominates on average (smoking status)
-may lose its discriminating power within an extreme subpopulation where
-it is nearly constant.  This distinction has not been documented in the
-health insurance cost-prediction literature reviewed in
-Chapter~\ref{sec:literature_review}.
+identified in Section~\ref{sec:research_gap}: global importance rankings
+can be misleading when the interest lies in the upper tail, because a
+variable that dominates on average may be nearly constant within an
+extreme subpopulation.
 
 \subsubsection{High-cost profile characteristics}
 
@@ -1247,8 +1238,8 @@ equation~\eqref{eq:shapley_decomp}.
 The Shapley-value attributions were recomputed for all $B = 100\,000$
 \gls{mc} profiles using each of the five trained networks from
 Section~\ref{sec:multiseed_dnn}.  This analysis directly addresses the
-limitation identified in
-Section~\ref{sec:limitations_conclusion}: whether the Shapley
+single-seed delimitation stated in
+Section~\ref{sec:scope_delimitations}: whether the Shapley
 attributions are sensitive to the stochastic training process.
 
 \subsubsection{Global Shapley stability}
@@ -1391,10 +1382,7 @@ importance of \texttt{smoker} declines slightly.
 The profile-level analysis
 (Figure~\ref{fig:highcost_profiles_ch4}) explains this re-ordering
 through the ceiling-effect mechanism established in
-Section~\ref{sec:highcost_conditional_results}: at $\tau_{99}$,
-smoking status is near-universal and therefore loses discriminating
-power, leaving coverage tier, medical history and family medical history
-as the variables that differentiate among extreme upper-tail profiles.
+Section~\ref{sec:highcost_conditional_results}.
 
 The continuous covariates (\texttt{age}, \texttt{bmi},
 \texttt{children}) play a limited role at all threshold levels. Their

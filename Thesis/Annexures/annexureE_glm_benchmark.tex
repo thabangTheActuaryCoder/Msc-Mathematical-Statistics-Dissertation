@@ -1,7 +1,7 @@
 % =============================================================
 % Annexure E: GLM Benchmark Methodology
 % =============================================================
-\section{\Gls{glm} Benchmark Methodology}
+\section{GLM Benchmark Methodology}
 \label{annexure:glm_benchmark}
 
 The Gamma \gls{glm} with log-link serves as the actuarial benchmark against which the \gls{dnn} is compared.  A \gls{rf} and an \gls{xgboost} gradient-boosted tree regressor are fitted as additional benchmarks to span the model-class spectrum from linear to piecewise-constant to smooth nonlinear (see Section~\ref{sec:tree_benchmarks_methods}).  The \gls{glm} was fitted using \texttt{statsmodels} with an intercept term and the same 22 reference-category encoded features used by the \gls{dnn} and tree-based models.

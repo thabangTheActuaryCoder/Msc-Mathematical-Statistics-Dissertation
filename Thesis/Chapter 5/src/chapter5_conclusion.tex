@@ -44,16 +44,13 @@ The literature review in Chapter~\ref{sec:literature_review} established
 the theoretical and empirical foundations for each component of the
 framework, surveying supervised regression, health insurance pricing,
 \gls{mc} simulation and Shapley-value attribution in their respective
-traditions.  The review identified the research gap: the existing
-literature applies deep learning and Shapley-value methods in isolation,
-without connecting the distributional analysis of a model-implied
-predicted-cost landscape to conditional feature-importance attribution
-within specific regions of that landscape.
+traditions, and formally stated the research gap that motivates the
+integrated framework (Section~\ref{sec:research_gap}).
 
 Chapter~\ref{chap:methods_and_data} translated the conceptual framework
 into a concrete empirical workflow applied to the Kaggle Insurance Data
-for Machine Learning benchmark dataset \citep{kaggleInsuranceDataML},
-containing one million policyholder records.  The chapter specified the
+for Machine Learning benchmark dataset
+\citep{kaggleInsuranceDataML}.  The chapter specified the
 data preprocessing, the \gls{dnn} architecture and five-phase hyperparameter
 comparison, the three benchmark models (Gamma \gls{glm}, \gls{rf},
 \gls{xgboost}), the \gls{mc} simulation design and the validation
@@ -75,22 +72,18 @@ Full performance comparisons are reported in
 Chapter~\ref{sec:results}.
 
 The \gls{mc} simulation produced a predicted-cost distribution whose
-summary statistics closely match the empirical charge distribution, as
-expected given the near-perfect fit and the use of training-data
-marginals (see the circularity caveat in
-Section~\ref{sec:mc_intro}).  The joint-distribution validation
+summary statistics closely match the empirical charge distribution, an
+outcome anticipated by the circularity caveat of
+Section~\ref{sec:mc_intro}.  The joint-distribution validation
 confirmed that the product-marginal input does not introduce material
 distributional distortion, and the residual-augmented sensitivity
 analysis established robustness to fitted residual perturbation.
 
-The conditional Shapley analysis produced the most distinctive finding.
-At $\tau_{99}$, the global feature-importance ranking reverses: family
-medical history, medical history and coverage level overtake smoking
-status.  This reversal is explained by the compositional structure of
-the extreme upper tail, where virtually all profiles are smokers and
-smoking status therefore loses discriminating power (the mechanical and
-substantive components of this reversal are discussed in
-Section~\ref{sec:addressing_rqs}).  The multi-seed robustness analysis
+The conditional Shapley analysis produced the most distinctive finding:
+at $\tau_{99}$, the global feature-importance ranking reverses, with
+family medical history, medical history and coverage level overtaking
+smoking status.  The mechanism behind this reversal is examined under
+Research Question~\ref{rq:6} below.  The multi-seed robustness analysis
 confirmed that the entire chain of results, including the $\tau_{99}$
 ranking reversal, is invariant to the stochastic training process across
 five independent seeds (details in Chapter~\ref{sec:results}).
@@ -106,7 +99,7 @@ The six research questions posed in Section~\ref{sec:research_questions}
 span the predictive, simulation and explanation stages of the framework.
 Each question is now addressed in light of the empirical results.
 
-\subsubsection*{Research Question~\ref{rq:1}}
+\subsubsection{Research Question~\ref{rq:1}}
 How does a \gls{dnn} regression model compare with a
 classical \gls{glm}, a \gls{rf} and an \gls{xgboost}
 gradient-boosted tree in predicting health insurance costs on a benchmark
@@ -140,10 +133,9 @@ training process.  This finding is consistent with the broader
 health-cost prediction literature
 \citep{dreweboss2022deep, samiuddin2023health, kaushik2022machine},
 although the unusually high \gls{r2} reflects the clean, structured nature
-of the benchmark data and should not be extrapolated to real-world
-insurance portfolios.
+of the benchmark data (Section~\ref{sec:scope_delimitations}).
 
-\subsubsection*{Research Question~\ref{rq:2}}
+\subsubsection{Research Question~\ref{rq:2}}
 What is the shape and distributional behaviour of the
 model-implied predicted-cost distribution obtained by propagating
 parametric \gls{mc} input profiles through the trained network?
@@ -160,21 +152,22 @@ that the distributional characterisation is invariant to the network's
 random initialisation (Section~\ref{sec:cross_seed_mc_ch4}).  Full
 distributional summaries are reported in Chapter~\ref{sec:results}.
 
-\subsubsection*{Research Question~\ref{rq:3}}
+\subsubsection{Research Question~\ref{rq:3}}
 Is the product-marginal \gls{mc} input distribution a
 defensible approximation of the training-data joint distribution for the
 purpose of generating simulated profiles?
 
 Five complementary diagnostics support an affirmative answer, including a
 multivariate energy distance permutation test ($p = 0.730$) and a
-Shapley attribution invariance assessment (Spearman
-$\rho_{\mathrm{S}} = 1.000$).  The individual diagnostic results are
+Shapley attribution invariance assessment comparing the parametric and
+bootstrap input regimes (Spearman
+$\rho_{\mathrm{S}} = 0.991$).  The individual diagnostic results are
 reported in Chapter~\ref{sec:results}.  It should be noted that the
 independence assumption broadens the simulated input space and can
 generate implausible covariate combinations; this limitation is discussed
 in Section~\ref{sec:limitations_conclusion}.
 
-\subsubsection*{Research Question~\ref{rq:4}}
+\subsubsection{Research Question~\ref{rq:4}}
 How sensitive is the predicted-cost distribution to residual
 perturbation from the fitted model?
 
@@ -187,7 +180,7 @@ does not alter the distributional conclusions; this finding is consistent
 across all five training seeds
 (Section~\ref{sec:cross_seed_residual_ch4}).
 
-\subsubsection*{Research Question~\ref{rq:5}}
+\subsubsection{Research Question~\ref{rq:5}}
 Which input variables receive the largest Shapley-value
 attributions globally, and how does the feature-importance ranking change
 conditionally within high-cost regions of the predicted-cost distribution?
@@ -217,7 +210,7 @@ $|r| = 0.033$, confirming that the \gls{dnn} learned an essentially additive
 mapping and that the main-effect Shapley summaries capture the full
 attribution structure.
 
-\subsubsection*{Research Question~\ref{rq:6}}
+\subsubsection{Research Question~\ref{rq:6}}
 What explains any differences between the global and conditional
 feature-importance rankings in the upper tail?
 
@@ -253,10 +246,7 @@ lundberg2017unified, molnar2022interpretable}.  The central
 methodological contribution is that the conditional Shapley analysis
 computed within Monte-Carlo-simulated high-cost regions produces a
 form of threshold-conditional feature attribution that none of these
-components can deliver in isolation.  The \gls{mc} distribution
-defines the regions of interest, the Shapley decomposition reveals
-the attribution structure within those regions, and the integration
-creates a connected analytical framework that extends conventional
+components can deliver in isolation, extending conventional
 global Shapley summaries into actuarially targeted subsets of the
 predicted-cost distribution.
 
@@ -424,11 +414,12 @@ The impact of these implausible profiles on the results is mitigated by
 their low probability, but it cannot be excluded entirely.
 
 The reported attributions are gradient-based \gls{shap} approximations, not
-exact game-theoretic Shapley values.  The approximation quality depends on
-the smoothness of the fitted prediction function and the adequacy of the
-background sample of $m_0 = 200$ observations.  The exact Shapley values
-would require evaluating the model at all $2^p$ subsets of features, which
-is computationally infeasible for $p = 22$.  The gradient-based
+exact game-theoretic Shapley values, exact computation being infeasible
+for the feature dimensionality considered here
+(Section~\ref{sec:shapley_attribution_simulated_profiles}).  The
+approximation quality depends on the smoothness of the fitted prediction
+function and the adequacy of the background sample of $m_0 = 200$
+observations.  The gradient-based
 approximation is the standard approach in the \gls{shap} literature
 \citep{lundberg2017unified}, but its approximation error has not been
 quantified for this specific setting.
@@ -477,18 +468,16 @@ attributions identify model-attributed contributions, not causal
 determinants of healthcare expenditure.
 
 % ---------------------------------------------------------
-% 5.6 IMPLICATIONS FOR ACTUARIAL PRACTICE AND STATISTICAL METHODOLOGY
+% 5.6 IMPLICATIONS FOR ACTUARIAL PRACTICE
 % ---------------------------------------------------------
 
-\subsection{Implications for Actuarial Practice and Statistical
-Methodology}
+\subsection{Implications for Actuarial Practice}
 \label{sec:implications}
 
-The findings carry implications for both actuarial practice and the
-broader field of statistical methodology, subject to the limitations
+The findings carry implications for actuarial practice and, as discussed
+in the section that follows, for the broader field of statistical
+methodology; both sets of implications are subject to the limitations
 identified above.
-
-\subsubsection*{Implications for actuarial practice}
 The substantial performance advantage of the \gls{dnn} over the Gamma \gls{glm} on
 this benchmark dataset illustrates the potential of flexible
 machine-learning models to improve upon the classical pricing framework,
@@ -529,14 +518,18 @@ making.  The benchmark-data qualifications noted in
 Section~\ref{sec:limitations_conclusion} apply: the methodology is
 transferable, but the specific performance figures are not.
 
-\subsubsection*{Implications for statistical methodology}
+% ---------------------------------------------------------
+% 5.7 IMPLICATIONS FOR STATISTICAL METHODOLOGY
+% ---------------------------------------------------------
+
+\subsection{Implications for Statistical Methodology}
+\label{sec:implications_statistical}
+
 From a statistical-methodological perspective, the dissertation
 illustrates how the tools of simulation-based inference can be applied
-to the outputs of fitted machine-learning models.  The circularity caveat noted in Section~\ref{sec:mc_intro} applies:
-on this benchmark dataset the \gls{mc} stage serves primarily to define the
-high-cost conditioning regions for the Shapley analysis rather than to
-reveal novel distributional properties.  On datasets with greater model
-error or distribution shift, the simulation stage would carry greater
+to the outputs of fitted machine-learning models.  On datasets with
+greater model error or distribution shift than the benchmark used here
+(Research Question~\ref{rq:2}), the simulation stage would carry greater
 independent inferential value.
 The conditional Shapley analysis extends the standard global summary by
 partitioning the predicted-cost distribution into regions of interest
@@ -547,11 +540,6 @@ output ranges, not only in insurance pricing but also in credit scoring,
 healthcare resource allocation, environmental risk assessment and other
 domains where the upper tail of the predicted distribution is of
 particular importance.
-
-The multi-layered validation protocol set out among the contributions
-above likewise transfers as a template for validating \gls{mc} and Shapley
-analyses in other applied settings, addressing threats to validity that are
-not routinely checked in the machine-learning interpretability literature.
 
 There is also a connection to the broader field of extreme value analysis.
 The conditional Shapley analysis at upper-tail thresholds is conceptually
@@ -575,9 +563,9 @@ directions (Section~\ref{sec:future_research}).
 
 A recent line of actuarial research imposes explicit shape constraints
 on neural networks during training.  The ICEnet of
-\citep{richman2024icenet}, presented in Chapter~7 of
-\citep{richman2025phd}, adds smoothness and monotonicity penalty terms
-to the loss function so that the network's \Gls{ice} (ICE) outputs vary smoothly and monotonically with respect
+\citet{richman2024icenet}, presented in Chapter~7 of
+\citet{richman2023phd}, adds smoothness and monotonicity penalty terms
+to the loss function so that the network's \Gls{ice} outputs vary smoothly and monotonically with respect
 to selected covariates.  Because the two studies differ in their
 response variables, evaluation metrics and datasets, a direct numerical
 comparison of predictive performance is not appropriate.
@@ -625,8 +613,8 @@ Interpretability
 \end{table}
 
 \noindent
-\textbf{Predictive performance.}
-\citet{richman2024icenet} reports that the ICEnet achieves a test-set
+On predictive performance,
+\citet{richman2024icenet} report that the ICEnet achieves a test-set
 Poisson deviance of $0.2388$, compared with $0.2387$ for the
 unconstrained network, a difference of $0.0001$.  When monotonicity
 constraints are applied alone, the out-of-sample deviance improves
@@ -642,8 +630,7 @@ demonstrate that \glspl{dnn} improve upon \gls{glm} baselines within
 their respective insurance domains.
 
 \noindent
-\textbf{Interpretability.}
-The ICEnet enforces actuarial reasonableness during training by
+On interpretability, the ICEnet enforces actuarial reasonableness during training by
 constraining the covariate-response relationships to be smooth and
 monotonic, which is important for commercial pricing and regulatory
 compliance.  The present dissertation pursues interpretability post hoc
@@ -668,14 +655,15 @@ regions.
 Several directions for future research have been uncovered in the course
 of this dissertation.  These can be divided into two broad categories:
 extensions of the modelling and simulation components, and extensions of
-the attribution and interpretation components.
-
-\subsubsection*{Modelling and simulation extensions}
+the attribution and interpretation components.  The first category,
+concerning the modelling and simulation components, comprises the
+following directions.
 
 \begin{itemize}
     \item Future work could extend the baseline comparison to include
           Bayesian neural networks, stacking ensembles and alternative
-          deep-learning architectures (e.g.\ TabNet, FT-Transformer).
+          deep-learning architectures (e.g.\ TabNet
+          \citep{arik2021tabnet} and the FT-Transformer).
           Such comparisons would clarify whether the Shapley attribution
           patterns documented here are model-dependent or model-invariant,
           and whether more complex architectures offer further predictive
@@ -741,7 +729,8 @@ the attribution and interpretation components.
           frequency models extends to continuous-cost prediction.
 \end{itemize}
 
-\subsubsection*{Attribution and interpretation extensions}
+The second category concerns the attribution and interpretation
+components of the framework.
 
 \begin{itemize}
     \item The $\tau_{99}$ ranking reversal could be traced more finely by
@@ -817,16 +806,9 @@ simulation provides the distributional characterisation, and Shapley-value
 decomposition provides the feature-level attribution.
 
 The most noteworthy finding is the feature-importance ranking reversal at
-the 99th percentile of the predicted-cost distribution.  While smoking
-status is the dominant contributor to predicted costs globally, it loses
-its discriminating power in the extreme upper tail, where virtually all
-profiles are smokers.  Within this tail, the variables that differentiate
-the costliest profiles from one another are coverage level, medical
-history and family medical history.  The multi-seed replication across
-five independent random initialisations confirms that this reversal is a
-robust structural property of the fitted model class rather than an
-artefact of a single training run, lending additional confidence to the
-finding.  This result illustrates a general principle that extends well
+the 99th percentile of the predicted-cost distribution, replicated
+across five independent random initialisations.  This result
+illustrates a general principle that extends well
 beyond insurance pricing: a variable's importance in a statistical model
 is not a fixed property, but depends on the region of the output space
 under consideration.  Global importance summaries, while useful, can
@@ -852,9 +834,8 @@ powerful prediction devices, but their value to the applied statistician
 extends beyond the point predictions they produce.  By treating the trained
 network as a deterministic transformation to be studied through \gls{mc}
 experiments and decomposed through Shapley values, this dissertation
-connects the machine-learning prediction paradigm to the classical
-statistical tradition of studying estimators through their distributional
-properties.  While this connection may seem like a modest step within the
+grounds the machine-learning prediction paradigm in long-standing
+statistical practice.  While this connection may seem like a modest step within the
 vast landscape of statistical learning and explainable modelling, it is
 worth remembering that each contribution to the field of interpretable
 machine learning is, in its own way, a contribution to the broader
