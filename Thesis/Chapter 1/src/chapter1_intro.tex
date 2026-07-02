@@ -81,7 +81,7 @@ The Gamma distribution implies a specific variance-mean relationship
 across all segments of the policyholder population.  While robust standard errors and alternative
 distributional assumptions can mitigate this concern, the fundamental
 limitation of the linear predictor structure remains.  As
-\citep{goodfellow2016deep} note, the capacity of a model class to
+\citet{goodfellow2016deep} note, the capacity of a model class to
 approximate a target function is determined by the richness of the
 hypothesis space, and the hypothesis space of a \gls{glm} is inherently
 constrained by its additive structure.
@@ -141,7 +141,7 @@ interactions without requiring the modeller to enumerate them in advance
 
 This capacity for automatic feature interaction has led to increasing
 adoption of neural networks in insurance applications.  Studies by
-\citep{richman2021ai} and \citep{kuo2019deep} have demonstrated that
+\citet{richman2021ai} and \citet{kuo2019deep} have demonstrated that
 neural networks can achieve predictive improvements over classical
 actuarial models on insurance cost prediction tasks, particularly when
 the data contain nonlinear covariate-response relationships that the \gls{glm}
@@ -354,9 +354,7 @@ attributes to predicted costs.  A Gamma \gls{glm} with a
 logarithmic link, a \gls{rf} regressor and an \gls{xgboost}
 gradient-boosted tree regressor are fitted alongside the network to
 provide benchmarks spanning three alternative model classes.  The
-primary comparison is between the actuarial-standard \gls{glm} and the \gls{dnn},
-with the tree-based models serving as intermediate reference points.
-The output of this stage is a validated prediction function with
+output of this stage is a validated prediction function with
 documented out-of-sample performance across all four models.
 
 In the second stage, parametric distributions are fitted to each input
@@ -409,9 +407,7 @@ prediction has received limited attention in the literature.
 From a practical perspective, the conditional Shapley analysis at
 upper-tail thresholds addresses a question of direct relevance to
 actuarial practice: which variables drive the most expensive predicted
-claims?  Traditional global feature-importance summaries may mask the
-fact that the drivers of average-cost predictions differ from the
-drivers of extreme-cost predictions.  By computing conditional Shapley
+claims?  By computing conditional Shapley
 summaries at multiple thresholds, the study provides a graded view of
 how feature importance evolves into the tail.  This information is
 relevant to risk selection, pricing segmentation and reinsurance
@@ -421,14 +417,10 @@ distribution.
 From a statistical-learning perspective, the construction of a
 model-implied predicted-cost distribution under an explicit input law
 connects the neural network prediction function to the broader tradition
-of simulation-based inference.  Rather than evaluating the model only at
-observed data points, the \gls{mc} component generates a distribution
-of predicted costs that reveals the range and shape of the model's
-output landscape.  This approach treats the prediction function as a
-statistical object whose distributional properties are themselves worthy
-of analysis, consistent with the mathematical-statistics emphasis on
-characterising estimators and prediction rules through their sampling
-distributions.
+of simulation-based inference (Section~\ref{sec:integration_contribution}).
+Rather than evaluating the model only at observed data points, the \gls{mc}
+component generates a distribution of predicted costs that reveals the
+range and shape of the model's output landscape.
 
 Finally, from an explainability perspective, the study demonstrates that
 Shapley-value attribution, often presented as a single global summary,

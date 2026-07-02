@@ -586,10 +586,9 @@ Four implementation decisions follow directly from the EDA:
     \item Categorical variables are simulated at the raw-category level
           and only afterwards encoded.
     \item The weak linear correlations among the numerical predictors,
-          together with their uniform-like marginal shapes, support the
-          product-marginal independence assumption in the \gls{mc}
-          design as a faithful reflection of the benchmark's
-          data-generating structure.
+          together with their uniform-like marginal shapes, motivate the
+          product-marginal independence assumption adopted in the \gls{mc}
+          design (Section~\ref{sec:mc_simulation_design}).
     \item The response is standardised during training and de-normalised
           for evaluation; no further transformation is needed.
 \end{enumerate}
@@ -959,7 +958,7 @@ validation \gls{r2}; and (6)~final test-set evaluation on the original
 monetary scale using \gls{r2}, \gls{rmse} and \gls{mae}.  The complete
 pseudocode is presented in
 Algorithm~\ref{tab:dnn_training_algorithm_annex}
-(Annexure~\ref{annexure:dnn_algorithm_detailed}).
+(\ref{annexure:dnn_algorithm_detailed}).
 
 \subsubsection{Benchmark GLM}
 \label{sec:glm_benchmark_methods}
@@ -1037,7 +1036,7 @@ predictions are obtained on the original monetary scale by applying the
 inverse link $\widehat{y}_i = \exp(\mathbf{z}_i^{\top}
 \widehat{\boldsymbol{\beta}})$.  The complete \gls{irls} algorithm is
 presented in Algorithm~\ref{tab:glm_algorithm_annex}
-(Annexure~\ref{annexure:glm_algorithm}).
+(\ref{annexure:glm_algorithm}).
 
 No hyperparameter tuning is applied to the \gls{glm}; its role as a benchmark
 was motivated in Section~\ref{sec:statistical_learning_supervised_regression}.
@@ -1126,7 +1125,7 @@ continues until each terminal node contains at most $n_{\min} = 5$
 observations.  The ensemble prediction is the average across all trees.
 The complete algorithm is presented in
 Algorithm~\ref{tab:rf_algorithm_annex}
-(Annexure~\ref{annexure:rf_algorithm}).
+(\ref{annexure:rf_algorithm}).
 
 Table~\ref{tab:rf_hyperparameters_ch3} summarises the \gls{rf}
 configuration.
@@ -1299,7 +1298,7 @@ optimal leaf weights are computed in closed form
 stopping with patience $P = 50$ rounds terminates training when the
 validation loss ceases to improve.  The complete algorithm is presented
 in Algorithm~\ref{tab:xgb_algorithm_annex}
-(Annexure~\ref{annexure:xgb_algorithm}).
+(\ref{annexure:xgb_algorithm}).
 
 Table~\ref{tab:xgb_hyperparameters_ch3} summarises the \gls{xgboost}
 configuration.
@@ -1934,9 +1933,9 @@ frequency tables and chi-squared summaries.  Because the sample size is
 large, formal tests are interpreted cautiously: very small distributional
 differences may be statistically significant without being practically
 important for simulation.  Support
-restrictions are treated as compulsory: simulated ages remain between 18 and
-65, \texttt{bmi} values between 18 and 50, \texttt{children} values between
-0 and 5, and categorical variables take only valid observed levels.
+restrictions are treated as compulsory: simulated numerical predictors are
+confined to their observed ranges and categorical variables take only valid
+observed levels.
 
 \subsubsection{Sample size and convergence monitoring}
 
@@ -2100,14 +2099,11 @@ and the parametric \gls{mc} sample are projected onto these components. The two
 point clouds are overlaid with distinct colours. If the independence
 assumption substantially alters the joint structure, the \gls{mc} cloud will
 appear more spread out or exhibit less internal clustering than the training
-cloud. The loadings of the first two principal components
-(Figure~\ref{fig:pca_loadings_ch3}) show that PC1 (6.9\% of total
-variance) is driven primarily by \texttt{coverage\_level\_\allowbreak{}Standard}
-(loading $0.706$) and \texttt{coverage\_level\_\allowbreak{}Premium} ($-0.706$), while
-PC2 (6.4\%) has loadings spread across multiple categorical predictors.
-Although PC1 is dominated by a single raw variable, the first two components
-together account for only 13.3\% of total variance, indicating that no
-single direction dominates the 22-dimensional input space.
+cloud. As reported in Section~\ref{sec:pca_structural_diagnostics}
+(Figure~\ref{fig:pca_loadings_ch3}), the first two principal components are
+dominated by the \texttt{coverage\_\allowbreak{}level} variable yet together
+account for only about $13\%$ of total variance, so no single direction
+dominates the 22-dimensional input space.
 
 \begin{figure}[H]
 \centering

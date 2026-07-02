@@ -127,7 +127,7 @@ multiplicative mean function.  The tree-based models, unconstrained by a
 multiplicative link, recover most of this gap.
 The five-phase sequential hyperparameter comparison selected the final
 \gls{dnn} configuration from among 16 candidate settings, documented in full
-in Annexure~\ref{annexure:hyperparameters}.  When the tree-based
+in \ref{annexure:hyperparameters}.  When the tree-based
 benchmarks were subsequently tuned via randomised search with
 cross-validation, the tuned \gls{rf} reached $R^2 = 0.9924$ and
 the tuned \gls{xgboost} matched the \gls{dnn} at $R^2 = 0.9956$.  The \gls{dnn} retains
@@ -270,16 +270,13 @@ feature-level attribution \citep{glasserman2004monte}; and Shapley-value
 studies decompose predictions on observed data without examining how the
 attribution structure changes across specific regions of the
 predicted-cost distribution \citep{kaushik2022machine}.
-\citep{blomerus2025longterm} demonstrates the viability of deep learning
-for long-term life insurance valuations, while the present study extends
-the deep-learning approach to health insurance cost prediction with an
-added simulation and attribution layer.  This dissertation demonstrates
-that the integration produces insight that none of the three components
-could provide in isolation (see Section~\ref{sec:integration_contribution}).
-The sequential dependence among the three stages means that the \gls{mc}
-output defines the conditioning regions for the Shapley stage, producing a
-connected analytical chain from fitted model through simulated population
-to feature attribution.
+Building on \citet{blomerus2025longterm}, the present study extends the
+deep-learning approach to health insurance cost prediction with an added
+simulation and attribution layer.  The sequential dependence among the
+three stages means that the \gls{mc} output defines the conditioning
+regions for the Shapley stage, producing a connected analytical chain from
+fitted model through simulated population to feature attribution (see
+Section~\ref{sec:integration_contribution}).
 
 The conditional feature-importance summaries at high-cost thresholds
 represent the most distinctive contribution.  The existing health
@@ -301,16 +298,10 @@ distribution from a formally stated input distribution, rather than
 reporting predictions only at observed data points.  This connects the
 neural network to the simulation-based inference tradition within
 mathematical statistics \citep{glasserman2004monte,
-rubinstein2016simulation, robert2004monte}, where the behaviour of
-estimators and
-predictive quantities is routinely studied through \gls{mc}
-experiments.  The distinction is methodologically significant: evaluating a
-model on observed data provides point predictions at covariate
-combinations that happen to appear in the dataset; evaluating it on a
-simulated population provides a distributional characterisation of the
-model's output landscape under a specified input law, allowing the
-analyst to study the range, dispersion and tail behaviour of the
-predictions as statistical quantities in their own right.
+rubinstein2016simulation, robert2004monte}: evaluating the model on a
+simulated population, rather than only at observed covariate combinations,
+yields a distributional characterisation of its output landscape---its
+range, dispersion and tail behaviour---under a specified input law.
 
 The multi-seed robustness analysis represents a further contribution.
 By retraining the \gls{dnn} under five independent random seeds and
@@ -352,7 +343,7 @@ variability in model fitting, hyperparameter selection and Shapley-value
 estimation.  Second, the five-phase sequential hyperparameter comparison
 provides a transparent, reproducible selection method documented with
 validation-loss curves and selection criteria
-(Annexure~\ref{annexure:hyperparameters}), avoiding the opacity of
+(\ref{annexure:hyperparameters}), avoiding the opacity of
 automated search methods.  Third, strict data-leakage prevention
 protocols (Section~\ref{sec:data_leakage_prevention}) ensure that all
 preprocessing parameters are computed exclusively on the training
@@ -404,10 +395,10 @@ single trained network with a fixed random seed.  The multi-seed
 robustness analysis (Section~\ref{sec:multiseed_dnn}) subsequently
 addressed this limitation by retraining the \gls{dnn} under five independent
 seeds and replicating the full simulation and attribution pipeline.  The
-cross-seed variability proved negligible across all stages: the test
-\gls{r2} standard deviation is $1.28 \times 10^{-5}$, the \gls{mc} mean
-varies by R15, and the global Shapley ranking is perfectly preserved
-($\rho_{\mathrm{S}} = 1.0000$).  While five seeds do not constitute an
+cross-seed variability proved negligible across all stages---the test
+\gls{r2}, the \gls{mc} mean and the global Shapley ranking were all
+essentially unchanged across seeds (quantified in
+Section~\ref{sec:addressing_rqs}).  While five seeds do not constitute an
 exhaustive exploration of the initialisation space, the convergent
 results across these independent replications provide strong evidence
 that the findings are not artefacts of a single random initialisation.
@@ -541,10 +532,7 @@ transferable, but the specific performance figures are not.
 \subsubsection*{Implications for statistical methodology}
 From a statistical-methodological perspective, the dissertation
 illustrates how the tools of simulation-based inference can be applied
-to the outputs of fitted machine-learning models.  The construction of
-a model-implied predicted-cost distribution by propagating \gls{mc}
-inputs through a trained network is conceptually analogous to studying a
-sampling distribution through \gls{mc} experiments.  The circularity caveat noted in Section~\ref{sec:mc_intro} applies:
+to the outputs of fitted machine-learning models.  The circularity caveat noted in Section~\ref{sec:mc_intro} applies:
 on this benchmark dataset the \gls{mc} stage serves primarily to define the
 high-cost conditioning regions for the Shapley analysis rather than to
 reveal novel distributional properties.  On datasets with greater model
@@ -560,16 +548,10 @@ healthcare resource allocation, environmental risk assessment and other
 domains where the upper tail of the predicted distribution is of
 particular importance.
 
-The validation protocol provides a template for validating \gls{mc} and
-Shapley analyses in other applied settings.  Joint-distribution
-diagnostics check whether the input distribution introduces distributional
-distortion; convergence monitoring checks whether the simulation size is
-adequate; residual-augmented sensitivity analysis checks whether the
-distributional conclusions are sensitive to residual variability; and
-attribution invariance checks verify whether the Shapley rankings are
-artefacts of the input regime.  These diagnostics address specific threats
-to validity that are not routinely checked in the machine-learning
-interpretability literature.
+The multi-layered validation protocol set out among the contributions
+above likewise transfers as a template for validating \gls{mc} and Shapley
+analyses in other applied settings, addressing threats to validity that are
+not routinely checked in the machine-learning interpretability literature.
 
 There is also a connection to the broader field of extreme value analysis.
 The conditional Shapley analysis at upper-tail thresholds is conceptually
@@ -581,10 +563,8 @@ focus is on decomposing the predictions that exceed the threshold into
 feature-level contributions.  The two perspectives are complementary: \gls{evt}
 characterises the statistical properties of the tail, while the
 conditional Shapley analysis explains the model's behaviour within the
-tail.  Future work could integrate these perspectives by using
-\gls{evt}-informed threshold selection to define the conditioning region for
-the Shapley analysis, and by assessing whether the attribution patterns
-are sensitive to the specific choice of threshold.
+tail; a concrete proposal for integrating them is set out in the future-work
+directions (Section~\ref{sec:future_research}).
 
 % ---------------------------------------------------------
 % 5.7 COMPARISON WITH CONSTRAINED NEURAL-NETWORK APPROACHES
@@ -646,7 +626,7 @@ Interpretability
 
 \noindent
 \textbf{Predictive performance.}
-\citep{richman2024icenet} reports that the ICEnet achieves a test-set
+\citet{richman2024icenet} reports that the ICEnet achieves a test-set
 Poisson deviance of $0.2388$, compared with $0.2387$ for the
 unconstrained network, a difference of $0.0001$.  When monotonicity
 constraints are applied alone, the out-of-sample deviance improves
@@ -764,12 +744,13 @@ the attribution and interpretation components.
 \subsubsection*{Attribution and interpretation extensions}
 
 \begin{itemize}
-    \item The $\tau_{99}$ ranking reversal could be strengthened by
-          increasing the simulation size to $B = 50\,000$ or $100\,000$,
-          by constructing bootstrap confidence intervals for the
-          conditional mean absolute Shapley values, or by introducing
-          intermediate thresholds (e.g.\ $\tau_{97.5}$, $\tau_{98}$) to
-          trace the transition in the importance ranking more finely.
+    \item The $\tau_{99}$ ranking reversal could be traced more finely by
+          enlarging the high-cost subsample---increasing the simulation size
+          well beyond $B = 100\,000$ so that the top $1\%$ contains
+          substantially more than the ${\approx}1\,000$ profiles available
+          here---and by introducing intermediate thresholds (e.g.\
+          $\tau_{97.5}$, $\tau_{98}$) to resolve the transition in the
+          importance ranking.
 
     \item Comparing the gradient-based \gls{shap} attributions with alternative
           methods, such as permutation-based \gls{shap}, KernelSHAP or LIME

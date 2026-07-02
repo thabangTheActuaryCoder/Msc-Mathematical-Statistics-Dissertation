@@ -4,7 +4,7 @@
 \section{Results}
 \label{sec:results}
 
-This chapter presents the empirical results of the three-component
+This chapter presents the empirical results of the three-stage
 methodological framework specified in Chapter~\ref{chap:methods_and_data}.
 The results are organised as follows:
 Section~\ref{sec:hyperparameter_results} reports the sequential
@@ -52,7 +52,7 @@ hyperparameters fixed at learning rate $0.001$, batch size $256$ and \gls{adam}.
 \noindent
 The validation loss and $R^2$ trajectories for this phase are presented in
 Figure~\ref{fig:phase1_activation_annex}
-(Annexure~\ref{annexure:hyperparameters}).  \gls{celu} achieves the
+(\ref{annexure:hyperparameters}).  \gls{celu} achieves the
 lowest validation loss (approximately $0.00435$) and the highest
 validation $R^2$ (approximately $0.9957$) from epoch~60 onwards.  \Gls{gelu}
 tracks \gls{celu} closely but settles at a marginally higher loss
@@ -69,7 +69,7 @@ forward.
 \noindent
 The validation trajectories are shown in
 Figure~\ref{fig:phase2_lr_annex}
-(Annexure~\ref{annexure:hyperparameters}).
+(\ref{annexure:hyperparameters}).
 $\eta = 0.01$ produces catastrophic divergence: the validation loss
 exceeds $1.0$ and the validation $R^2$ drops to near zero, indicating
 that the gradient updates overshoot the loss surface at this step size.
@@ -88,7 +88,7 @@ $\eta = 0.0005$ fixed.
 \noindent
 The validation trajectories are shown in
 Figure~\ref{fig:phase3_batchsize_annex}
-(Annexure~\ref{annexure:hyperparameters}).
+(\ref{annexure:hyperparameters}).
 All four batch sizes converge to similar validation performance, with
 best validation $R^2$ values between $0.9956$ and $0.9957$.  The batch
 size $|\mathcal{B}| = 256$ was retained, as it achieves among the lowest
@@ -102,7 +102,7 @@ forward.
 \noindent
 The validation trajectories are shown in
 Figure~\ref{fig:phase4_optimiser_annex}
-(Annexure~\ref{annexure:hyperparameters}).
+(\ref{annexure:hyperparameters}).
 \Gls{nadam} converges faster than \gls{adam} in the initial epochs and exhibits
 smoother validation loss trajectories throughout training.  From
 approximately epoch~40 onwards, \gls{nadam} consistently achieves lower
@@ -118,7 +118,7 @@ $(\beta_1, \beta_2) \in \{(0.90, 0.999),\; (0.95, 0.999),\;
 \noindent
 The validation trajectories are shown in
 Figure~\ref{fig:phase5_momentum_annex}
-(Annexure~\ref{annexure:hyperparameters}).
+(\ref{annexure:hyperparameters}).
 All three momentum configurations converge to similar final validation
 performance.  The $\beta_1 = 0.95$ configuration achieves marginally
 lower and more stable validation loss from epoch~40 onwards, with the
@@ -130,7 +130,7 @@ $(\beta_1, \beta_2) = (0.95, 0.999)$ was retained.
 \subsubsection{Hyperparameter comparison overview}
 
 Figure~\ref{fig:validation_loss_overview_annex}
-(Annexure~\ref{annexure:hyperparameters}) presents the best validation
+(\ref{annexure:hyperparameters}) presents the best validation
 loss achieved by each configuration across all five phases.
 The selected configuration (\gls{celu}, $\eta = 0.0005$,
 $|\mathcal{B}| = 256$, \gls{nadam}, $\beta_1 = 0.95$) achieves the lowest
@@ -333,16 +333,13 @@ Kaggle benchmark dataset's \citep{kaggleInsuranceDataML} algorithmically generat
 \gls{glm} is the model an actuary would deploy as a first approach and
 \gls{xgboost} represents the current state of the art for tabular data,
 the comparison provides practical benchmark context that situates the
-\gls{dnn} within the actuarial modelling landscape.  The \gls{dnn} is
-therefore retained for the subsequent analyses on the grounds of its
-superior accuracy and its differentiability for gradient-based
-attribution.
+\gls{dnn} within the actuarial modelling landscape.
 
 The finding that a \gls{dnn} outperforms a classical \gls{glm}
 on this benchmark is consistent with the broader health-cost prediction
-literature.  \citep{dreweboss2022deep} report that deep-learning models
+literature.  \citet{dreweboss2022deep} report that deep-learning models
 achieve lower prediction error than standard actuarial models on claims
-data, while \citep{samiuddin2023health} and \citep{kaushik2022machine}
+data, while \citet{samiuddin2023health} and \citet{kaushik2022machine}
 similarly observe that neural-network architectures improve upon
 traditional regression baselines for insurance cost estimation.  As noted
 in Section~\ref{sec:integrating_dnn_mc_shapley}, however, this
@@ -351,7 +348,7 @@ superiority is not universal across all tabular insurance datasets
 benchmark dataset \citep{kaggleInsuranceDataML} whose deterministic cost formula produces a strong, noise-free covariate-response structure.
 
 A related line of actuarial research applies explicit shape constraints
-to neural networks during training.  \citep{richman2024icenet} develop
+to neural networks during training.  \citet{richman2024icenet} develop
 the ICEnet, which adds smoothness and monotonicity penalties to the loss
 function so that \Gls{ice} outputs remain
 actuarially reasonable.  Because that study targets claims frequency
@@ -379,7 +376,7 @@ Table~\ref{tab:final_hyperparameters_ch4}.
 
 The training loss, validation loss and validation $R^2$ trajectories
 across all five seeds are presented in
-Annexure~\ref{annexure:multiseed_training}
+\ref{annexure:multiseed_training}
 (Figures~\ref{fig:dnn_multiseed_train_loss_annex}
 to~\ref{fig:dnn_multiseed_epoch_vs_r2_annex}).  All five seeds converge
 to the same loss plateau, with the validation $R^2$ trajectories
@@ -473,7 +470,7 @@ Tuned   & 320 & 385 & 0.9924 \\
 \end{table}
 
 \noindent
-Tuning improves the \gls{rf} test $R^2$ from $0.9900$ to $0.9924$,
+Tuning improves the \gls{rf} test $R^2$ from $0.9899$ to $0.9924$,
 reducing the test \gls{rmse} from R443 to R385 ($13.1\%$ reduction) and
 the test \gls{mae} from R358 to R320 ($10.6\%$ reduction).  The tuned
 \gls{rf} substantially narrows the gap to the \gls{dnn} but remains
@@ -610,7 +607,7 @@ diagnostic protocol in Section~\ref{sec:mc_input_validation}.
 The bivariate and multivariate dependence structure of the training data
 was compared with that of the \gls{mc} sample using five complementary
 diagnostics (detailed figures in
-Annexure~\ref{annexure:mc_joint_validation}).  Pairwise scatter plots
+\ref{annexure:mc_joint_validation}).  Pairwise scatter plots
 for the three continuous variables confirmed that all training-data
 Pearson correlations are negligible ($r \leq 0.012$), and the Monte
 Carlo sample shows even weaker correlations ($r \leq 0.002$), as
@@ -787,7 +784,7 @@ sensitive to the \gls{dnn} training seed, the $B = 100\,000$ simulation was
 repeated using each of the five trained networks from
 Section~\ref{sec:multiseed_dnn}.  The cross-seed \gls{mc}
 diagnostics are presented in
-Annexure~\ref{annexure:multiseed_mc}
+\ref{annexure:multiseed_mc}
 (Figures~\ref{fig:mc_seed_distributions_annex}
 to~\ref{fig:mc_convergence_rate_annex}).
 
@@ -842,7 +839,7 @@ equation~\eqref{eq:fixed_residual_perturbation_ch3}.
 The centred training residuals from which the augmented draws are sampled
 were verified as symmetric, centred at zero and free of systematic bias across prediction ranges, satisfying the requirements for the perturbation analysis
 (Figure~\ref{fig:mc_residual_diagnostics_annex},
-Annexure~\ref{annexure:residual_diagnostics}).  The residual histogram
+\ref{annexure:residual_diagnostics}).  The residual histogram
 is symmetric and bell-shaped with no systematic bias; the Q-Q plot shows
 slight tail compression consistent with the mild platykurtic behaviour
 noted in Section~\ref{sec:model_validation_diagnostics}; and the
@@ -883,7 +880,7 @@ that follows.
 
 The residual-augmented sensitivity analysis was repeated for all five
 \gls{dnn} seeds.  Figure~\ref{fig:residual_augmented_mc_annex}
-(Annexure~\ref{annexure:multiseed_residual}) compares the base and
+(\ref{annexure:multiseed_residual}) compares the base and
 augmented distributions with cross-seed dispersion.  The residual
 standard deviation $\hat{\sigma}_{\varepsilon} \approx \text{R}290$ is
 consistent across all five seeds, and the augmentation adds
@@ -971,7 +968,7 @@ medical history categories.
 
 The beeswarm plot of all 22 encoded features
 (Figure~\ref{fig:shap_beeswarm_annex},
-Annexure~\ref{annexure:shap_beeswarm}) reveals several patterns
+\ref{annexure:shap_beeswarm}) reveals several patterns
 consistent with the aggregated importance ranking.  The binary
 \texttt{smoker} variable produces a clear bimodal separation, with
 smoker $=$ yes yielding \gls{shap} values of approximately $+0.5$ to $+1.0$
@@ -990,7 +987,7 @@ $\pm 0.15$.
 The Shapley attributions computed on the training data were compared with
 those computed on the \gls{mc} simulated profiles
 (Figure~\ref{fig:shap_training_vs_mc_invariance_annex},
-Annexure~\ref{annexure:shap_invariance}).  The Spearman rank correlation
+\ref{annexure:shap_invariance}).  The Spearman rank correlation
 between the two feature-importance vectors is $\rho_{\mathrm{S}} =
 1.000$: all 11 raw variables occupy the same importance rank under both
 input regimes, with the mean $|\text{SHAP}|$ values falling on the
@@ -1223,7 +1220,7 @@ covariates.
 A representative high-cost profile at the $\tau_{95}$ threshold
 (predicted cost R24\,249) was decomposed using a \gls{shap} waterfall plot
 (Figure~\ref{fig:shap_waterfall_annex},
-Annexure~\ref{annexure:shap_waterfall}).  The profile is characterised
+\ref{annexure:shap_waterfall}).  The profile is characterised
 by age~$= 34$, \texttt{bmi}~$= 31.4$, \texttt{children}~$= 0$,
 \texttt{smoker}~$=$ yes, \texttt{family\_medical\_\allowbreak{}history}~$=$ Heart
 disease, \texttt{medical\_\allowbreak{}history}~$=$ Heart disease and
@@ -1260,7 +1257,7 @@ The global mean $|\text{SHAP}|$ values were computed for each seed and
 compared across all ten pairwise seed combinations.  Detailed
 visualisations of the seed-level importance values and cross-seed
 dispersion are presented in
-Annexure~\ref{annexure:multiseed_shap}
+\ref{annexure:multiseed_shap}
 (Figures~\ref{fig:shap_seed_stability_annex}
 and~\ref{fig:shap_cross_seed_dispersion_annex}).
 
@@ -1313,7 +1310,7 @@ data, not an artefact of a single random initialisation.
 
 The \gls{shap} dependence plots for the \texttt{smoker} variable and the
 \texttt{bmi}/\texttt{coverage\_\allowbreak{}level} relationship are presented in
-Annexure~\ref{annexure:multiseed_dependence}
+\ref{annexure:multiseed_dependence}
 (Figures~\ref{fig:shap_dependence_smoker_annex}
 and~\ref{fig:shap_dependence_bmi_coverage_annex}).  The binary
 \texttt{smoker} variable produces a clear bimodal attribution pattern
@@ -1347,7 +1344,7 @@ $|r| = 0.033$, indicating that the Shapley contributions of different
 variables are essentially uncorrelated across profiles.  The top 15
 pairwise correlations, visualised in
 Figure~\ref{fig:shap_interaction_pairs_annex}
-(Annexure~\ref{annexure:multiseed_interactions}), confirm that no pair
+(\ref{annexure:multiseed_interactions}), confirm that no pair
 exhibits a correlation exceeding $|r| = 0.033$.
 
 This finding has two implications.  First, it confirms that the \gls{dnn} has

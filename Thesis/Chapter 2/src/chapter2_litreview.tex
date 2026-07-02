@@ -110,7 +110,7 @@ to obtain a model-implied distribution of predicted costs.
 
 \noindent
 Shapley values provide the attribution layer for the simulated output space.
-Originally introduced in cooperative game theory by \citep{shapley1953value}
+Originally introduced in cooperative game theory by \citet{shapley1953value}
 and subsequently adapted to the explanation of machine-learning predictions
 \citep{lundberg2017unified, rozemberczki2022shapley}, Shapley values
 decompose an individual fitted prediction into additive contributions
@@ -152,7 +152,7 @@ predicted costs. A broader assessment requires both distributional analysis of
 fitted predictions and feature-level attribution of those predictions.
 
 \noindent
-At the broader actuarial level, \citep{richman2021ai} surveys recent
+At the broader actuarial level, \citet{richman2021ai} surveys recent
 developments in artificial intelligence and deep learning in actuarial
 science and concludes that neural-network methods are increasingly being
 adopted across pricing, reserving and risk-classification tasks, typically
@@ -167,7 +167,7 @@ workflow, which is the methodological gap that the proposed framework
 addresses.
 
 \noindent
-A closer comparison is provided by \citep{orji2024explainable}, who apply
+A closer comparison is provided by \citet{orji2024explainable}, who apply
 machine-learning regressors together with \gls{shap} and \gls{ice} plots to
 predict medical insurance premiums on the same family of policyholder
 attributes used here and identify smoker status, age and \gls{bmi} as the
@@ -662,9 +662,9 @@ distribution under \(\widehat{F}_{X}\), Shapley estimation is a computational
 device for approximating exact Shapley values when the required summation over
 all \(2^p\) feature coalitions is infeasible. Because the exact calculation is
 equivalent to averaging over all \(p!\) feature orderings, sampling-based
-estimators are often employed. \citep{castro2009polynomial} proposed a
+estimators are often employed. \citet{castro2009polynomial} proposed a
 polynomial-time scheme based on randomly sampled permutations, and
-\citep{maleki2013bounding} derived confidence bounds for such estimators.
+\citet{maleki2013bounding} derived confidence bounds for such estimators.
 
 \noindent
 Let
@@ -1023,7 +1023,7 @@ Regression methods are evaluated on a continuous scale using prediction-error me
   \noindent
   Machine-learning methods offer a more flexible way to approximate complex
   predictor-response relationships. In actuarial contexts,
-  \citep{richman2021ai} notes that neural-network methods can capture
+  \citet{richman2021ai} notes that neural-network methods can capture
   nonlinearities and interactions in risk relationships, learn internal feature
   representations from mixed-type inputs, and reduce the need for manual
   specification of predictor transformations. These properties are relevant when
@@ -1053,14 +1053,12 @@ surface compatible with the simulation and interpretation workflow.
 
 \noindent
 The use of a \gls{dnn} should not be read as a dismissal of competing
-tabular-data methods. Tree-based models and ensemble methods such as
-\gls{rf} and gradient-boosted trees can also capture nonlinearities and
-interactions, and empirical work on structured datasets shows that they are
-often strong competitors \citep{grinsztajn2022why,orji2024explainable}. The
-\gls{dnn} is used because it provides a fitted nonlinear prediction
-function that can be repeatedly evaluated and then connected to \gls{mc}
-input simulation and Shapley-value explanation. Tree-based models remain useful
-benchmarks for contextualising empirical performance.
+tabular-data methods; tree-based ensembles such as \gls{rf} and
+gradient-boosted trees are often strong competitors
+\citep{grinsztajn2022why,orji2024explainable} and are fitted here as
+benchmarks. The \gls{dnn} is used because it provides a differentiable
+prediction surface that can be repeatedly evaluated and then connected to
+\gls{mc} input simulation and Shapley-value explanation.
 
 \noindent
 The supervised regression formulation also clarifies the roles of the Monte
@@ -2003,12 +2001,11 @@ choose a model that captures stable structure without merely recalling noise in
 the training data.
 
 \noindent
-The statistical notion of bias
-in this decomposition is distinct from the trainable bias parameter in a
-neural-network layer and from data bias in the benchmark dataset. The
-bias-variance trade-off is therefore used as a general learning principle and
-not as a justification for including or omitting bias parameters in the
-\gls{dnn} architecture.
+As already noted, the statistical notion of bias in this decomposition is
+distinct from the trainable bias parameter in a neural-network layer and
+from data bias in the benchmark dataset; the bias-variance trade-off is used
+here as a general learning principle, not as a justification for the
+bias-free \gls{dnn} architecture.
 
 \noindent
 The training partition \(\mathcal{D}_{\mathrm{train}}\)
@@ -2067,14 +2064,14 @@ estimator of the cost surface rather than a replacement for actuarial reasoning.
 \noindent
 The broader actuarial machine-learning literature provides extensive evidence
 that neural networks and related models can be embedded within traditional
-insurance frameworks.  \citep{wuthrich2023statistical} provide a comprehensive
+insurance frameworks.  \citet{wuthrich2023statistical} provide a comprehensive
 treatment of statistical foundations for actuarial learning,
-\citep{noll2020case} demonstrate neural-network pricing on French motor
-third-party liability data, and \citep{schelldorfer2019nesting} show how
+\citet{noll2020case} demonstrate neural-network pricing on French motor
+third-party liability data, and \citet{schelldorfer2019nesting} show how
 classical actuarial models can be nested within neural-network architectures.
-\citep{blierwong2021machine} survey machine-learning applications across
+\citet{blierwong2021machine} survey machine-learning applications across
 property and casualty insurance pricing and reserving.  In the life insurance
-domain, \citep{blomerus2025longterm} demonstrates the viability of deep
+domain, \citet{blomerus2025longterm} demonstrates the viability of deep
 learning for long-term life insurance valuations using commercial European
 portfolio data, achieving valuations that conform to the 99.5\% accuracy
 required by Solvency~II.
@@ -2083,7 +2080,7 @@ required by Solvency~II.
 Within health insurance specifically, recent work has demonstrated that neural
 networks can be incorporated into actuarial pricing structures without
 abandoning the underlying frequency-severity logic.
-\citep{laporta2025neural} propose neural-network models for pricing correlated
+\citet{laporta2025neural} propose neural-network models for pricing correlated
 health risks by embedding negative multinomial
 neural networks for claim frequency and gamma neural networks for claim
 severity within a classical frequency-severity structure. Their empirical
@@ -2096,7 +2093,7 @@ within actuarial pricing logic to improve both accuracy and risk segmentation.
 
 \noindent
 A complementary approach to neural-network pricing is to impose explicit shape
-constraints during training.  \citep{richman2024icenet} develop the ICEnet,
+constraints during training.  \citet{richman2024icenet} develop the ICEnet,
 which adds smoothness and monotonicity penalty terms to the loss function so
 that the network's \Gls{ice} outputs vary in a manner
 consistent with actuarial domain knowledge.  Applied to claims frequency
@@ -2112,10 +2109,10 @@ Section~\ref{sec:comparison_constrained_nn}.
 \noindent
 Alongside neural-network approaches, tree-based ensemble methods have become
 widely used for insurance cost prediction on structured tabular data.
-\citep{orji2024explainable} apply \glspl{rf} and gradient-boosted trees to
+\citet{orji2024explainable} apply \glspl{rf} and gradient-boosted trees to
 health insurance cost data and report predictive performance comparable to, and
 in some configurations exceeding, that of neural networks.  More broadly,
-\citep{grinsztajn2022why} provide systematic evidence that tree-based models,
+\citet{grinsztajn2022why} provide systematic evidence that tree-based models,
 particularly gradient-boosted implementations such as \gls{xgboost}
 \citep{chen2016xgboost}, building on the gradient boosting framework of
 \citep{friedman2001greedy}, frequently match or outperform \glspl{dnn}
@@ -2134,9 +2131,9 @@ and an \gls{xgboost} regressor are fitted as benchmarks to contextualise the
 
 \noindent
 Earlier work on algorithmic health cost prediction by
-\citep{bertsimas2008algorithmic} demonstrated the potential of machine-learning
+\citet{bertsimas2008algorithmic} demonstrated the potential of machine-learning
 methods to outperform traditional actuarial approaches, while
-\citep{duncan2016testing} tested alternative regression frameworks for
+\citet{duncan2016testing} tested alternative regression frameworks for
 predictive modelling of health care costs in the North American context.
 These studies confirm that health insurance cost prediction is a well-studied
 regression problem where model flexibility can yield meaningful improvements
@@ -3005,7 +3002,7 @@ profiles on which the high-cost interpretability analysis is based.
 Shapley values originate in cooperative game theory and provide a principled axiomatic method for allocating a total payoff among players \citep{shapley1953value}. In machine learning, the players are the input variables and the payoff is the model prediction. The Shapley value of feature \(j\) measures the average marginal contribution of that feature across all possible subsets of features, as formalised in equation~\eqref{eq:shapley_exact}. The Shapley value is the unique solution satisfying four axioms: efficiency (contributions sum to the total prediction shift), symmetry (identically contributing features receive identical values), dummy (a feature that never changes the value receives zero), and additivity \citep{shapley1953value}.
 
 \noindent
-The \gls{shap} framework connects Shapley values to machine learning model interpretation \citep{lundberg2017unified}. The additive decomposition in equation~\eqref{eq:shapley_decomp} provides a local explanation of an individual prediction. \citep{lundberg2017unified} proved that this is the only additive feature attribution method satisfying efficiency, dummy and symmetry simultaneously, which is why it constitutes the theoretical foundation for the \gls{shap} computational framework.  \citep{covert2021explaining} provide a unifying removal-based framework that relates \gls{shap} to other explanation methods, \citep{sundararajan2020many} examine the many distinct Shapley value formulations that arise under different baseline and feature-dependence assumptions, and \citep{lundberg2020local} extend Shapley-based explanations from local to global understanding for tree models.
+The \gls{shap} framework connects Shapley values to machine learning model interpretation \citep{lundberg2017unified}. The additive decomposition in equation~\eqref{eq:shapley_decomp} provides a local explanation of an individual prediction. \citet{lundberg2017unified} proved that this is the only additive feature attribution method satisfying efficiency, dummy and symmetry simultaneously, which is why it constitutes the theoretical foundation for the \gls{shap} computational framework.  \citet{covert2021explaining} provide a unifying removal-based framework that relates \gls{shap} to other explanation methods, \citet{sundararajan2020many} examine the many distinct Shapley value formulations that arise under different baseline and feature-dependence assumptions, and \citet{lundberg2020local} extend Shapley-based explanations from local to global understanding for tree models.
 
 \noindent
 Shapley-based explanations can be interpreted locally or globally. A local explanation focuses on a single policyholder profile and explains why the model assigned a particular predicted cost. A global explanation summarises feature contributions across many observations. A common global importance measure is the mean absolute Shapley value:
@@ -3080,7 +3077,7 @@ Shapley-based explanations have become widespread in applied machine learning
 \citep{kaushik2022machine}. Conditional Shapley analysis, in which attributions
 are computed for profiles within a specific region of the predicted-cost
 distribution such as the simulated high-cost tail, is not a routine component
-of these analyses. The survey by \citep{rozemberczki2022shapley} catalogues a
+of these analyses. The survey by \citet{rozemberczki2022shapley} catalogues a
 wide range of Shapley-value applications in machine learning but does not
 discuss conditioning Shapley attribution on simulated prediction regions.
 
@@ -3104,11 +3101,10 @@ covert2021explaining}, but gives less attention to the combined question of
 how a fitted prediction model behaves across many simulated policyholder
 profiles, how the resulting model-implied predicted-cost distribution behaves,
 and which variables the fitted model attributes to high-cost simulated
-profiles.  Recent work by \citep{blomerus2025longterm} demonstrates the
-viability of deep learning for long-term life insurance valuations,
-reinforcing the case for neural-network-based approaches in insurance
-applications; the present study extends this line of inquiry to health
-insurance cost prediction with an added simulation and attribution layer.
+profiles.  Building on the deep-learning approach established by
+\citet{blomerus2025longterm} in the life insurance domain, the present
+study extends this line of inquiry to health insurance cost prediction with
+an added simulation and attribution layer.
 
 \noindent
 The framework addresses this gap by connecting the three components
