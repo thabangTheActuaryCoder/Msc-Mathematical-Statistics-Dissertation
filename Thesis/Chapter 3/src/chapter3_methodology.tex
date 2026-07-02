@@ -5,24 +5,42 @@
 \section{Methods and Data}
 \label{chap:methods_and_data}
 
+\subsection{Introduction}
+\label{sec:chapter3_introduction}
+
 \noindent
 This chapter translates the conceptual \gls{dnn}, \gls{mc} and Shapley framework
 of Chapter~\ref{sec:literature_review} into a concrete empirical workflow
 applied to the Kaggle Insurance Data for Machine Learning benchmark
-dataset \citep{kaggleInsuranceDataML}, described in
-Section~\ref{sec:data_source_variable_structure}.  The chapter proceeds sequentially:
-it first describes the data and the exploratory diagnostics that motivate
-the main modelling choices; it then specifies the architecture and
-training protocol of the \gls{dnn} that serves as
-the prediction function; and it presents the predictive and structural
-checks that must be satisfied before the network is used in the \gls{mc}
-and Shapley-value analyses.  The \gls{mc} simulation design, a
-validation of the resulting input distribution that diagnoses its
-joint-distribution difference from the training data, a
-residual-augmented sensitivity analysis, and the Shapley-value
-implementation are treated in the sections that follow.  The chapter
-closes with a formal statement of the modelling assumptions and
-interpretive boundaries.
+dataset \citep{kaggleInsuranceDataML}.  Every methodological choice made
+here, from the preprocessing protocol to the Shapley implementation
+settings, is documented with its statistical justification, so that the
+results of Chapter~\ref{sec:results} can be traced back to an explicit
+and reproducible design.
+
+\noindent
+The chapter is organised as follows.
+Section~\ref{sec:data_source_variable_structure} describes the data
+source and variable structure, and
+Section~\ref{sec:feature_encoding_input_standardisation} sets out the
+data audit, partitioning, preprocessing and leakage-prevention protocol.
+Section~\ref{sec:eda_model_simulation_design} presents the exploratory
+diagnostics that motivate the main modelling and simulation choices.
+Section~\ref{sec:dnn_specification_training} specifies the architecture
+and training protocol of the \gls{dnn} that serves as the prediction
+function, together with the \gls{glm} and tree-based benchmark models,
+and Section~\ref{sec:model_validation_diagnostics} presents the
+predictive and structural checks that must be satisfied before the
+network is used in the simulation and attribution analyses.
+Section~\ref{sec:mc_simulation_design} sets out the parametric \gls{mc}
+simulation design, Section~\ref{sec:mc_input_validation} validates the
+resulting input distribution by diagnosing its joint-distribution
+difference from the training data, and
+Section~\ref{sec:residual_augmented_mc} develops the residual-augmented
+sensitivity analysis.  Section~\ref{sec:shapley_attribution_simulated_profiles}
+details the Shapley-value implementation for simulated profiles, and
+Section~\ref{sec:modelling_assumptions} closes the chapter with a formal
+statement of the modelling assumptions and interpretive boundaries.
 
 % ----------------------------------------
 % 3.1 DATA SOURCE AND VARIABLE STRUCTURE
