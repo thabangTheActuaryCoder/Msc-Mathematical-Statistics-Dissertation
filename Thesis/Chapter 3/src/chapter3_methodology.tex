@@ -405,9 +405,9 @@ in Table~\ref{tab:numeric_correlations}.
 Pairwise correlations among the predictors are negligible
 ($|r| \le 0.002$), and the marginal correlations with \texttt{charges} are
 weak.  This does not imply that the predictors are
-unimportant---the deep
+unimportant (the deep
 network can learn complex nonlinear interactions invisible to a linear
-correlation matrix---but it does provide empirical support for the
+correlation matrix), but it does provide empirical support for the
 product-marginal independence assumption used in the \gls{mc}
 simulation.  The correlation heatmap in Figure~\ref{fig:correlation_heatmap}
 confirms the uniformly pale off-diagonal shading.
@@ -519,9 +519,9 @@ effect of one variable on charges depends on the level of another.
 \noindent
 Figure~\ref{fig:interaction_smoker_coverage_ch3} shows that the smoker
 effect is present at every coverage tier but is amplified at higher
-coverage levels. At the Basic tier, the smoker--non-smoker difference in
-mean charges is approximately R5\,000 (R17\,000 versus R12\,000), whereas
-at the Premium tier the difference widens to approximately R5\,000--R6\,000
+coverage levels. At the Basic tier, the difference in mean charges between
+smokers and non-smokers is approximately R5\,000 (R17\,000 versus R12\,000), whereas
+at the Premium tier the difference widens to approximately R5\,000 to R6\,000
 on a higher base (R22\,000 versus R17\,000). The boxplots confirm that
 smokers consistently occupy a higher distributional range within each tier.
 Figure~\ref{fig:interaction_smoker_medical_ch3} reveals a consistent
@@ -1964,7 +1964,7 @@ and subsequently encoded using the reference-category scheme.
 \subsubsection{Goodness-of-fit and support checks}
 
 For continuous variables, empirical histograms and density overlays are
-inspected, and Kolmogorov--Smirnov (K-S) and Anderson--Darling (A-D)
+inspected, and Kolmogorov-Smirnov (K-S) and Anderson-Darling (A-D)
 statistics are recorded.  These two statistics summarise complementary
 aspects of marginal fit: the K-S statistic measures the maximum
 absolute deviation between the empirical and fitted cumulative distribution
