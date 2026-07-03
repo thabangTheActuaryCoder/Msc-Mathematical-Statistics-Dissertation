@@ -77,9 +77,7 @@ Section~\ref{sec:dnn_specification_training}.
 
 \begin{table}[H]
 \centering
-\caption{\Gls{dnn} training and model selection algorithm.}
-\label{tab:dnn_training_algorithm_annex}
-\small
+{\small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{p{0.92\textwidth}}
 \toprule
@@ -122,7 +120,9 @@ training history, selected epoch $e^{*}$. \\[3pt]
 7. Save $\widehat{\theta}$, architecture specification, standardisation
    parameters, training history, and all evaluation outputs. \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
+\caption{\Gls{dnn} training and model selection algorithm.}
+\label{tab:dnn_training_algorithm_annex}
 \end{table}
 
 % -------------------------------------------------------------
@@ -131,9 +131,7 @@ training history, selected epoch $e^{*}$. \\[3pt]
 
 \begin{table}[H]
 \centering
-\caption{Gamma \gls{glm} with log link fitting algorithm.}
-\label{tab:glm_algorithm_annex}
-\small
+{\small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{p{0.92\textwidth}}
 \toprule
@@ -176,7 +174,9 @@ $\widehat{\phi}$. \\[3pt]
 5. Evaluate \gls{r2}, \gls{rmse} and \gls{mae} on the training,
    validation and test partitions. \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
+\caption{Gamma \gls{glm} with log link fitting algorithm.}
+\label{tab:glm_algorithm_annex}
 \end{table}
 
 % -------------------------------------------------------------
@@ -185,9 +185,7 @@ $\widehat{\phi}$. \\[3pt]
 
 \begin{table}[H]
 \centering
-\caption{\Gls{rf} regression training algorithm.}
-\label{tab:rf_algorithm_annex}
-\small
+{\small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{p{0.92\textwidth}}
 \toprule
@@ -226,7 +224,9 @@ $\{T_1, \ldots, T_B\}$. \\[3pt]
 4. Evaluate \gls{r2}, \gls{rmse} and \gls{mae} on the training,
    validation and test partitions on the original monetary scale. \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
+\caption{\Gls{rf} regression training algorithm.}
+\label{tab:rf_algorithm_annex}
 \end{table}
 
 % -------------------------------------------------------------
@@ -235,9 +235,7 @@ $\{T_1, \ldots, T_B\}$. \\[3pt]
 
 \begin{table}[H]
 \centering
-\caption{\Gls{xgboost} gradient-boosted tree regression training algorithm.}
-\label{tab:xgb_algorithm_annex}
-\small
+{\small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{p{0.92\textwidth}}
 \toprule
@@ -285,6 +283,8 @@ $\hat{f}_{M^{*}}(\mathbf{z})$, selected round $M^{*}$. \\[3pt]
 5. Evaluate \gls{r2}, \gls{rmse} and \gls{mae} on the training,
    validation and test partitions on the original monetary scale. \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
+\caption{\Gls{xgboost} gradient-boosted tree regression training algorithm.}
+\label{tab:xgb_algorithm_annex}
 \end{table}
 

@@ -4,7 +4,7 @@
 \section{MC Simulation Procedure}
 \label{annexure:mc_simulation}
 
-The parametric \gls{mc} simulation generates $B = 100\,000$ synthetic policyholder profiles from marginal distributions estimated on the full dataset. Each profile is encoded, standardised and scored through the trained FunnelDNN to produce a model-implied predicted-cost distribution.
+The parametric \gls{mc} simulation generates $B = 100\,000$ synthetic policyholder profiles from marginal distributions estimated from the training partition only, in accordance with the leakage-prevention protocol of Section~\ref{sec:mc_simulation_design}. Each profile is encoded, standardised and scored through the trained FunnelDNN to produce a model-implied predicted-cost distribution.
 
 % -------------------------------------------------------------
 \subsection{Marginal Distributions}
@@ -14,8 +14,6 @@ Table~\ref{tab:mc_marginals} summarises the marginal distribution assumed for ea
 
 \begin{table}[htbp]
 \centering
-\caption{Marginal distributions used for \gls{mc} profile generation.}
-\label{tab:mc_marginals}
 \begin{tabular}{lll}
 \toprule
 \textbf{Variable} & \textbf{Distribution} & \textbf{Parameters} \\
@@ -33,11 +31,15 @@ occupation              & Multinomial & 4 levels, estimated proportions \\
 coverage\_level         & Multinomial & 3 levels, estimated proportions \\
 \bottomrule
 \end{tabular}
+\caption{Marginal distributions used for \gls{mc} profile generation.}
+\label{tab:mc_marginals}
 \end{table}
 
 % -------------------------------------------------------------
 \subsection{Profile Generation and Scoring}
 \label{annexure:mc_generate}
+
+The simulation procedure itself is specified in Section~\ref{sec:mc_simulation_design} and is not restated here. Algorithm~\ref{alg:mc_simulation} records only the concrete run configuration used in this study: the random seed, the sample size and the encoded input dimension.
 
 \begin{algorithm}[htbp]
 \caption{Parametric \gls{mc} simulation.}
@@ -60,7 +62,7 @@ coverage\_level         & Multinomial & 3 levels, estimated proportions \\
 \subsection{Convergence Diagnostics}
 \label{annexure:mc_convergence}
 
-\gls{mc} convergence was assessed by computing summary statistics (mean, standard deviation, quantiles and \gls{mcse}) at pilot sizes $B \in \{1\,000;\allowbreak\; 2\,500;\allowbreak\; 5\,000;\allowbreak\; 10\,000;\allowbreak\; 25\,000;\allowbreak\; 50\,000;\allowbreak\; 100\,000\}$. Stabilisation of the mean and tail quantiles confirmed that $B = 100\,000$ provides adequate precision.
+\gls{mc} convergence was assessed using the pilot procedure described in Section~\ref{sec:mc_simulation_design}, in which the running mean, standard deviation, selected quantiles and \gls{mcse} are recomputed at increasing pilot sample sizes; the pilot grid is listed in that section and is not repeated here. Stabilisation of the mean and tail quantiles confirmed that $B = 100\,000$ provides adequate precision.
 
 % -------------------------------------------------------------
 \subsection{Residual-Augmented Sensitivity}

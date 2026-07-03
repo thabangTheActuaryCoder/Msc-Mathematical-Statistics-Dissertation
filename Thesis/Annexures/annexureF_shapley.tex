@@ -36,8 +36,6 @@ Table~\ref{tab:dummy_mapping} shows the mapping from the 22 encoded dummy column
 
 \begin{table}[htbp]
 \centering
-\caption{Dummy-to-raw variable aggregation mapping.}
-\label{tab:dummy_mapping}
 \begin{tabular}{lll}
 \toprule
 \textbf{Raw Variable} & \textbf{Encoded Columns} & \textbf{Count} \\
@@ -55,13 +53,15 @@ occupation               & 18, 19, 20 & 3 \\
 coverage\_level          & 21, 22    & 2 \\
 \bottomrule
 \end{tabular}
+\caption{Dummy-to-raw variable aggregation mapping.}
+\label{tab:dummy_mapping}
 \end{table}
 
 % -------------------------------------------------------------
 \subsection{Efficiency Verification}
 \label{annexure:shap_efficiency}
 
-The Shapley efficiency axiom $\bigl(\sum_{j=1}^{p} \phi_j = f(\mathbf{x}) - \phi_0\bigr)$ was verified for all $B$ profiles. The maximum absolute reconstruction error was below 0.5 normalised units, confirming that the gradient-based approximation satisfies the efficiency property to adequate precision.
+The Shapley efficiency axiom $\bigl(\sum_{j=1}^{p} \phi_j = f(\mathbf{x}) - \phi_0\bigr)$ was verified for all $B$ profiles. The maximum absolute reconstruction error was below 0.5 normalised units, confirming that the gradient-based approximation satisfies the efficiency property to adequate precision. It should be noted, however, that 0.5 normalised units corresponds to half a standard deviation of the standardised response, so this check bounds gross approximation failure rather than certifying high accuracy; the relative reconstruction error on the monetary scale is the more informative measure of attribution precision.
 
 % -------------------------------------------------------------
 \subsection{Global Importance}

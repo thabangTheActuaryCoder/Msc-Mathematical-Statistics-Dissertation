@@ -31,11 +31,13 @@ and convergence properties;
 Section~\ref{sec:residual_augmented_results} evaluates the
 residual-augmented sensitivity analysis;
 Section~\ref{sec:shapley_results} reports the Shapley-value attribution
-results at the global and high-cost conditional levels;
+results at the global level;
+Section~\ref{sec:highcost_conditional_results} presents the high-cost
+conditional Shapley analysis;
 Section~\ref{sec:cross_seed_shap} presents the cross-seed Shapley
 attribution stability analysis;
-Section~\ref{sec:shap_interactions} reports the \gls{shap} interaction
-analysis; and
+Section~\ref{sec:shap_interactions} reports the Shapley attribution
+correlation analysis; and
 Section~\ref{sec:mc_shapley_integration} examines the correspondence
 between the \gls{mc} distributional findings and the Shapley
 attribution patterns.
@@ -142,13 +144,17 @@ loss achieved by each configuration across all five phases.
 The selected configuration (\gls{celu}, $\eta = 0.0005$,
 $|\mathcal{B}| = 256$, \gls{nadam}, $\beta_1 = 0.95$) achieves the lowest
 validation loss among all evaluated configurations.
+It should be noted, however, that several phase winners were separated
+only by validation-$R^2$ differences at the fourth decimal place;
+differences of this magnitude lie within the run-to-run variability
+documented in Section~\ref{sec:multiseed_dnn}, so the selected
+configuration should be read as one member of a set of statistically
+equivalent configurations.
 Table~\ref{tab:final_hyperparameters_ch4} records the final training
 configuration.
 
 \begin{table}[H]
 \centering
-\caption{Selected hyperparameters from the sequential comparison.}
-\label{tab:final_hyperparameters_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{p{0.30\textwidth}p{0.25\textwidth}p{0.30\textwidth}}
@@ -162,6 +168,8 @@ configuration.
 5. Momentum $(\beta_1, \beta_2)$ & (0.90, 0.999), (0.95, 0.999), (0.99, 0.999) & (0.95, 0.999) \\
 \bottomrule
 \end{tabular}
+\caption{Selected hyperparameters from the sequential comparison.}
+\label{tab:final_hyperparameters_ch4}
 \end{table}
 
 \subsubsection{Final model predictive performance}
@@ -177,9 +185,6 @@ $R^2$ (equation~\eqref{eq:r_squared}).
 
 \begin{table}[H]
 \centering
-\caption{Predictive performance of the final \gls{dnn} on the original
-monetary scale.}
-\label{tab:final_model_performance_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrrr}
@@ -190,6 +195,9 @@ Training ($n = 524\,288$) & 251 & 291 & 0.9957 \\
 Test ($n = 237\,856$) & 251 & 290 & 0.9957 \\
 \bottomrule
 \end{tabular}
+\caption{Predictive performance of the final \gls{dnn} on the original
+monetary scale.}
+\label{tab:final_model_performance_ch4}
 \end{table}
 
 \noindent
@@ -225,9 +233,6 @@ partitions.
 
 \begin{table}[H]
 \centering
-\caption{Predictive performance comparison across four model classes on
-the original monetary scale.}
-\label{tab:four_model_comparison_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{llrrr}
@@ -256,6 +261,9 @@ the original monetary scale.}
     & Test       & 251 & 290 & 0.9957 \\
 \bottomrule
 \end{tabular}
+\caption{Predictive performance comparison across four model classes on
+the original monetary scale.}
+\label{tab:four_model_comparison_ch4}
 \end{table}
 
 \noindent
@@ -271,9 +279,12 @@ achieves a test $R^2$ of $0.9899$, reducing the \gls{glm}'s test
 \gls{rmse} from R913 to R443 ($51.5\%$) and its \gls{mae} from R624 to
 R358 ($42.6\%$).  However, its training $R^2$ of $0.9946$ versus its
 test $R^2$ of $0.9899$ indicates a degree of overfitting: with
-unrestricted depth (Table~\ref{tab:rf_hyperparameters_ch3}), the
-unpruned trees memorise some training-set noise that the
-minimum-leaf-size constraint of five observations does not remove.  \gls{xgboost} performs substantially
+unrestricted depth (Table~\ref{tab:rf_hyperparameters_ch3}), the fully
+grown trees fit the training partition more closely than they
+generalise.  Because the response is near-deterministic, this gap
+reflects the approximation and estimation variance of fully grown
+trees rather than the memorisation of noise, and the minimum-leaf-size
+constraint of five observations does not remove it.  \gls{xgboost} performs substantially
 better, achieving a test $R^2$ of $0.9955$ with a test \gls{rmse} of
 R297 and a test \gls{mae} of R255.  Its training-to-test gap is
 negligible ($R^2_{\mathrm{train}} = 0.9959$ versus
@@ -281,8 +292,8 @@ $R^2_{\mathrm{test}} = 0.9955$), indicating effective regularisation
 from the learning rate ($\eta = 0.05$) and subsampling parameters.
 The \gls{dnn} marginally outperforms \gls{xgboost} on all three test metrics
 ($R^2$: $0.9957$ versus $0.9955$; \gls{rmse}: R290 versus R297;
-\gls{mae}: R251 versus R255), while showing perfect
-training-to-test agreement.  The \gls{dnn}'s advantage over the
+\gls{mae}: R251 versus R255), while showing training-to-test
+agreement to four rounded decimals.  The \gls{dnn}'s advantage over the
 tree-based models, although modest in absolute terms, is consistent
 with its ability to learn smooth, continuous mappings through
 backpropagation, whereas tree-based models approximate these mappings
@@ -300,9 +311,10 @@ Figure~\ref{fig:four_model_comparison_ch4} visualises the test-set
 comparison across all four model classes.  The \gls{glm}'s inferior fit
 is attributable to the log-link's multiplicative mean structure, which
 does not match the additive data-generating process underlying this
-dataset.  The charges variable is constructed as an approximately linear
-function of the input features plus noise; the \gls{glm}'s exponential
-inverse-link therefore introduces systematic model misspecification.
+dataset.  The charges variable is generated by a deterministic, approximately
+additive cost formula with a bounded random perturbation; the
+\gls{glm}'s exponential inverse-link therefore introduces systematic
+model misspecification.
 The \gls{rf} and \gls{xgboost} close the gap substantially, with \gls{xgboost}
 nearly matching the \gls{dnn}.  The \gls{dnn} learns the additive
 structure directly through its flexible hidden-layer representations and
@@ -342,9 +354,10 @@ Kaggle benchmark dataset's \citep{kaggleInsuranceDataML} algorithmically generat
 \gls{xgboost} represents the current state of the art for tabular data,
 the comparison provides practical benchmark context that situates the
 \gls{dnn} within the actuarial modelling landscape.  The scope of both
-claims is bounded by the data: the deterministic cost formula underlying
-the benchmark \citep{kaggleInsuranceDataML} produces a strong,
-noise-free covariate-response structure, so the relative model ranking
+claims is bounded by the data: the deterministic cost formula with
+bounded perturbation underlying the benchmark
+\citep{kaggleInsuranceDataML} produces a strong, near-deterministic
+covariate-response structure, so the relative model ranking
 holds within this setting rather than universally.
 
 The finding that a \gls{dnn} outperforms a classical \gls{glm}
@@ -359,10 +372,9 @@ superiority is not universal across all tabular insurance datasets
 \citep{richman2021ai}.
 
 A related line of actuarial research applies explicit shape constraints
-to neural networks during training.  \citet{richman2024icenet} develop
-the ICEnet, which adds smoothness and monotonicity penalties to the loss
-function so that \Gls{ice} outputs remain
-actuarially reasonable.  Because that study targets claims frequency
+to neural networks during training, exemplified by the ICEnet of
+\citet{richman2024icenet}, reviewed in
+Chapter~\ref{sec:literature_review}.  Because that study targets claims frequency
 under a Poisson deviance criterion rather than continuous monetary costs,
 a direct numerical comparison with the present results is not possible;
 the methodological differences are discussed in
@@ -402,9 +414,6 @@ predictive performance for each of the five seeds.
 
 \begin{table}[H]
 \centering
-\caption{Test-set predictive performance of the FunnelDNN across five
-random seeds (original monetary scale).}
-\label{tab:multiseed_test_performance_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrrr}
@@ -420,13 +429,18 @@ random seeds (original monetary scale).}
 \textbf{Mean $\pm$ SD} & $251.2 \pm 0.4$ & $291.0 \pm 0.0$ & $0.99566 \pm 0.00001$ \\
 \bottomrule
 \end{tabular}
+\caption{Test-set predictive performance of the FunnelDNN across five
+random seeds (original monetary scale).}
+\label{tab:multiseed_test_performance_ch4}
 \end{table}
 
 \noindent
 The cross-seed variability is negligible: the test $R^2$ ranges from
 $0.99564$ to $0.99567$ (standard deviation $= 0.00001$), the test
-\gls{rmse} is R291 in all five seeds, and the test \gls{mae} varies
-by less than R1 across seeds.  These results confirm that the
+\gls{rmse} rounds to R291 in all five seeds (R290--R291 across
+identical-configuration runs, given the R290 test value reported for
+seed~42 in Table~\ref{tab:final_model_performance_ch4}), and the test
+\gls{mae} varies by less than R1 across seeds.  These results confirm that the
 predictive performance reported in
 Table~\ref{tab:final_model_performance_ch4} is not an artefact of a
 fortunate random initialisation.
@@ -464,9 +478,6 @@ performance.
 
 \begin{table}[H]
 \centering
-\caption{\Gls{rf} performance: default versus tuned
-hyperparameters (test set, original monetary scale).}
-\label{tab:tuned_rf_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrrr}
@@ -478,6 +489,9 @@ Default & 358 & 443 & 0.9899 \\
 Tuned   & 320 & 385 & 0.9924 \\
 \bottomrule
 \end{tabular}
+\caption{\Gls{rf} performance: default versus tuned
+hyperparameters (test set, original monetary scale).}
+\label{tab:tuned_rf_ch4}
 \end{table}
 
 \noindent
@@ -494,9 +508,6 @@ Table~\ref{tab:tuned_xgb_ch4} compares the default and tuned
 
 \begin{table}[H]
 \centering
-\caption{\Gls{xgboost} performance: default versus tuned hyperparameters
-(test set, original monetary scale).}
-\label{tab:tuned_xgb_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrrr}
@@ -508,6 +519,9 @@ Default & 255 & 297 & 0.9955 \\
 Tuned   & 252 & 292 & 0.9956 \\
 \bottomrule
 \end{tabular}
+\caption{\Gls{xgboost} performance: default versus tuned hyperparameters
+(test set, original monetary scale).}
+\label{tab:tuned_xgb_ch4}
 \end{table}
 
 \noindent
@@ -524,9 +538,6 @@ comparison across all six model configurations.
 
 \begin{table}[H]
 \centering
-\caption{Test-set performance comparison across six model
-configurations (original monetary scale).}
-\label{tab:six_model_comparison_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrrr}
@@ -542,6 +553,9 @@ $\boldsymbol{R^2}$ \\
 \gls{dnn} (FunnelDNN) & 251 & 290 & 0.9957 \\
 \bottomrule
 \end{tabular}
+\caption{Test-set performance comparison across six model
+configurations (original monetary scale).}
+\label{tab:six_model_comparison_ch4}
 \end{table}
 
 \noindent
@@ -567,9 +581,6 @@ variability of the test $R^2$ for each model class.
 
 \begin{table}[H]
 \centering
-\caption{Cross-seed variability of test $R^2$ across four model
-classes (five random seeds each).}
-\label{tab:multiseed_all_models_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrr}
@@ -580,9 +591,12 @@ classes (five random seeds each).}
 \gls{glm} (Gamma, log-link) & 0.9571 & $< 0.0001$ \\
 \gls{rf} (tuned) & 0.9924 & $0.0001$ \\
 \gls{xgboost} (tuned) & 0.9956 & $< 0.0001$ \\
-\gls{dnn} (FunnelDNN) & 0.9957 & $0.0000$ \\
+\gls{dnn} (FunnelDNN) & 0.9957 & $< 0.0001$ \\
 \bottomrule
 \end{tabular}
+\caption{Cross-seed variability of test $R^2$ across four model
+classes (five random seeds each).}
+\label{tab:multiseed_all_models_ch4}
 \end{table}
 
 \noindent
@@ -636,8 +650,9 @@ of $0.012$ and mean absolute differences between $0.003$ and $0.004$
 (Figure~\ref{fig:threeway_crosstabs_annex}), confirming that
 higher-order interactions are negligible.  A permutation-based energy
 distance test ($1\,000$ permutations) returned $p = 0.730$
-(Figure~\ref{fig:energy_distance_annex}), indicating that the joint
-distributions are indistinguishable by this non-parametric criterion.
+(Figure~\ref{fig:energy_distance_annex}), providing no evidence of a
+difference between the joint distributions under this non-parametric
+criterion.
 A t-SNE projection showed thoroughly intermixed point clouds across all
 identified clusters (Figure~\ref{fig:tsne_joint_overlay_annex}),
 providing nonlinear confirmation that the \gls{mc} profiles do not
@@ -667,9 +682,6 @@ summary statistics.
 
 \begin{table}[H]
 \centering
-\caption{Distributional summary of the \gls{mc} predicted costs
-($B = 100\,000$).}
-\label{tab:mc_distribution_summary_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lr}
@@ -679,7 +691,7 @@ summary statistics.
 Mean & R16\,752 \\
 Standard deviation & R4\,417 \\
 Skewness & $0.132$ \\
-Kurtosis & $-0.337$ \\
+Excess kurtosis & $-0.337$ \\
 Minimum & R4\,172 \\
 25th percentile & R13\,621 \\
 Median & R16\,632 \\
@@ -690,11 +702,14 @@ Median & R16\,632 \\
 Maximum & R31\,781 \\
 \bottomrule
 \end{tabular}
+\caption{Distributional summary of the \gls{mc} predicted costs
+($B = 100\,000$).}
+\label{tab:mc_distribution_summary_ch4}
 \end{table}
 
 \noindent
 The distribution is approximately symmetric (skewness $= 0.132$) and
-slightly platykurtic (kurtosis $= -0.337$), with a mean of R16\,752 and
+slightly platykurtic (excess kurtosis $= -0.337$), with a mean of R16\,752 and
 a standard deviation of R4\,417. The interquartile range spans
 R13\,621 to R19\,792, and the upper tail extends to a maximum predicted
 cost of R31\,781. The near-zero skewness and the close agreement
@@ -729,9 +744,6 @@ simulation size.
 
 \begin{table}[H]
 \centering
-\caption{\gls{mc} convergence: running summaries and MCSE by
-simulation size.}
-\label{tab:mc_convergence_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{rrrrrrr}
@@ -747,6 +759,9 @@ $B$ & Mean & SD & Median & P95 & P99 & MCSE \\
 100\,000 & 16\,752 & 4\,417 & 16\,632 & 24\,249 & 27\,049 & 14.0 \\
 \bottomrule
 \end{tabular}
+\caption{\gls{mc} convergence: running summaries and MCSE by
+simulation size.}
+\label{tab:mc_convergence_ch4}
 \end{table}
 
 \noindent
@@ -759,17 +774,20 @@ distributional and attribution analyses.
 The theoretical \gls{mcse} for the sample mean of $B$ independent draws
 from a distribution with standard deviation $\sigma$ is
 $\sigma / \sqrt{B}$, which decreases at rate
-$\mathcal{O}(B^{-1/2})$.  The empirical convergence rate in
-Table~\ref{tab:mc_convergence_ch4} closely follows this theoretical
-law: the ratio
+$\mathcal{O}(B^{-1/2})$.  Because the reported \gls{mcse} is computed
+as the running standard deviation divided by $\sqrt{B}$, the ratios in
+Table~\ref{tab:mc_convergence_ch4} follow this scaling largely by
+construction: the ratio
 $\mathrm{MCSE}(B{=}1\,000) \,/\, \mathrm{MCSE}(B{=}10\,000)
-= 136.8 / 44.3 = 3.09$ matches the theoretical ratio
+= 136.8 / 44.3 = 3.09$ agrees with the theoretical ratio
 $\sqrt{10\,000 / 1\,000} = \sqrt{10} \approx 3.16$, and
 $\mathrm{MCSE}(B{=}1\,000) \,/\, \mathrm{MCSE}(B{=}100\,000)
-= 136.8 / 14.0 = 9.77$ matches $\sqrt{100} = 10.0$.  The
-simulation therefore exhibits the canonical \gls{mc} convergence
-behaviour, confirming that no pathological variance inflation or serial
-dependence is present in the simulated profiles.
+= 136.8 / 14.0 = 9.77$ agrees with $\sqrt{100} = 10.0$, with the small
+departures reflecting movement in the running standard deviation.  The
+table therefore verifies the expected $\mathcal{O}(B^{-1/2})$ scaling
+arithmetic; the substantive evidence for convergence is the practical
+stability of the estimated distributional summaries across pilot
+simulation sizes.
 
 The running upper-tail percentiles in
 Table~\ref{tab:mc_convergence_ch4} provide an empirical assessment of
@@ -788,16 +806,20 @@ for the conditional Shapley analysis that follows.
 \label{sec:cross_seed_mc_ch4}
 
 To assess whether the \gls{mc} predicted-cost distribution is
-sensitive to the \gls{dnn} training seed, the $B = 100\,000$ simulation was
-repeated using each of the five trained networks from
-Section~\ref{sec:multiseed_dnn}.  The cross-seed \gls{mc}
+sensitive to the \gls{dnn} training seed, the simulation was repeated
+at a reduced size of $B = 10\,000$ using each of the five trained
+networks from Section~\ref{sec:multiseed_dnn}.  The cross-seed \gls{mc}
 diagnostics are presented in
 \ref{annexure:multiseed_mc}
 (Figures~\ref{fig:mc_seed_distributions_annex}
 to~\ref{fig:mc_convergence_rate_annex}).
 
 The cross-seed mean predicted cost is R16\,649 $\pm$ R15 across the
-five seeds, representing a coefficient of variation below $0.1\%$.  The
+five seeds, representing a coefficient of variation below $0.1\%$.
+The gap of approximately R100 between this cross-seed mean and the
+base-run mean of R16\,752 (Table~\ref{tab:mc_distribution_summary_ch4})
+is consistent with \gls{mc} variability at the reduced simulation size
+together with seed-to-seed network differences.  The
 predicted-cost density overlays are virtually identical across seeds
 (Figure~\ref{fig:mc_seed_distributions_annex}), and the bootstrap 95\%
 confidence intervals overlap within a narrow band of approximately R15
@@ -891,8 +913,10 @@ The residual-augmented sensitivity analysis was repeated for all five
 (\ref{annexure:multiseed_residual}) compares the base and
 augmented distributions with cross-seed dispersion.  The residual
 standard deviation $\hat{\sigma}_{\varepsilon} \approx \text{R}290$ is
-consistent across all five seeds, and the augmentation adds
-approximately 2\% extra variance to the predicted-cost distribution.
+consistent across all five seeds, and the augmentation inflates the
+variance of the predicted-cost distribution by approximately $0.4\%$
+(equivalently, its standard deviation by approximately $0.2\%$),
+relative to the base standard deviation of R4\,417.
 The base-to-augmented distributional shift is negligible in every seed,
 confirming that the residual-augmented conclusions of
 Section~\ref{sec:residual_augmented_results} are not sensitive to the training initialisation.
@@ -930,8 +954,6 @@ reports the numerical values.
 
 \begin{table}[H]
 \centering
-\caption{Global Shapley feature importance for all 11 raw variables.}
-\label{tab:shap_global_importance_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrr}
@@ -951,6 +973,8 @@ reports the numerical values.
 \texttt{region} & $+0.002$ & $0.057$ \\
 \bottomrule
 \end{tabular}
+\caption{Global Shapley feature importance for all 11 raw variables.}
+\label{tab:shap_global_importance_ch4}
 \end{table}
 
 \noindent
@@ -1019,9 +1043,6 @@ values and the corresponding high-cost set sizes.
 
 \begin{table}[H]
 \centering
-\caption{High-cost thresholds from the \gls{mc} predicted-cost
-distribution.}
-\label{tab:highcost_thresholds_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrrrr}
@@ -1036,6 +1057,9 @@ $\tau_{95}$ & 0.95 & 24\,249 & 5\,000 & 0.05 \\
 $\tau_{99}$ & 0.99 & 27\,049 & 1\,000 & 0.01 \\
 \bottomrule
 \end{tabular}
+\caption{High-cost thresholds from the \gls{mc} predicted-cost
+distribution.}
+\label{tab:highcost_thresholds_ch4}
 \end{table}
 
 \subsubsection{Conditional versus global importance}
@@ -1085,8 +1109,6 @@ values.
 
 \begin{table}[H]
 \centering
-\caption{Mean absolute Shapley values: global and conditional at each high-cost threshold.}
-\label{tab:shap_conditional_values_ch4}
 \small
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{lrrrrr}
@@ -1108,6 +1130,9 @@ $\boldsymbol{\tau_{95}}$ & $\boldsymbol{\tau_{99}}$ &
 \texttt{region} & 0.057 & 0.062 & 0.063 & 0.063 & $[0.060,\; 0.065]$ \\
 \bottomrule
 \end{tabular}
+\caption{Mean absolute Shapley values: global and conditional at each
+high-cost threshold (bootstrap percentile intervals).}
+\label{tab:shap_conditional_values_ch4}
 \end{table}
 
 The ranking reversal at $\tau_{99}$ is based on
@@ -1153,7 +1178,7 @@ increase in the conditional importance of
 \texttt{coverage\_\allowbreak{}level}, \texttt{medical\_\allowbreak{}history} and
 \texttt{family\_medical\_\allowbreak{}history} as the threshold moves from the global
 level through $\tau_{90}$ and $\tau_{95}$ to $\tau_{99}$. In contrast,
-\texttt{smoker} shows a marked decline in conditional importance at the
+\texttt{smoker} shows a modest decline in conditional importance at the
 most extreme threshold ($0.563$ at $\tau_{99}$ versus $0.578$ globally),
 consistent with the compositional evidence discussed above.
 
@@ -1275,9 +1300,9 @@ The coefficient of variation of the mean $|\text{SHAP}|$ values is below
 $0.1\%$ for every variable
 (Figure~\ref{fig:shap_cross_seed_dispersion_annex}), confirming that the
 magnitude of the attributions, not merely the ranking, is stable across
-seeds. This result is invariant of the seed, indicating that the model
+seeds. This result is invariant across seeds, indicating that the model
 converges to a consistent attribution structure in each case despite
-differences in random initialization.
+differences in random initialisation.
 
 \subsubsection{Conditional Shapley stability at $\tau_{99}$}
 
@@ -1319,14 +1344,20 @@ benchmark dataset.
 
 
 % =============================================================
-\subsection{SHAP Interaction Analysis}
+\subsection{Shapley Attribution Correlation Analysis}
 \label{sec:shap_interactions}
 
 To assess whether the \gls{dnn} has learned meaningful pairwise interactions
-among the input variables, the \gls{shap} interaction structure was analysed by
-computing the pairwise Pearson correlations between all
-$\binom{11}{2} = 55$ pairs of raw-variable Shapley-value vectors across
-the $B = 100\,000$ \gls{mc} profiles.
+among the input variables, the correlation structure of the Shapley
+attributions was analysed by computing the pairwise Pearson correlations
+between all $\binom{11}{2} = 55$ pairs of raw-variable Shapley-value
+vectors across the $B = 100\,000$ \gls{mc} profiles.  Correlations
+between per-feature attribution vectors are a coarse proxy for
+interaction structure: they cannot detect interactions that are masked
+by dominant main effects, and a definitive statement about pairwise
+interactions would require formal \gls{shap} interaction values
+(Shapley--Taylor indices).  The results below should therefore be read
+as descriptive evidence rather than a formal interaction test.
 
 \begin{figure}[H]
 \centering
@@ -1337,23 +1368,25 @@ the $B = 100\,000$ \gls{mc} profiles.
 
 \noindent
 Figure~\ref{fig:shap_interaction_heatmap_ch4} displays the pairwise
-interaction heatmap.  All 55 off-diagonal correlations fall below
-$|r| = 0.033$, indicating that the Shapley contributions of different
-variables are essentially uncorrelated across profiles.  The top 15
-pairwise correlations, visualised in
+attribution-correlation heatmap.  All 55 off-diagonal correlations fall
+below $|r| = 0.033$, indicating that the Shapley contributions of
+different variables are essentially uncorrelated across profiles.  The
+top 15 pairwise correlations, visualised in
 Figure~\ref{fig:shap_interaction_pairs_annex}
-(\ref{annexure:multiseed_interactions}), confirm that no pair
-exhibits a correlation exceeding $|r| = 0.033$.
+(\ref{annexure:multiseed_interactions}), are consistent with this
+pattern: no pair exhibits a correlation exceeding $|r| = 0.033$.
 
-This finding has two implications.  First, it confirms that the \gls{dnn} has
-learned an essentially additive mapping from the input features to the
-predicted cost, consistent with the additive data-generating process of
-the benchmark dataset.  Second, it validates the use of main-effect
-Shapley summaries (global mean $|\text{SHAP}|$ and conditional mean
-$|\text{SHAP}|$) as adequate characterisations of the model's
-attribution structure: because pairwise interactions are negligible, the
-main-effect Shapley values capture the full attribution pattern without
-material loss of information.
+This finding has two implications.  First, it is consistent with the
+\gls{dnn} having learned an essentially additive mapping from the input
+features to the predicted cost, in line with the additive
+data-generating process of the benchmark dataset.  Second, it supports
+the use of main-effect Shapley summaries (global mean $|\text{SHAP}|$
+and conditional mean $|\text{SHAP}|$) as adequate characterisations of
+the model's attribution structure: with no pairwise attribution
+correlations of material size, the main-effect Shapley values appear to
+capture the attribution pattern without material loss of information,
+subject to the caveat that this diagnostic cannot rule out interactions
+masked by dominant main effects.
 
 
 % =============================================================
@@ -1419,12 +1452,13 @@ $1.28 \times 10^{-5}$ across five random seeds
 predicted cost varies by R15 (Section~\ref{sec:cross_seed_mc_ch4}); and
 the global Shapley importance ranking is perfectly preserved across all
 ten pairwise seed combinations ($\rho_{\mathrm{S}} = 1.0000$,
-Figure~\ref{fig:shap_spearman_heatmap_ch4}).  The $\tau_{99}$ ranking
-reversal is replicated in all five seeds
-(Figure~\ref{fig:cond_shap_tail_stability_ch4}), and the \gls{shap}
-interaction analysis confirms that the \gls{dnn} has learned an essentially
-additive mapping (all pairwise correlations below $|r| = 0.033$,
-Figure~\ref{fig:shap_interaction_heatmap_ch4}).  These convergent
+Figure~\ref{fig:shap_spearman_heatmap_ch4}).  This robustness extends
+to the extreme tail through the cross-seed replication of the
+$\tau_{99}$ ranking reversal (this replication result is presented in
+Section~\ref{sec:cross_seed_shap}), and the Shapley attribution
+correlation analysis is consistent with the \gls{dnn} having learned an
+essentially additive mapping (all pairwise correlations below
+$|r| = 0.033$, Figure~\ref{fig:shap_interaction_heatmap_ch4}).  These convergent
 findings establish that the entire chain of results, from predictive
 performance through the \gls{mc} distribution to the global and
 conditional Shapley attributions, is invariant to the stochastic training

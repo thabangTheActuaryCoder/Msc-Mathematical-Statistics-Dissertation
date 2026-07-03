@@ -18,13 +18,11 @@ Hyperparameters were selected through a five-phase sequential comparison procedu
     \item Momentum $\beta_1$ ($0.90, 0.95, 0.99$) with $\beta_2 = 0.999$ fixed, using the best optimiser.
 \end{enumerate}
 
-Each configuration was trained with early stopping (patience of 10 validation checks at 5-epoch intervals) up to a maximum of 100 epochs. Table~\ref{tab:hyper_full} reports the full results.
+Each configuration was trained with early stopping (patience of 10 validation checks at 5-epoch intervals) up to a maximum of 200 epochs. Table~\ref{tab:hyper_full} reports the full results.
 
 \begin{table}[htbp]
 \centering
-\caption{Full five-phase hyperparameter comparison results.}
-\label{tab:hyper_full}
-\footnotesize
+{\footnotesize
 \begin{tabular}{llrrr}
 \toprule
 \textbf{Phase} & \textbf{Configuration} & \textbf{Best Epoch} & \textbf{Val \gls{r2}} & \textbf{Time (s)} \\
@@ -55,7 +53,9 @@ Each configuration was trained with early stopping (patience of 10 validation ch
   & $\beta_1=0.95$ & 40 & 0.995690 & 427.8 \\
   & $\beta_1=0.99$ & 95 & 0.995685 & 621.8 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
+\caption{Full five-phase hyperparameter comparison results.}
+\label{tab:hyper_full}
 \end{table}
 
 % -------------------------------------------------------------
@@ -124,8 +124,6 @@ A \gls{gp} surrogate with a Mat\'{e}rn $\nu = 5/2$ kernel was fitted to the obse
 
 \begin{table}[htbp]
 \centering
-\caption{Best hyperparameter configuration selected for the final \gls{dnn} model.}
-\label{tab:best_hyperparams}
 \begin{tabular}{ll}
 \toprule
 \textbf{Hyperparameter} & \textbf{Selected Value} \\
@@ -138,10 +136,12 @@ Optimiser       & \gls{nadam} \\
 $\beta_1$       & 0.90 \\
 $\beta_2$       & 0.999 \\
 Bias            & False (all layers) \\
-Max epochs      & 100 \\
+Max epochs      & 200 \\
 Early stopping  & 10 checks (every 5 epochs) \\
 Loss function   & \gls{mse} (on normalised scale) \\
 \bottomrule
 \end{tabular}
+\caption{Best hyperparameter configuration selected for the final \gls{dnn} model.}
+\label{tab:best_hyperparams}
 \end{table}
 
