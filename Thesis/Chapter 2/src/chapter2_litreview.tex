@@ -132,13 +132,8 @@ distribution, namely profiles whose fitted predictions exceed a chosen
 upper-tail threshold, as formalised in Section~\ref{high-cost}.
 
 \noindent
-The three components are hierarchically justified: the \gls{dnn} provides
-the fitted prediction surface, \gls{mc} simulation examines its behaviour
-empirically where closed-form analysis is unavailable, and Shapley values
-attribute predictions to input features where the network's parameters
-cannot be interpreted directly.  Used jointly, the simulation and
-attribution layers allow both the output distribution and the feature-level
-drivers of selected regions of that distribution to be examined.  The
+The hierarchical rationale for combining the three components was set out
+in the conceptual framework of Section~\ref{sec:conceptual_framework}; the
 precise distributional choices and simulation procedure are specified in
 Chapter~\ref{chap:methods_and_data}.
 
@@ -644,9 +639,15 @@ surface or parameter uncertainty in \(\widehat{\theta}\). Second, because
 equation~\eqref{eq:input_law}, the simulated profiles populate the input space
 more broadly than the training data, so \(\mathcal{X}_{\mathrm{sim}}\) will
 contain attribute combinations that \(\widehat{m}\) did not encounter during
-training. Residual-augmented \gls{mc} and predictive-uncertainty analyses
-that extend beyond the fitted surface are developed in
-Chapter~\ref{chap:methods_and_data}.
+training. Residual-augmented \gls{mc} analyses that extend beyond the
+fitted surface are developed in Chapter~\ref{chap:methods_and_data},
+although these address only the residual component of predictive
+uncertainty. The parameter-uncertainty component would be quantified by
+the standard deep-learning approaches of \gls{mc} dropout, which
+interprets dropout applied at prediction time as approximate Bayesian
+inference \citep{gal2016dropout}, and deep ensembles of independently
+trained networks \citep{lakshminarayanan2017simple}; both are natural
+extensions of the present design.
 
 % --------------------------------------------------------
 % 2.2.3 Shapley attribution
@@ -1145,29 +1146,39 @@ A \gls{dnn} is a composition of layers that maps an input vector to an
 output prediction. In regression problems, the aim is to approximate an unknown
 function that maps explanatory variables to a continuous response
 \citep{goodfellow2016deep, bishop2006pattern}.  The theoretical basis for
-this approximation role is the universal approximation theorem
-\citep{hornik1989multilayer, cybenko1989approximation}: for any continuous
-function $f: [0,1]^p \to \mathbb{R}$ and any $\varepsilon > 0$, there
-exists a single-hidden-layer network $F$ with a non-polynomial activation
-function such that
+this approximation role is the universal approximation theorem.
+\citet{cybenko1989approximation} established the result for sigmoidal
+activation functions and \citet{hornik1989multilayer} for general
+squashing functions, while the sharpest characterisation is due to
+\citet{leshno1993multilayer}, who showed that a single-hidden-layer
+network can approximate continuous functions on compact sets to arbitrary
+accuracy if and only if the activation function is not a polynomial.  In
+this form the theorem states that for any continuous function
+$f: [0,1]^p \to \mathbb{R}$ and any $\varepsilon > 0$, there exists a
+single-hidden-layer network $F$ with a non-polynomial activation function
+such that
 $\sup_{\mathbf{x}} |F(\mathbf{x}) - f(\mathbf{x})| < \varepsilon$.
 The domain $[0,1]^p$ requires every input variable to be confined to a
 finite, closed range; the specific choice of $[0,1]$ is a notational
 convention, since any bounded range $[a,b]$ can be mapped to $[0,1]$ by a
 linear rescaling, so the theorem applies to any compact input domain.
-What matters is not the particular endpoints but that the inputs cannot
-grow without bound; if they could, no fixed-size network would be able to
-track the target function everywhere.  Recent studies have examined the
+Two qualifications are important.  First, compactness is essential:
+uniform approximation is guaranteed only on bounded input sets, not over
+an unbounded domain.  Secondly, the theorem is existential rather than a
+statement about a network of fixed size; the hidden-layer width required
+to achieve a given tolerance $\varepsilon$ generally grows as
+$\varepsilon$ shrinks, so the guarantee concerns the family of
+single-hidden-layer networks rather than any particular architecture.  Recent studies have examined the
 conditions under which \glspl{dnn} are competitive with tree-based
 models on tabular data, finding that well-tuned simple networks can match
 complex architectures \citep{kadra2021welltuned} and that the relative advantage
 of deep learning over gradient boosting depends on dataset characteristics such
 as sample size and feature cardinality \citep{shwartzziv2022tabular}.
-Understanding deep learning generalization remains an active research area;
+Understanding deep learning generalisation remains an active research area;
 \citet{zhang2021understanding} demonstrate that conventional statistical
-learning theory, which predicts poor generalization for overparameterized
+learning theory, which predicts poor generalisation for overparameterised
 models, requires rethinking in the deep learning context where networks with
-more parameters than training examples can still generalize well. In the empirical application, the
+more parameters than training examples can still generalise well. In the empirical application, the
 input vector consists of encoded policyholder characteristics and the response is
 a health insurance charge or premium.
 
@@ -1678,7 +1689,17 @@ This bias-free specification removes additive layer-bias parameters from the
 network architecture; the distinction between architectural, statistical and
 data-related meanings of bias is noted above. Its adequacy is assessed empirically
 through training, validation and test performance, and where appropriate through
-comparison with a bias-inclusive network.
+comparison with a bias-inclusive network. One theoretical qualification should
+be recorded. The approximation theorems reviewed in
+Section~\ref{sec:dnn_regression} assume affine layer maps comprising both
+weights and biases; a bias-free network whose activation satisfies
+\(\sigma(0)=0\) is positively homogeneous and constrained to pass through the
+origin of the standardised input space, so the universal approximation
+guarantee does not directly apply to the implemented architecture. The
+justification for the bias-free choice therefore rests on the empirical
+diagnostics and model comparisons reported in
+Chapters~\ref{chap:methods_and_data} and~\ref{sec:results}, not on the
+universal approximation theorem.
 
 \noindent
 The final architecture should not be selected purely by intuition; it should be
@@ -1930,13 +1951,15 @@ average fitted model by
 \]
 Also let
 \[
-    \bar{Y}
+    m(\mathbf{X})
     =
     f(\mathbf{X})
     =
     \mathbb{E}(Y\mid \mathbf{X})
 \]
-denote the systematic component of the response. The expected out-of-sample
+denote the systematic component of the response, written with the
+regression-function symbol \(m(\cdot)\) of equation~\eqref{eq:regression}
+to avoid confusion with the bar notation used elsewhere for sample means. The expected out-of-sample
 error under squared loss can then be written as
 \begin{equation}
 \label{eq:bias_variance_population}
@@ -1992,7 +2015,7 @@ error under squared loss can then be written as
         \mathbb{E}_{Y\mid\mathbf{X}}
         \!\left[
             \left(
-                \bar{Y}
+                m(\mathbf{X})
                 -
                 Y
             \right)^2
@@ -2073,8 +2096,11 @@ classical actuarial models can be nested within neural-network architectures.
 property and casualty insurance pricing and reserving.  In the life insurance
 domain, \citet{blomerus2025longterm} demonstrates the viability of deep
 learning for long-term life insurance valuations using commercial European
-portfolio data, achieving valuations that conform to the 99.5\% accuracy
-required by Solvency~II.
+portfolio data, achieving valuations sufficiently accurate to support
+capital calculations under Solvency~II; the 99.5\% figure in that
+framework is the confidence level of the one-year Value-at-Risk defining
+the Solvency Capital Requirement, rather than a prescribed valuation
+accuracy standard.
 
 \noindent
 Within health insurance specifically, recent work has demonstrated that neural
@@ -2123,9 +2149,11 @@ on structured policyholder attributes rather than on unstructured data such as
 images or text, tree-based methods represent a credible alternative to the
 \gls{dnn} and may in some settings be the preferred model class.  The present
 dissertation nonetheless selects the \gls{dnn} as the primary model for the
-\gls{mc} and Shapley workflow because its smooth, differentiable prediction
-surface is directly compatible with gradient-based Shapley computation and
-continuous forward-pass evaluation over large simulated input samples.  A \gls{rf}
+\gls{mc} and Shapley workflow because it provides a differentiable
+prediction surface compatible with gradient-based \gls{shap} explainers and
+with continuous forward-pass evaluation over large simulated input samples;
+the specific gradient-based explainer employed is described in
+Chapter~\ref{chap:methods_and_data}.  A \gls{rf}
 and an \gls{xgboost} regressor are fitted as benchmarks to contextualise the
 \gls{dnn}'s predictive performance within this spectrum of model classes.
 
@@ -2295,7 +2323,10 @@ and kurtosis by
     \right]^2
     }.
 \]
-Values of \(\widehat{\gamma}_{1j}>0\) indicate right-skewness, while values of
+Following common convention, the sample variance \(s_j^2\) uses the
+unbiased divisor \(n-1\), whereas the skewness and kurtosis estimators are
+ratios of divisor-\(n\) central moments; this mixed convention is adopted
+throughout. Values of \(\widehat{\gamma}_{1j}>0\) indicate right-skewness, while values of
 \(\widehat{\gamma}_{2j}\) substantially above \(3\) indicate heavier-than-normal
 tails. These quantities help identify variables that are asymmetric,
 heavy-tailed or potentially unsuitable for simple symmetric distributional
@@ -2414,7 +2445,21 @@ This approach is convenient and can generate values beyond the observed sample.
 It is the approach adopted in this dissertation, where independent fitted
 marginals are combined as specified in equation~\eqref{eq:input_law}. The
 independence assumption is a deliberate modelling choice, as discussed in
-connection with equation~\eqref{eq:input_law}.
+connection with equation~\eqref{eq:input_law}. Two strands of literature
+qualify this choice. Evaluating or explaining a fitted model at covariate
+combinations that lie off the data manifold can produce extrapolation
+artefacts, because the model is queried in regions where it was never
+constrained by training data \citep{hooker2021unrestricted}. Relatedly, when
+features are dependent, the marginal (interventional) and conditional
+formulations of Shapley attribution diverge, and estimating the conditional
+expectations required by the latter is non-trivial
+\citep{aas2021explaining, janzing2020feature}. Under the product-marginal
+design adopted here the two formulations coincide by construction, which is
+precisely the condition under which the marginal \gls{shap} estimator used
+later is internally consistent. The generated profiles may nonetheless
+include jointly implausible attribute combinations, so attribution results
+in sparsely supported regions of the input space must be interpreted with
+care.
 
 \noindent
 A third approach is nonparametric or semi-parametric simulation, using
@@ -2740,6 +2785,22 @@ coles2001introduction}, where tail behaviour is characterised through extreme
 value distributions and related threshold exceedance models.
 
 \noindent
+Two clarifications situate the present tail analysis within this
+literature. First, the quantity simulated here is the fitted conditional
+mean \(\widehat{m}(\mathbf{X})\), so the upper tail examined is a tail of
+conditional means rather than of realised costs; since
+\(\mathrm{Var}\{\mathbb{E}(Y\mid\mathbf{X})\}\leq\mathrm{Var}(Y)\), this
+tail is necessarily lighter than the tail of realised claim costs, and
+high-cost conditioning statements therefore concern expected costs rather
+than realised claim severities. Second, a fuller treatment of extremes
+would adopt the peaks-over-threshold framework, in which suitably
+normalised excesses over a high threshold converge to the generalised
+Pareto distribution
+\citep{pickands1975statistical, balkema1974residual, coles2001introduction};
+fitting such threshold-exceedance models to the cost distribution is
+deferred to future work.
+
+\noindent
 Let \(u\) denote a high-cost threshold, and suppose that the model-implied
 exceedance probability is
 \[
@@ -2856,12 +2917,16 @@ where
     =
     \frac{f(x)}{q(x)}
 \]
-is the likelihood ratio, also called the importance weight. A well-chosen
+is the likelihood ratio, also called the importance weight. For the
+identity above to hold, the proposal density must satisfy \(q(x)>0\)
+wherever \(g(x)f(x)\neq 0\), so that the integrand remains absolutely
+continuous with respect to the proposal. A well-chosen
 proposal distribution \(q\) concentrates simulation effort in the region that
 contributes most to the quantity being estimated, and can substantially reduce
-estimator variance \citep{glasserman2004monte,rubinstein2016simulation}. A poor
-choice of \(q\), however, may increase variance rather than reduce it, so the
-proposal distribution must be selected carefully.
+estimator variance \citep{glasserman2004monte,rubinstein2016simulation}. An
+ill-chosen proposal, however, yields unbounded likelihood ratios and can
+produce an estimator with severely inflated, or even infinite, variance, so
+the proposal distribution must be selected with care.
 
 \noindent
 Stratified sampling is another variance-reduction approach. Suppose the input
@@ -2930,7 +2995,8 @@ quasi-\gls{mc} estimator is
         \right)
     \right).
 \]
-For sufficiently smooth integrands and moderate effective dimension,
+For integrands of bounded variation in the sense of Hardy and Krause, the
+Koksma--Hlawka inequality implies that
 quasi-\gls{mc} methods can improve convergence relative to ordinary Monte
 Carlo, with rates closer to
 \[
@@ -2948,6 +3014,10 @@ than the usual
     \right)
 \]
 \gls{mc} rate \citep{caflisch1998monte,lemieux2009monte,owen2013monte}.
+At the input dimension used here, \(p=22\), the \((\log M)^{p}\) factor
+renders this worst-case bound practically vacuous for feasible simulation
+sizes, so any benefit of quasi-\gls{mc} sampling in this setting would rest
+on low effective dimension of the integrand rather than on the formal rate.
 
 \noindent
 In the present framework, variance-reduction methods are primarily relevant for
@@ -3002,7 +3072,7 @@ profiles on which the high-cost interpretability analysis is based.
 Shapley values originate in cooperative game theory and provide a principled axiomatic method for allocating a total payoff among players \citep{shapley1953value}. In machine learning, the players are the input variables and the payoff is the model prediction. The Shapley value of feature \(j\) measures the average marginal contribution of that feature across all possible subsets of features, as formalised in equation~\eqref{eq:shapley_exact}. The Shapley value is the unique solution satisfying four axioms: efficiency (contributions sum to the total prediction shift), symmetry (identically contributing features receive identical values), dummy (a feature that never changes the value receives zero), and additivity \citep{shapley1953value}.
 
 \noindent
-The \gls{shap} framework connects Shapley values to machine learning model interpretation \citep{lundberg2017unified}. The additive decomposition in equation~\eqref{eq:shapley_decomp} provides a local explanation of an individual prediction. \citet{lundberg2017unified} proved that this is the only additive feature attribution method satisfying efficiency, dummy and symmetry simultaneously, which is why it constitutes the theoretical foundation for the \gls{shap} computational framework.  \citet{covert2021explaining} provide a unifying removal-based framework that relates \gls{shap} to other explanation methods, \citet{sundararajan2020many} examine the many distinct Shapley value formulations that arise under different baseline and feature-dependence assumptions, and \citet{lundberg2020local} extend Shapley-based explanations from local to global understanding for tree models.
+The \gls{shap} framework connects Shapley values to machine learning model interpretation \citep{lundberg2017unified}. The additive decomposition in equation~\eqref{eq:shapley_decomp} provides a local explanation of an individual prediction. Within the class of additive feature attribution methods, the Shapley value is the unique attribution satisfying local accuracy (the machine-learning counterpart of the efficiency axiom above), missingness and consistency \citep[Theorem~1]{lundberg2017unified}, a result building on the uniqueness theorem of \citet{young1985monotonic}, in which a monotonicity condition takes the place of the dummy and additivity axioms of the classical characterisation. This uniqueness result is why the Shapley value constitutes the theoretical foundation for the \gls{shap} computational framework.  \citet{covert2021explaining} provide a unifying removal-based framework that relates \gls{shap} to other explanation methods, \citet{sundararajan2020many} examine the many distinct Shapley value formulations that arise under different baseline and feature-dependence assumptions, and \citet{lundberg2020local} extend Shapley-based explanations from local to global understanding for tree models.
 
 \noindent
 Shapley-based explanations can be interpreted locally or globally. A local explanation focuses on a single policyholder profile and explains why the model assigned a particular predicted cost. A global explanation summarises feature contributions across many observations. A common global importance measure is the mean absolute Shapley value:
@@ -3055,8 +3125,9 @@ conditional Shapley analysis computed within Monte-Carlo-simulated
 high-cost regions produces a form of threshold-conditional feature
 attribution that none of these individually mature tools can deliver
 in isolation.  While each component is well known, their integration
-within a single, reproducible workflow creates a new analytical
-capability applied here to health insurance cost prediction.
+within a single, reproducible workflow provides a capability not
+previously demonstrated in the health insurance cost-prediction
+literature.
 
 \noindent
 \gls{mc} simulation has a long history in actuarial science and quantitative
