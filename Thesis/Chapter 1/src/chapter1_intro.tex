@@ -100,7 +100,7 @@ fitted to the residuals of the preceding ensemble.  Both methods offer
 greater flexibility than the \gls{glm} but remain fundamentally
 piecewise-constant approximators: unlike neural networks, they do not
 learn smooth, continuous mappings through differentiable transformations.
-Including a \gls{rf} and an \gls{xgboost} benchmark alongside the \gls{glm} and
+Including an \gls{rf} and an \gls{xgboost} benchmark alongside the \gls{glm} and
 \gls{dnn} provides a graded comparison across model classes of increasing
 flexibility.  The core comparison remains the actuarial-standard \gls{glm}
 against the \gls{dnn}, since this dissertation is situated within an actuarial
@@ -337,14 +337,14 @@ the benchmark dataset using a systematic hyperparameter comparison.  The
 trained network defines a prediction function
 $\hat{f}: \mathbb{R}^p \to \mathbb{R}$ that maps encoded policyholder
 attributes to predicted costs.  A Gamma \gls{glm} with a
-logarithmic link, a \gls{rf} regressor and an \gls{xgboost}
+logarithmic link, an \gls{rf} regressor and an \gls{xgboost}
 gradient-boosted tree regressor are fitted alongside the network to
 provide benchmarks spanning three alternative model classes.  The
 output of this stage is a validated prediction function with
 documented out-of-sample performance across all four models.
 
 In the second stage, parametric distributions are fitted to each input
-variable in the training partition, and a \gls{mc} sample of
+variable in the training partition, and an \gls{mc} sample of
 $B = 100\,000$ synthetic policyholder profiles is drawn from the product
 of these marginals.  Each profile is encoded and passed through the
 trained prediction function, yielding a sample of $B$ predicted costs.
@@ -380,12 +380,12 @@ change in the tail?''
 The study contributes to several intersecting areas within mathematical
 statistics and actuarial science.
 
-From a methodological perspective, the integration of \gls{dnn}
-prediction, parametric \gls{mc} simulation and Shapley-value
-attribution within a single reproducible framework demonstrates a workflow
-that is applicable to any regression problem where distributional
-analysis and feature attribution in specific output regions are of
-interest.  While each component is individually well established, and the
+From a methodological perspective, the three-stage workflow, whose
+integrated character is argued in
+Section~\ref{sec:integration_contribution}, is demonstrated in a single
+reproducible framework that is applicable to any regression problem
+where distributional analysis and feature attribution in specific
+output regions are of interest.  While each component is individually well established, and the
 three-stage combination has been applied in other domains
 \citep{santos2023explainable}, its application to health insurance cost
 prediction has received limited attention in the literature.
@@ -435,13 +435,14 @@ The dissertation addresses the following research questions:
 
 \begin{enumerate}
     \item \label{rq:1} How does a \gls{dnn} regression model compare with a
-          classical \gls{glm}, a \gls{rf} and an
+          classical \gls{glm}, an \gls{rf} and an
           \gls{xgboost} gradient-boosted tree in predicting health insurance
           costs on a benchmark dataset?
 
-    \item \label{rq:2} What is the shape and distributional behaviour of the
-          model-implied predicted-cost distribution obtained by propagating
-          parametric \gls{mc} input profiles through the trained network?
+    \item \label{rq:2} How adequately does parametric \gls{mc} simulation of
+          policyholder profiles reproduce the model-implied predicted-cost
+          distribution, and how effectively does it define the high-cost
+          conditioning regions required for tail-focused attribution?
 
     \item \label{rq:3} Is the product-marginal \gls{mc} input distribution a
           defensible approximation of the training-data joint distribution
@@ -460,8 +461,8 @@ The dissertation addresses the following research questions:
 \end{enumerate}
 
 Research Question~\ref{rq:1} addresses the predictive stage.  Research
-Questions~\ref{rq:2} to \ref{rq:4} address the simulation stage, covering the distributional
-characterisation, the input-distribution validity and the
+Questions~\ref{rq:2} to \ref{rq:4} address the simulation stage, covering the adequacy of the
+simulated predicted-cost distribution, the input-distribution validity and the
 residual-perturbation robustness respectively.  Research Questions~\ref{rq:5}
 and~\ref{rq:6} address the explanation stage, covering both the global and
 conditional Shapley analyses and the interpretation of any observed
@@ -481,14 +482,16 @@ questions:
 \begin{enumerate}
     \item To fit a \gls{dnn} regression model to a health
           insurance benchmark dataset and to evaluate its predictive
-          performance against a classical \gls{glm}, a
+          performance against a classical \gls{glm}, an
           \gls{rf} and an \gls{xgboost} gradient-boosted tree benchmark.
 
     \item To design and implement a parametric \gls{mc} simulation
           that generates synthetic policyholder profiles from fitted
           marginal distributions, propagates them through the trained
-          network, and produces a model-implied distribution of
-          predicted costs.
+          network, and to assess how adequately the simulation
+          reproduces the model-implied distribution of predicted costs
+          and how effectively it defines the high-cost conditioning
+          regions required for tail-focused attribution.
 
     \item To validate the \gls{mc} input distribution against the
           observed training data using joint-distribution diagnostics,
@@ -605,7 +608,7 @@ The following delimitations define the boundaries of the study:
           covariate-response relationships are more complex.
 
     \item \textbf{Focused model comparison.}  Three benchmark models (a
-          Gamma \gls{glm}, a \gls{rf} and an \gls{xgboost} gradient-boosted
+          Gamma \gls{glm}, an \gls{rf} and an \gls{xgboost} gradient-boosted
           tree) are included to contextualise the predictive performance
           of the \gls{dnn} across model classes of increasing
           flexibility.  However, the dissertation does not attempt an
@@ -661,7 +664,11 @@ Machine Learning benchmark dataset \citep{kaggleInsuranceDataML}, which is publi
 contains no personally identifiable information.  The dataset does not represent actual policyholder records
 from any insurance company.  No data collection involving human
 participants was conducted for this study, and no ethical clearance from
-a research ethics committee was required.
+a research ethics committee was required.  The proposal was nonetheless
+reviewed by the Departmental Research Committee of the Department of
+Mathematical Statistics and Actuarial Science, which confirmed its
+scientific merit and recommended it for ethics approval or waiver
+(project number UFS-HSD2026/1253).
 
 Notwithstanding the use of benchmark data, the dissertation acknowledges
 the broader ethical considerations associated with the use of machine

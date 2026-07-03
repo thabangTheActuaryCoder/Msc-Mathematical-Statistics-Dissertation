@@ -12,88 +12,32 @@
 \subsection{Introduction}
 \label{sec:summary_of_findings}
 
-This final chapter draws the dissertation to a close.  It looks back
-over the route taken through the preceding chapters, consolidates what
-the empirical analysis established, and considers what the findings
-mean beyond the immediate setting in which they were produced.  As a
-point of departure, it is worth restating the problem in its simplest
-form.
+This final chapter draws the dissertation to a close.  It consolidates
+what the empirical analysis established and considers what the findings
+mean beyond the immediate setting in which they were produced.  The
+conceptual motivation for the study---treating a fitted prediction
+model as a statistical object whose properties merit systematic
+investigation in their own right---was developed in
+Section~\ref{sec:positioning} and underpins the structure of this
+chapter.
 
-Health insurance cost prediction is, at its core, a regression problem:
-the analyst seeks to estimate a continuous monetary outcome from a vector
-of policyholder characteristics.  In the actuarial profession, this
-estimation has traditionally been performed using \glspl{glm}, and in particular the Gamma distribution with a logarithmic link,
-which imposes a multiplicative mean structure on the relationship between
-covariates and costs.  The appeal of this classical framework lies in its
-interpretability: each coefficient describes the proportional change in
-the conditional mean cost associated with a unit change in a predictor,
-holding all other predictors fixed.  This dissertation began by asking
-whether a more flexible model class, specifically \glspl{dnn},
-could improve upon this classical baseline, and whether the improved
-predictions could be analysed through methods that go beyond
-point-prediction accuracy.
-
-The motivation for moving beyond point prediction was developed in
-Chapter~\ref{sec:introduction}, which argued that a fitted prediction
-model is a statistical object whose properties merit systematic
-investigation.  Just as the sampling distribution of an estimator is
-studied through \gls{mc} experiments to understand its variability and
-tail behaviour, the distribution of a prediction function's outputs under
-a specified input law can be studied to understand the range, shape and
-extreme-value behaviour of its predictions.  And just as the contribution
-of individual observations to an estimator can be decomposed through
-influence functions, the contribution of individual input variables to a
-prediction can be decomposed through Shapley values.  These parallels
-between classical statistical methodology and modern machine-learning
-interpretation formed the conceptual basis of the dissertation.
-
-The literature review in Chapter~\ref{sec:literature_review} established
-the theoretical and empirical foundations for each component of the
-framework, surveying supervised regression, health insurance pricing,
-\gls{mc} simulation and Shapley-value attribution in their respective
-traditions, and formally stated the research gap that motivates the
-integrated framework (Section~\ref{sec:research_gap}).
-
+In brief, the dissertation asked whether a \gls{dnn} could improve upon
+the classical Gamma \gls{glm} for health insurance cost prediction, and
+whether the resulting predictions could be analysed beyond
+point-prediction accuracy through \gls{mc} simulation and Shapley-value
+attribution.  Chapter~\ref{sec:literature_review} established the
+theoretical and empirical foundations of each component and stated the
+research gap (Section~\ref{sec:research_gap}), and
 Chapter~\ref{chap:methods_and_data} translated the conceptual framework
-into a concrete empirical workflow applied to the Kaggle Insurance Data
-for Machine Learning benchmark dataset
-\citep{kaggleInsuranceDataML}.  The chapter specified the
-data preprocessing, the \gls{dnn} architecture and five-phase hyperparameter
-comparison, the three benchmark models (Gamma \gls{glm}, \gls{rf},
-\gls{xgboost}), the \gls{mc} simulation design and the validation
-diagnostics (see Table~\ref{tab:modelling_assumptions_ch3} for the
-consolidated modelling assumptions).
-
-The empirical results in Chapter~\ref{sec:results} demonstrated the
-value of the integrated framework.  The five-phase sequential
-hyperparameter comparison selected the final \gls{dnn} configuration, which
-achieved test-set $R^2 = 0.9957$ with near-identical training and test
-metrics ruling out overfitting.  The \gls{dnn} substantially outperformed the
-Gamma \gls{glm}, whose log-link multiplicative structure does not match the
-approximately additive data-generating process of the benchmark data.
-The tree-based benchmarks (\gls{rf} and \gls{xgboost}) also achieved
-strong performance; after tuning, \gls{xgboost} matched the \gls{dnn} to four
-decimal places.  The \gls{dnn} was retained for the subsequent analyses on the
-grounds of its differentiability for gradient-based \gls{shap} computation.
-Full performance comparisons are reported in
-Chapter~\ref{sec:results}.
-
-The \gls{mc} simulation produced a predicted-cost distribution whose
-summary statistics closely match the empirical charge distribution, an
-outcome anticipated by the circularity caveat of
-Section~\ref{sec:mc_intro}.  The joint-distribution validation
-confirmed that the product-marginal input does not introduce material
-distributional distortion, and the residual-augmented sensitivity
-analysis established robustness to fitted residual perturbation.
-
-The conditional Shapley analysis produced the most distinctive finding:
-at $\tau_{99}$, the global feature-importance ranking reverses, with
-family medical history, medical history and coverage level overtaking
-smoking status.  The mechanism behind this reversal is examined under
-Research Question~\ref{rq:6} below.  The multi-seed robustness analysis
-confirmed that the entire chain of results, including the $\tau_{99}$
-ranking reversal, is invariant to the stochastic training process across
-five independent seeds (details in Chapter~\ref{sec:results}).
+into an empirical workflow applied to the Kaggle Insurance Data for
+Machine Learning benchmark dataset \citep{kaggleInsuranceDataML}.  The
+results in Chapter~\ref{sec:results} established the strong predictive
+performance of the \gls{dnn} relative to its benchmarks, validated the
+\gls{mc} predicted-cost distribution, and produced the study's most
+distinctive finding: the reversal of the global feature-importance
+ranking at the $\tau_{99}$ threshold, shown to be robust to the
+stochastic training process across five independent seeds
+(Sections~\ref{sec:multiseed_dnn} and~\ref{sec:cross_seed_shap}).
 
 The remainder of the chapter is organised as follows.
 Section~\ref{sec:addressing_rqs} answers each of the six research
@@ -123,82 +67,76 @@ Each question is now addressed in light of the empirical results.
 
 \subsubsection{Research Question~\ref{rq:1}}
 How does a \gls{dnn} regression model compare with a
-classical \gls{glm}, a \gls{rf} and an \gls{xgboost}
+classical \gls{glm}, an \gls{rf} and an \gls{xgboost}
 gradient-boosted tree in predicting health insurance costs on a benchmark
 dataset?
 
-The \gls{dnn} achieves a test-set \gls{r2} of $0.9957$, a test \gls{mae} of R251 and a
-test \gls{rmse} of R290.  The Gamma \gls{glm} (log-link) achieves a test-set \gls{r2} of
-$0.9571$, a test \gls{mae} of R624 and a test \gls{rmse} of R913.  The \gls{dnn} therefore
-outperforms the \gls{glm} on every metric, reducing the test \gls{rmse} by $68.2\%$
-and the test \gls{mae} by $59.8\%$.  The two tree-based benchmarks narrow the
-gap: the \gls{rf} achieves $R^2 = 0.9899$ and \gls{xgboost} reaches
-$R^2 = 0.9955$, approaching the \gls{dnn}'s accuracy.  All four models show
-near-identical training and test performance, ruling out overfitting.
-The \gls{glm}'s performance gap is attributable to the log-link
-misspecification discussed in Section~\ref{sec:four_model_comparison_ch4}:
-the benchmark data's additive structure does not match the \gls{glm}'s
-multiplicative mean function.  The tree-based models, unconstrained by a
-multiplicative link, recover most of this gap.
-The five-phase sequential hyperparameter comparison selected the final
-\gls{dnn} configuration from among 16 candidate settings, documented in full
-in \ref{annexure:hyperparameters}.  When the tree-based
-benchmarks were subsequently tuned via randomised search with
-cross-validation, the tuned \gls{rf} reached $R^2 = 0.9924$ and
-the tuned \gls{xgboost} matched the \gls{dnn} at $R^2 = 0.9956$.  The \gls{dnn} retains
-a marginal advantage ($R^2 = 0.9957$), but the practical gap is
-negligible.  Multi-seed replication across five random
-initialisations confirmed that the \gls{dnn}'s test \gls{r2} varies by only
-$1.28 \times 10^{-5}$ (Table~\ref{tab:multiseed_test_performance_ch4}),
-establishing that the reported performance is robust to the stochastic
-training process.  This finding is consistent with the broader
-health-cost prediction literature
-\citep{dreweboss2022deep, samiuddin2023health, kaushik2022machine},
-although the unusually high \gls{r2} reflects the clean, structured nature
-of the benchmark data (Section~\ref{sec:scope_delimitations}).
+The \gls{dnn} outperforms the Gamma \gls{glm} (log-link) on every
+metric, achieving a test-set \gls{r2} of $0.9957$ against $0.9571$ and
+reducing the test \gls{rmse} by $68.2\%$ and the test \gls{mae} by
+$59.8\%$ (Table~\ref{tab:four_model_comparison_ch4}); the \gls{glm}'s
+performance gap is attributable to the log-link misspecification
+discussed in Section~\ref{sec:four_model_comparison_ch4}.  The
+tree-based benchmarks narrow the gap substantially: after tuning, the
+\gls{rf} reaches $R^2 = 0.9924$ and \gls{xgboost} reaches
+$R^2 = 0.9956$, leaving the \gls{dnn} with a marginal advantage of no
+practical consequence (Section~\ref{sec:tuned_benchmarks},
+Table~\ref{tab:six_model_comparison_ch4}).  All models show
+near-identical training and test performance, ruling out overfitting,
+and multi-seed replication confirmed that the \gls{dnn}'s test \gls{r2}
+varies by only $1.28 \times 10^{-5}$ across five random initialisations
+(Section~\ref{sec:multiseed_dnn},
+Table~\ref{tab:multiseed_test_performance_ch4}).  The hyperparameter
+selection underlying the final \gls{dnn} configuration is documented in
+full in \ref{annexure:hyperparameters}.
 
 \subsubsection{Research Question~\ref{rq:2}}
-What is the shape and distributional behaviour of the
-model-implied predicted-cost distribution obtained by propagating
-parametric \gls{mc} input profiles through the trained network?
+How adequately does parametric \gls{mc} simulation of policyholder
+profiles reproduce the model-implied predicted-cost distribution, and
+how effectively does it define the high-cost conditioning regions
+required for tail-focused attribution?
 
-The distribution is approximately symmetric, unimodal, and centred near
-the mean of the observed training charges
+The parametric \gls{mc} simulation reproduces the model-implied
+predicted-cost distribution closely: the simulated distribution is
+approximately symmetric, unimodal and centred near the mean of the
+observed training charges
 (Figure~\ref{fig:mc_predicted_vs_actual_ch4}).  As noted in
-Section~\ref{sec:mc_intro}, this close agreement is expected given the
-near-perfect \gls{dnn} fit and the use of training-data marginals; the Monte
-Carlo stage therefore functions primarily to define the conditioning
-regions for the Shapley analysis.  Convergence diagnostics confirmed
-adequate simulation size, and the multi-seed replication established
-that the distributional characterisation is invariant to the network's
-random initialisation (Section~\ref{sec:cross_seed_mc_ch4}).  Full
-distributional summaries are reported in Chapter~\ref{sec:results}.
+Section~\ref{sec:mc_intro}, this close agreement is expected by
+construction given the near-perfect \gls{dnn} fit and the use of
+training-data marginals; the simulation's principal role is therefore
+to define the high-cost conditioning regions for the tail-focused
+Shapley analysis, a role it fulfils effectively, with convergence
+diagnostics confirming adequate simulation size
+(Section~\ref{sec:mc_results}).  The distributional characterisation is
+invariant to the network's random initialisation
+(Section~\ref{sec:cross_seed_mc_ch4}).
 
 \subsubsection{Research Question~\ref{rq:3}}
 Is the product-marginal \gls{mc} input distribution a
 defensible approximation of the training-data joint distribution for the
 purpose of generating simulated profiles?
 
-Five complementary diagnostics support an affirmative answer, including a
-multivariate energy distance permutation test ($p = 0.730$) and a
-Shapley attribution invariance assessment comparing the parametric and
-bootstrap input regimes (Spearman
-$\rho_{\mathrm{S}} = 0.991$).  The individual diagnostic results are
-reported in Chapter~\ref{sec:results}.  It should be noted that the
-independence assumption broadens the simulated input space and can
-generate implausible covariate combinations; this limitation is discussed
-in Section~\ref{sec:limitations_conclusion}.
+Five complementary diagnostics support an affirmative answer, most
+directly a multivariate energy distance permutation test ($p = 0.730$)
+and a Shapley attribution invariance assessment comparing the
+parametric and bootstrap input regimes (Spearman
+$\rho_{\mathrm{S}} = 0.991$); the individual diagnostic results are
+reported in Section~\ref{sec:simulated_input_validation_ch4}.  The
+independence assumption nonetheless broadens the simulated input space
+and can generate implausible covariate combinations, a limitation
+discussed in Section~\ref{sec:limitations_conclusion}.
 
 \subsubsection{Research Question~\ref{rq:4}}
 How sensitive is the predicted-cost distribution to residual
 perturbation from the fitted model?
 
-The predicted-cost distribution is robust to residual perturbation.
-Both empirical-residual augmentation and fixed perturbation bands
-retained the same location, spread and shape.  The \gls{dnn}'s residuals on
-this benchmark dataset are sufficiently small
+The predicted-cost distribution is robust to residual perturbation:
+both empirical-residual augmentation and fixed perturbation bands
+retained the same location, spread and shape
+(Section~\ref{sec:residual_augmented_results}).  The \gls{dnn}'s
+residuals on this benchmark dataset are sufficiently small
 ($\hat{\sigma}_{\varepsilon} \approx \text{R}290$) that their addition
-does not alter the distributional conclusions; this finding is consistent
+does not alter the distributional conclusions, a finding consistent
 across all five training seeds
 (Section~\ref{sec:cross_seed_residual_ch4}).
 
@@ -209,28 +147,25 @@ conditionally within high-cost regions of the predicted-cost distribution?
 
 At the global level, four variables form a clear top tier: smoking status
 ($I_g = 0.578$), coverage level ($0.401$), medical history ($0.367$) and
-family medical history ($0.351$).  Occupation ($0.171$) and exercise
-frequency ($0.149$) contribute at a secondary level.  The remaining five
-variables each have mean absolute Shapley values below $0.13$.  The
-conditional analysis at three thresholds reveals a progressive shift.  At
-$\tau_{90}$, the ranking mirrors the global ordering.  At $\tau_{95}$,
-family medical history and medical history show increased conditional
-importance.  At $\tau_{99}$, the ranking reverses: family medical history
-($0.649$), medical history ($0.615$) and coverage level ($0.595$)
-overtake smoking status ($0.563$).  The second-tier variables remain
-stable across all thresholds, indicating that the reversal is driven
+family medical history ($0.351$)
+(Table~\ref{tab:shap_global_importance_ch4}).  The conditional analysis
+reveals a progressive shift across thresholds: at $\tau_{90}$ the
+ranking mirrors the global ordering, while at $\tau_{99}$ it reverses,
+with family medical history ($0.649$), medical history ($0.615$) and
+coverage level ($0.595$) overtaking smoking status ($0.563$)
+(Table~\ref{tab:shap_conditional_values_ch4}).  The reversal is driven
 entirely by changes in the relative importance of the top-tier
-categorical risk factors.  The multi-seed analysis
-(Section~\ref{sec:cross_seed_shap}) confirmed that the global importance
-ranking is perfectly preserved across all ten pairwise seed combinations
-(Spearman $\rho_{\mathrm{S}} = 1.0000$), and the $\tau_{99}$ ranking
-reversal is replicated in all five seeds with pairwise conditional
-Spearman correlations between $0.9909$ and $1.0000$.  The \gls{shap}
-interaction analysis (Section~\ref{sec:shap_interactions}) further
-established that all 55 pairwise Shapley-value correlations fall below
-$|r| = 0.033$, confirming that the \gls{dnn} learned an essentially additive
-mapping and that the main-effect Shapley summaries capture the full
-attribution structure.
+categorical risk factors
+(Section~\ref{sec:highcost_conditional_results}).  The multi-seed
+analysis (Section~\ref{sec:cross_seed_shap}) confirmed that the global
+importance ranking is perfectly preserved across all ten pairwise seed
+combinations (Spearman $\rho_{\mathrm{S}} = 1.0000$), and the
+$\tau_{99}$ ranking reversal is replicated in all five seeds with
+pairwise conditional Spearman correlations between $0.9909$ and
+$1.0000$.  The Shapley attribution correlation analysis
+(Section~\ref{sec:shap_interactions}) further established that all 55
+pairwise Shapley-value correlations fall below $|r| = 0.033$, a pattern
+consistent with an essentially additive learned mapping.
 
 \subsubsection{Research Question~\ref{rq:6}}
 What explains any differences between the global and conditional
@@ -247,8 +182,6 @@ Shapley values within a conditioning set) and a substantive component
 (coverage level, medical history and family medical history retain
 meaningful variation and their rising conditional importance reflects
 genuine structure in the fitted model's attribution surface).
-Separating these two components is essential before drawing broader
-conclusions, as discussed in Section~\ref{sec:highcost_conditional_results}.
 
 % ---------------------------------------------------------
 % 5.3 CONTRIBUTIONS
@@ -315,16 +248,18 @@ simulated population, rather than only at observed covariate combinations,
 yields a distributional characterisation of its output landscape---its
 range, dispersion and tail behaviour---under a specified input law.
 
-The multi-seed robustness analysis represents a further contribution.
+The multi-seed robustness analysis constitutes a methodological
+strength of the study.
 By retraining the \gls{dnn} under five independent random seeds and
 replicating the entire \gls{mc} and Shapley pipeline for each seed,
 the dissertation demonstrates that the predictive performance, the
 model-implied cost distribution, the global Shapley ranking, and the
 $\tau_{99}$ ranking reversal are all invariant to the stochastic
-training process.  This type of comprehensive cross-seed replication is
-not routinely performed in the applied machine-learning interpretability
-literature, where results are typically reported for a single trained
-network.
+training process (Sections~\ref{sec:multiseed_dnn}
+and~\ref{sec:cross_seed_shap}).  Comprehensive cross-seed replication
+of this kind appears not to be routine in the applied machine-learning
+interpretability literature, where results are typically reported for a
+single trained network.
 
 The multi-layered validation protocol, comprising joint-distribution
 diagnostics, convergence monitoring, residual-augmented sensitivity
@@ -337,9 +272,11 @@ where Shapley values are often reported without assessing their
 sensitivity to the input distribution or the residual structure of the
 fitted model.  Finally, the three benchmark models (Gamma \gls{glm}, \gls{rf} and
 \gls{xgboost}) contextualise the \gls{dnn}'s performance across the model-class
-spectrum, establishing that the predictive superiority reflects genuine
-advantages of smooth nonlinear function approximation rather than
-artefacts of the benchmark data.
+spectrum: the \gls{dnn}'s predictive superiority is established over
+the misspecified no-interaction \gls{glm}, while tuned gradient
+boosting attains near-identical accuracy, so the benchmarks demonstrate
+the adequacy, rather than the dominance, of the \gls{dnn} as the
+prediction component of the framework.
 
 % ---------------------------------------------------------
 % 5.4 STRENGTHS OF THE STUDY
@@ -364,7 +301,8 @@ initialisations demonstrates that neither the predictive performance nor
 the attribution structure depends on the specific weight initialisation,
 transforming the $\tau_{99}$ ranking reversal from a single-seed
 observation into a reproducible structural property of the fitted model
-class.  Finally, all conclusions are explicitly qualified as internal to
+class (Section~\ref{sec:cross_seed_shap}).  Finally, all conclusions
+are explicitly qualified as internal to
 the fitted model and benchmark data, with modelling assumptions stated
 formally in Table~\ref{tab:modelling_assumptions_ch3}.
 
@@ -376,44 +314,32 @@ formally in Table~\ref{tab:modelling_assumptions_ch3}.
 \label{sec:limitations_conclusion}
 
 It is important to be forthright about the limitations that qualify the
-scope of these findings.  Several of these limitations are inherent in the
-methodological choices made in this dissertation; others reflect the
-constraints of the benchmark data.
-
-All results are conditional on the Kaggle Insurance Data for
-Machine Learning benchmark dataset \citep{kaggleInsuranceDataML}, whose
-clean, additive structure produces unusually high predictive performance
-($R^2 = 0.9957$) that should not be extrapolated to real-world insurance
-portfolios.  This structure also favours the \gls{dnn} over the log-link
-\gls{glm}, whose multiplicative misspecification is discussed in
-Section~\ref{sec:four_model_comparison_ch4}.  The benchmark data serves
-to demonstrate the methodology on a controlled, reproducible dataset, but
-the specific numerical results are properties of this dataset and not of
-health insurance cost prediction in general.
-
-The study compares the \gls{dnn} against a Gamma/log-link \gls{glm}, a \gls{rf}
-and an \gls{xgboost} gradient-boosted tree regressor.  While these benchmarks
-span three major model classes (parametric, bagging and boosting), ensemble
-methods such as stacking, Bayesian neural networks and other advanced
-alternatives were not evaluated.  The existing literature suggests that
-gradient-boosted trees often perform competitively with neural networks on
-tabular data \citep{richman2021ai}, and indeed the \gls{xgboost} benchmark
-achieves near-\gls{dnn} accuracy on this dataset.  A broader model-selection
-study including additional architectures and datasets would further
-strengthen the conclusions.
-
-The \gls{mc} and Shapley analyses were initially conditional on a
-single trained network with a fixed random seed.  The multi-seed
-robustness analysis (Section~\ref{sec:multiseed_dnn}) subsequently
-addressed this limitation by retraining the \gls{dnn} under five independent
-seeds and replicating the full simulation and attribution pipeline.  The
-cross-seed variability proved negligible across all stages---the test
-\gls{r2}, the \gls{mc} mean and the global Shapley ranking were all
-essentially unchanged across seeds (quantified in
-Section~\ref{sec:addressing_rqs}).  While five seeds do not constitute an
-exhaustive exploration of the initialisation space, the convergent
-results across these independent replications provide strong evidence
-that the findings are not artefacts of a single random initialisation.
+scope of these findings.  The delimitations set out in
+Section~\ref{sec:scope_delimitations} continue to apply; three of them
+are qualified further by the results.  First, the near-ceiling
+predictive performance ($R^2 = 0.9957$) is a property of the clean,
+approximately additive structure of the benchmark data
+\citep{kaggleInsuranceDataML}, which also favours the \gls{dnn} over
+the log-link \gls{glm}
+(Section~\ref{sec:four_model_comparison_ch4}); the benchmark data serve
+to demonstrate the methodology, and the specific numerical results
+should not be extrapolated to real-world insurance portfolios.  Second,
+the focused model comparison is sharpened by the tuning results:
+consistent with evidence that gradient-boosted trees perform
+competitively with neural networks on tabular data
+\citep{richman2021ai}, the tuned \gls{xgboost} attains near-\gls{dnn}
+accuracy on this dataset, while stacking ensembles, Bayesian neural
+networks and other advanced alternatives remain unevaluated.  Third,
+the initial conditioning of the \gls{mc} and Shapley analyses on a
+single trained network was subsequently addressed by the multi-seed
+replication, in which both the training metrics
+(Section~\ref{sec:multiseed_dnn}) and the attribution structure,
+including the $\tau_{99}$ reversal
+(Section~\ref{sec:cross_seed_shap}), proved essentially unchanged
+across five independent seeds; five seeds do not exhaust the
+initialisation space, but the convergent replications provide strong
+evidence that the findings are not artefacts of a single random
+initialisation.
 
 The tuned \gls{xgboost} benchmark achieves $R^2 = 0.9956$, matching the \gls{dnn}
 ($R^2 = 0.9957$) to within one unit in the fourth decimal place.  This
@@ -430,7 +356,7 @@ that the training-data dependence structure is weak ($p = 0.730$), the
 independence assumption broadens the simulated input space beyond what
 would be observed in practice.  In particular, the product-marginal
 sampling can generate covariate combinations that are implausible in a
-real insurance portfolio, i.e.\ profiles with extreme \gls{bmi}, many dependants
+real insurance portfolio, e.g.\ profiles with extreme \gls{bmi}, many dependants
 and low exercise frequency that are rare or absent in the training data.
 The impact of these implausible profiles on the results is mitigated by
 their low probability, but it cannot be excluded entirely.
@@ -449,8 +375,10 @@ quantified for this specific setting.
 The conditional Shapley summaries at $\tau_{99}$ rely on approximately
 1\,000 simulated profiles (the top $1\%$ of $B = 100\,000$).  The
 nonparametric bootstrap confidence intervals ($R = 10\,000$ resamples)
-reported in Table~\ref{tab:shap_conditional_values_ch4} provide formal
-statistical support for the ranking reversal, and the monotonic trends
+reported in Table~\ref{tab:shap_conditional_values_ch4} quantify the
+sampling variability of the conditional attribution summaries given the
+fitted network and, on that conditional basis, support the ranking
+reversal; the monotonic trends
 across $\tau_{90}$, $\tau_{95}$ and $\tau_{99}$ strengthen the finding.
 Nevertheless, the precision of the conditional estimates remains lower
 than the global estimates, which are computed over the full simulation.
@@ -468,11 +396,13 @@ peaks-over-threshold methods to define the high-cost region and by
 assessing the sensitivity of the attribution results to the threshold
 selection.
 
-A further methodological limitation concerns the absence of formal
+A further methodological limitation concerns the scope of the
 uncertainty quantification around the Shapley-value estimates.  The
-gradient-based \gls{shap} implementation produces point estimates of the
-attributions for each profile, but does not provide confidence intervals or
-posterior distributions for the feature-importance summaries.  In a
+bootstrap intervals discussed above quantify the sampling variability
+of the attribution summaries conditional on the fitted network;
+uncertainty in the network parameters themselves---the weight and
+training uncertainty arising from the estimation of the network---is
+not propagated through the Shapley computation.  In a
 Bayesian framework, one could place posterior distributions over the
 network weights and propagate the resulting weight uncertainty through the
 Shapley computation, yielding posterior distributions of the
@@ -577,18 +507,17 @@ tail; a concrete proposal for integrating them is set out in the future-work
 directions (Section~\ref{sec:future_research}).
 
 % ---------------------------------------------------------
-% 5.7 COMPARISON WITH CONSTRAINED NEURAL-NETWORK APPROACHES
+% 5.8 COMPARISON WITH CONSTRAINED NEURAL-NETWORK APPROACHES
 % ---------------------------------------------------------
 
 \subsection{Comparison with Constrained Neural-Network Approaches}
 \label{sec:comparison_constrained_nn}
 
 A recent line of actuarial research imposes explicit shape constraints
-on neural networks during training.  The ICEnet of
-\citet{richman2024icenet}, presented in Chapter~7 of
-\citet{richman2023phd}, adds smoothness and monotonicity penalty terms
-to the loss function so that the network's \Gls{ice} outputs vary smoothly and monotonically with respect
-to selected covariates.  Because the two studies differ in their
+on neural networks during training, exemplified by the ICEnet of
+\citet{richman2024icenet}, which was reviewed in
+Chapter~\ref{sec:literature_review}.  Because that study and the
+present dissertation differ in their
 response variables, evaluation metrics and datasets, a direct numerical
 comparison of predictive performance is not appropriate.
 Table~\ref{tab:comparison_icenet} summarises the principal differences.
@@ -634,8 +563,7 @@ Interpretability
 \end{tabular}
 \end{table}
 
-\noindent
-On predictive performance,
+\subsubsection{Comparison of Predictive Performance}
 \citet{richman2024icenet} report that the ICEnet achieves a test-set
 Poisson deviance of $0.2388$, compared with $0.2387$ for the
 unconstrained network, a difference of $0.0001$.  When monotonicity
@@ -651,8 +579,8 @@ cross-study ranking of accuracy is claimed.  Both studies, however,
 demonstrate that \glspl{dnn} improve upon \gls{glm} baselines within
 their respective insurance domains.
 
-\noindent
-On interpretability, the ICEnet enforces actuarial reasonableness during training by
+\subsubsection{Comparison of Interpretability Approaches}
+The ICEnet enforces actuarial reasonableness during training by
 constraining the covariate-response relationships to be smooth and
 monotonic, which is important for commercial pricing and regulatory
 compliance.  The present dissertation pursues interpretability post hoc
@@ -668,7 +596,7 @@ individual predictions and how these contributions change in high-cost
 regions.
 
 % ---------------------------------------------------------
-% 5.8 RECOMMENDATIONS FOR FUTURE RESEARCH
+% 5.9 RECOMMENDATIONS FOR FUTURE RESEARCH
 % ---------------------------------------------------------
 
 \subsection{Recommendations for Future Research}
@@ -685,7 +613,8 @@ following directions.
     \item Future work could extend the baseline comparison to include
           Bayesian neural networks, stacking ensembles and alternative
           deep-learning architectures (e.g.\ TabNet
-          \citep{arik2021tabnet} and the FT-Transformer).
+          \citep{arik2021tabnet} and the FT-Transformer
+          \citep{gorishniy2021revisiting}).
           Such comparisons would clarify whether the Shapley attribution
           patterns documented here are model-dependent or model-invariant,
           and whether more complex architectures offer further predictive
@@ -771,14 +700,15 @@ components of the framework.
           reversal is a property of the fitted model rather than an
           artefact of the gradient-based approximation.
 
-    \item The \gls{shap} interaction analysis in
+    \item The Shapley attribution correlation analysis in
           Section~\ref{sec:shap_interactions} established that pairwise
           Shapley-value correlations are negligible on this benchmark
-          dataset (all below $|r| = 0.033$), confirming an essentially
+          dataset (all below $|r| = 0.033$), consistent with an essentially
           additive learned mapping.  On real-world insurance portfolios
           with genuine covariate interactions, the interaction structure
-          may be more complex.  Extending the interaction analysis to
-          datasets with known non-additive relationships would clarify
+          may be more complex.  Extending the analysis to formal \gls{shap}
+          interaction values on datasets with known non-additive
+          relationships would clarify
           when main-effect Shapley summaries remain adequate and when
           higher-order interaction decompositions are necessary.
 
@@ -811,7 +741,7 @@ components of the framework.
 \end{itemize}
 
 % ---------------------------------------------------------
-% 5.9 CONCLUDING REMARK
+% 5.10 CONCLUDING REMARK
 % ---------------------------------------------------------
 
 \subsection{Concluding Remark}
