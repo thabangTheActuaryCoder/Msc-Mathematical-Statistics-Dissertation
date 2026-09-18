@@ -4,25 +4,25 @@
 \section{GLM Benchmark Methodology}
 \label{annexure:glm_benchmark}
 
-The Gamma \gls{glm} with log-link serves as the actuarial benchmark against which the \gls{dnn} is compared.  An \gls{rf} and an \gls{xgboost} gradient-boosted tree regressor are fitted as additional benchmarks to span the model-class spectrum from linear to piecewise-constant to smooth nonlinear (see Section~\ref{sec:tree_benchmarks_methods}).  The \gls{glm} was fitted using \texttt{statsmodels} with an intercept term and the same 22 reference-category encoded features used by the \gls{dnn} and tree-based models.
+The Gamma GLM with log-link serves as the actuarial benchmark against which the DNN is compared.  An RF and an XGBoost gradient-boosted tree regressor are fitted as additional benchmarks to span the model-class spectrum from linear to piecewise-constant to smooth nonlinear (see Section~\ref{sec:tree_benchmarks_methods}).  The GLM was fitted using \texttt{statsmodels} with an intercept term and the same 22 reference-category encoded features used by the DNN and tree-based models.
 
 % -------------------------------------------------------------
 \subsection{Fitting Procedure}
 \label{annexure:glm_fit}
 
 \begin{algorithm}[htbp]
-\caption{\Gls{glm} benchmark fitting and comparison.}
+\caption{GLM benchmark fitting and comparison.}
 \label{alg:glm_benchmark}
 \begin{algorithmic}[1]
 \Require Raw feature matrices $\mathbf{X}_{\mathrm{train}}, \mathbf{X}_{\mathrm{val}}, \mathbf{X}_{\mathrm{test}}$ (unstandardised), response vectors $\mathbf{y}_{\mathrm{train}}, \mathbf{y}_{\mathrm{val}}, \mathbf{y}_{\mathrm{test}}$
-\Ensure Comparison metrics (\gls{r2}, \gls{rmse}, \gls{mae}) for \gls{glm}, \gls{rf}, \gls{xgboost} and \gls{dnn} on all partitions
+\Ensure Comparison metrics (\ensuremath{R^2}, RMSE, MAE) for GLM, RF, XGBoost and DNN on all partitions
 \State Prepend intercept column to each feature matrix
-\State Fit Gamma \gls{glm} with log-link on $(\mathbf{X}_{\mathrm{train}}, \mathbf{y}_{\mathrm{train}})$ via \gls{irls}
+\State Fit Gamma GLM with log-link on $(\mathbf{X}_{\mathrm{train}}, \mathbf{y}_{\mathrm{train}})$ via IRLS
 \State Extract coefficient table: $\hat{\boldsymbol{\beta}}$, standard errors, $z$-values, $p$-values
 \For{each partition $\mathcal{P} \in \{\mathrm{train}, \mathrm{val}, \mathrm{test}\}$}
     \State $\hat{\mathbf{y}}_{\mathrm{GLM}} \gets \exp(\mathbf{X}_{\mathcal{P}} \hat{\boldsymbol{\beta}})$
-    \State Compute \gls{r2}, \gls{rmse}, \gls{mae} for \gls{glm} predictions
-    \State Compute \gls{r2}, \gls{rmse}, \gls{mae} for \gls{dnn} predictions (from checkpoint)
+    \State Compute \ensuremath{R^2}, RMSE, MAE for GLM predictions
+    \State Compute \ensuremath{R^2}, RMSE, MAE for DNN predictions (from checkpoint)
 \EndFor
 \end{algorithmic}
 \end{algorithm}
@@ -31,7 +31,7 @@ The Gamma \gls{glm} with log-link serves as the actuarial benchmark against whic
 \subsection{Coefficient Extraction}
 \label{annexure:glm_coefs}
 
-The fitted \gls{glm} produces a coefficient vector $\hat{\boldsymbol{\beta}} \in \mathbb{R}^{23}$ (22 features plus intercept). For each coefficient, the exponentiated value $\exp(\hat{\beta}_k)$ gives the multiplicative effect on the expected cost. Statistical significance was assessed at the $\alpha = 0.05$ level using Wald $z$-tests.
+The fitted GLM produces a coefficient vector $\hat{\boldsymbol{\beta}} \in \mathbb{R}^{23}$ (22 features plus intercept). For each coefficient, the exponentiated value $\exp(\hat{\beta}_k)$ gives the multiplicative effect on the expected cost. Statistical significance was assessed at the $\alpha = 0.05$ level using Wald $z$-tests.
 
 % -------------------------------------------------------------
 \subsection{Model Comparison}

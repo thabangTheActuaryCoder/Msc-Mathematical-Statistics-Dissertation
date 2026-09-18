@@ -52,7 +52,7 @@ combined with dominated convergence, yields $\mu(H) = 0$ for all open half-space
 \subsection{Derivation of the Adam and NAdam Update Rules}
 \label{annexure:adam_nadam}
 
-\noindent\textbf{\Gls{adam} update rule.}
+\noindent\textbf{Adam update rule.}
 Let $g_t = \nabla_{\boldsymbol{\theta}} \mathcal{L}(\boldsymbol{\theta}_{t-1})$ denote the gradient of the loss at iteration $t$. The first and second moment estimates are
 \begin{align}
   m_t &= \beta_1 \, m_{t-1} + (1 - \beta_1) \, g_t, \label{eq:adam_m} \\
@@ -70,8 +70,8 @@ The parameter update is
 \end{equation}
 where $\eta > 0$ is the learning rate and $\epsilon > 0$ (typically $10^{-8}$) prevents division by zero.
 
-\noindent\textbf{\Gls{nadam} update rule.}
-\Gls{nadam} incorporates Nesterov momentum by replacing the bias-corrected first moment $\hat{m}_t$ with a look-ahead estimate. The modification replaces~\eqref{eq:adam_update} with
+\noindent\textbf{NAdam update rule.}
+NAdam incorporates Nesterov momentum by replacing the bias-corrected first moment $\hat{m}_t$ with a look-ahead estimate. The modification replaces~\eqref{eq:adam_update} with
 \begin{equation}
   \boldsymbol{\theta}_t = \boldsymbol{\theta}_{t-1} - \eta \, \frac{\beta_1 \hat{m}_t + \frac{(1-\beta_1)}{1-\beta_1^t} g_t}{\sqrt{\hat{v}_t} + \epsilon}.
   \label{eq:nadam_update}

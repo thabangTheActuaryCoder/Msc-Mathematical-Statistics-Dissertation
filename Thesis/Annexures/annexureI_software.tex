@@ -21,13 +21,13 @@ Python~3.11 via the Anaconda distribution. Jupyter Notebook was used for interac
 \toprule
 \textbf{Package} & \textbf{Version} & \textbf{Purpose} \\
 \midrule
-PyTorch           & 2.x              & \gls{dnn} architecture, training and inference \\
+PyTorch           & 2.x              & DNN architecture, training and inference \\
 SHAP              & 0.43+            & Shapley value computation (GradientExplainer) \\
-statsmodels       & 0.14+            & \gls{glm} (Gamma, log-link) fitting \\
+statsmodels       & 0.14+            & GLM (Gamma, log-link) fitting \\
 NumPy             & 1.24+            & Numerical computation \\
 pandas            & 2.x              & Data manipulation and I/O \\
 SciPy             & 1.11+            & Statistical tests, distributions \\
-scikit-learn      & 1.3+             & \Gls{rf}, \gls{gp} surrogate, train/test splitting, metrics \\
+scikit-learn      & 1.3+             & RF, GP surrogate, train/test splitting, metrics \\
 matplotlib        & 3.8+             & Static figure generation \\
 seaborn           & 0.13+            & Statistical visualisation \\
 scikit-optimize   & 0.10+            & Bayesian Optimisation (\texttt{gp\_minimize}) \\
@@ -45,12 +45,12 @@ Plotly            & 5.x              & Interactive 3D surface plots \\
 
 \begin{itemize}
     \item Processor: Apple Silicon (M-series)
-    \item Primary compute device: \gls{mps} via PyTorch
-    \item \Gls{shap} compute device: CPU (faster than \gls{mps} for GradientExplainer)
-    \item Fallback: CPU (used when \gls{mps} is unavailable or for \gls{shap} computations)
+    \item Primary compute device: MPS via PyTorch
+    \item SHAP compute device: CPU (faster than MPS for GradientExplainer)
+    \item Fallback: CPU (used when MPS is unavailable or for SHAP computations)
 \end{itemize}
 
-The PyTorch device was selected automatically: \gls{mps} if available on Apple Silicon, CUDA if available on NVIDIA hardware, and CPU as fallback.
+The PyTorch device was selected automatically: MPS if available on Apple Silicon, CUDA if available on NVIDIA hardware, and CPU as fallback.
 
 % -------------------------------------------------------------
 \subsection{Reproducibility}
@@ -62,9 +62,9 @@ Fixed random seed of 42:
     \item NumPy random operations (\texttt{np.random.seed(42)})
     \item NumPy Generator objects (\texttt{np.random.default\_\allowbreak{}rng(42)})
     \item scikit-learn train/test split (\texttt{random\_state=42})
-    \item \Gls{rf} fitting (\texttt{random\_state=42})
-    \item \Gls{xgboost} fitting (\texttt{seed=42})
-    \item \gls{gp} surrogate fitting (\texttt{random\_state=42})
+    \item RF fitting (\texttt{random\_state=42})
+    \item XGBoost fitting (\texttt{seed=42})
+    \item GP surrogate fitting (\texttt{random\_state=42})
 \end{itemize}
 
 % -------------------------------------------------------------
@@ -83,14 +83,14 @@ Fixed random seed of 42:
 \subsection{Code Availability}
 \label{annexure:code_availability}
 
-The Python code used for data preprocessing, model training, \gls{mc} simulation, \gls{glm} and tree-based benchmarking, Shapley-value computation and diagnostic figure generation is available as supplementary material. The code is organised into separate Jupyter notebooks corresponding to each stage of the analysis:
+The Python code used for data preprocessing, model training, MC simulation, GLM and tree-based benchmarking, Shapley-value computation and diagnostic figure generation is available as supplementary material. The code is organised into separate Jupyter notebooks corresponding to each stage of the analysis:
 
 \begin{itemize}
     \item Data preprocessing and reference-category encoding (\ref{annexure:preprocessing}).
-    \item \Gls{dnn} architecture definition and training (\ref{annexure:dnn_training}).
-    \item Parametric \gls{mc} simulation (\ref{annexure:mc_simulation}).
-    \item \Gls{glm} benchmark fitting and comparison (\ref{annexure:glm_benchmark}).
-    \item Tree-based benchmark fitting: \Gls{rf} and \gls{xgboost} (Section~\ref{sec:tree_benchmarks_methods}).
+    \item DNN architecture definition and training (\ref{annexure:dnn_training}).
+    \item Parametric MC simulation (\ref{annexure:mc_simulation}).
+    \item GLM benchmark fitting and comparison (\ref{annexure:glm_benchmark}).
+    \item Tree-based benchmark fitting: RF and XGBoost (Section~\ref{sec:tree_benchmarks_methods}).
     \item Shapley-value computation and conditional analysis (\ref{annexure:shapley}).
 \end{itemize}
 

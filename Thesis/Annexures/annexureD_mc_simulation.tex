@@ -1,10 +1,10 @@
 % =============================================================
-% Annexure D: \gls{mc} Simulation Procedure
+% Annexure D: MC Simulation Procedure
 % =============================================================
 \section{MC Simulation Procedure}
 \label{annexure:mc_simulation}
 
-The parametric \gls{mc} simulation generates $B = 100\,000$ synthetic policyholder profiles from marginal distributions estimated from the training partition only, in accordance with the leakage-prevention protocol of Section~\ref{sec:mc_simulation_design}. Each profile is encoded, standardised and scored through the trained FunnelDNN to produce a model-implied predicted-cost distribution.
+The parametric MC simulation generates $B = 100\,000$ synthetic policyholder profiles from marginal distributions estimated from the training partition only, in accordance with the leakage-prevention protocol of Section~\ref{sec:mc_simulation_design}. Each profile is encoded, standardised and scored through the trained FunnelDNN to produce a model-implied predicted-cost distribution.
 
 % -------------------------------------------------------------
 \subsection{Marginal Distributions}
@@ -31,7 +31,7 @@ occupation              & Multinomial & 4 levels, estimated proportions \\
 coverage\_level         & Multinomial & 3 levels, estimated proportions \\
 \bottomrule
 \end{tabular}
-\caption{Marginal distributions used for \gls{mc} profile generation.}
+\caption{Marginal distributions used for MC profile generation.}
 \label{tab:mc_marginals}
 \end{table}
 
@@ -42,10 +42,10 @@ coverage\_level         & Multinomial & 3 levels, estimated proportions \\
 The simulation procedure itself is specified in Section~\ref{sec:mc_simulation_design} and is not restated here. Algorithm~\ref{alg:mc_simulation} records only the concrete run configuration used in this study: the random seed, the sample size and the encoded input dimension.
 
 \begin{algorithm}[htbp]
-\caption{Parametric \gls{mc} simulation.}
+\caption{Parametric MC simulation.}
 \label{alg:mc_simulation}
 \begin{algorithmic}[1]
-\Require Fitted marginals, trained \gls{dnn} $f_{\boldsymbol{\theta}^*}$, standardisation parameters, sample size $B = 100\,000$
+\Require Fitted marginals, trained DNN $f_{\boldsymbol{\theta}^*}$, standardisation parameters, sample size $B = 100\,000$
 \Ensure Predicted-cost vector $\hat{\mathbf{y}}_{\mathrm{MC}} \in \mathbb{R}^B$
 \State Initialise random number generator with seed 42
 \For{$i = 1, \ldots, B$}
@@ -62,7 +62,7 @@ The simulation procedure itself is specified in Section~\ref{sec:mc_simulation_d
 \subsection{Convergence Diagnostics}
 \label{annexure:mc_convergence}
 
-\gls{mc} convergence was assessed using the pilot procedure described in Section~\ref{sec:mc_simulation_design}, in which the running mean, standard deviation, selected quantiles and \gls{mcse} are recomputed at increasing pilot sample sizes; the pilot grid is listed in that section and is not repeated here. Stabilisation of the mean and tail quantiles confirmed that $B = 100\,000$ provides adequate precision.
+MC convergence was assessed using the pilot procedure described in Section~\ref{sec:mc_simulation_design}, in which the running mean, standard deviation, selected quantiles and MCSE are recomputed at increasing pilot sample sizes; the pilot grid is listed in that section and is not repeated here. Stabilisation of the mean and tail quantiles confirmed that $B = 100\,000$ provides adequate precision.
 
 % -------------------------------------------------------------
 \subsection{Residual-Augmented Sensitivity}
@@ -78,10 +78,10 @@ where $\varepsilon_i$ is drawn with replacement from the centred residual vector
 \subsection{Encoding for MC Profiles}
 \label{annexure:mc_encode}
 
-The same reference-category encoding scheme described in \ref{annexure:encoding} was applied to the \gls{mc} profiles, producing an $B \times 22$ feature matrix that matches the trained model's input specification.
+The same reference-category encoding scheme described in \ref{annexure:encoding} was applied to the MC profiles, producing an $B \times 22$ feature matrix that matches the trained model's input specification.
 
 % -------------------------------------------------------------
 \subsection{DNN Scoring}
 \label{annexure:mc_score}
 
-Each encoded profile is standardised using the training-set parameters ($\boldsymbol{\mu}_X$, $\boldsymbol{\sigma}_X$), passed through the trained \gls{dnn} in a single forward pass (with gradients disabled), and de-normalised to the original Rand scale using the training-set response parameters ($\mu_y$, $\sigma_y$).
+Each encoded profile is standardised using the training-set parameters ($\boldsymbol{\mu}_X$, $\boldsymbol{\sigma}_X$), passed through the trained DNN in a single forward pass (with gradients disabled), and de-normalised to the original Rand scale using the training-set response parameters ($\mu_y$, $\sigma_y$).

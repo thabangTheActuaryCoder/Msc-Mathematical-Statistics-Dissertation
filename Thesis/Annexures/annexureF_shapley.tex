@@ -4,7 +4,7 @@
 \section{Shapley-Value Computation Procedure}
 \label{annexure:shapley}
 
-Approximate Shapley values were computed using the \gls{shap} library's GradientExplainer, which uses integrated gradients as an approximation to exact Shapley values for differentiable models. All \gls{shap} computations were performed on CPU, as GradientExplainer runs faster on CPU than on MPS for this model size.
+Approximate Shapley values were computed using the SHAP library's GradientExplainer, which uses integrated gradients as an approximation to exact Shapley values for differentiable models. All SHAP computations were performed on CPU, as GradientExplainer runs faster on CPU than on MPS for this model size.
 
 % -------------------------------------------------------------
 \subsection{Computation Procedure}
@@ -14,7 +14,7 @@ Approximate Shapley values were computed using the \gls{shap} library's Gradient
 \caption{Batch Shapley-value computation with dummy-to-raw aggregation.}
 \label{alg:shap_computation}
 \begin{algorithmic}[1]
-\Require Trained \gls{dnn} $f_{\boldsymbol{\theta}^*}$ (CPU copy), standardised training data $\mathbf{X}_{\mathrm{train}}$, standardised \gls{mc} profiles $\mathbf{X}_{\mathrm{MC}}$, batch size $B_s = 2\,000$
+\Require Trained DNN $f_{\boldsymbol{\theta}^*}$ (CPU copy), standardised training data $\mathbf{X}_{\mathrm{train}}$, standardised MC profiles $\mathbf{X}_{\mathrm{MC}}$, batch size $B_s = 2\,000$
 \Ensure Raw-variable Shapley matrix $\boldsymbol{\Phi} \in \mathbb{R}^{B \times 11}$
 \State Sample 200 background rows from $\mathbf{X}_{\mathrm{train}}$ (seed 42)
 \State Initialise GradientExplainer with $f_{\boldsymbol{\theta}^*}$ and background data
@@ -67,7 +67,7 @@ The Shapley efficiency axiom $\bigl(\sum_{j=1}^{p} \phi_j = f(\mathbf{x}) - \phi
 \subsection{Global Importance}
 \label{annexure:shap_global}
 
-Global feature importance was computed as the mean absolute Shapley value across all $B$ \gls{mc} profiles: $\bar{|\phi|}_j = B^{-1} \sum_{i=1}^{B} |\phi_{ij}|$ for each raw variable $j$. Variables were ranked by this measure to identify the most influential predictors of insurance cost.
+Global feature importance was computed as the mean absolute Shapley value across all $B$ MC profiles: $\bar{|\phi|}_j = B^{-1} \sum_{i=1}^{B} |\phi_{ij}|$ for each raw variable $j$. Variables were ranked by this measure to identify the most influential predictors of insurance cost.
 
 % -------------------------------------------------------------
 \subsection{High-Cost Conditional Shapley Analysis}

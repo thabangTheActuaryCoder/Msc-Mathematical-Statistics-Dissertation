@@ -11,7 +11,7 @@
 Health insurance cost prediction lies at the intersection of statistical
 learning, actuarial modelling and explainable machine learning.  The
 empirical task involves estimating a continuous monetary outcome from
-policyholder characteristics such as age, \gls{bmi}, smoking
+policyholder characteristics such as age, BMI, smoking
 status, coverage level and medical history.  In the insurance industry,
 these estimates underpin individual pricing, reserve adequacy and
 portfolio risk management.  A single fitted value or prediction-error
@@ -23,9 +23,9 @@ prediction.
 
 It is therefore important to establish the modelling landscape within
 which this dissertation operates: the classical actuarial framework
-based on \glspl{glm}, the tree-based ensemble methods that
+based on GLMs, the tree-based ensemble methods that
 occupy an intermediate position between linear and fully flexible models,
-the introduction of \glspl{dnn} into insurance pricing, and the
+the introduction of DNNs into insurance pricing, and the
 growing demand for post-hoc model explanation.  Each of these themes is
 introduced below, before the specific research problem and analytical
 framework are stated.
@@ -34,7 +34,7 @@ framework are stated.
 \label{sec:classical_actuarial}
 
 The statistical modelling of insurance costs has a long history.
-\Glspl{glm} have served as the standard framework
+GLMs have served as the standard framework
 for actuarial pricing since the seminal work of
 \citet{nelder1972generalized} and the framework's subsequent adoption
 by the insurance profession.  In health insurance, the Gamma distribution with
@@ -60,10 +60,10 @@ structure of the log-link allows each coefficient to be interpreted as a
 relative risk factor: exponentiating $\beta_j$ yields the multiplicative
 effect of a unit increase in the $j$-th covariate on the expected cost,
 holding all other covariates constant.  This interpretive simplicity has
-made \glspl{glm} the dominant modelling tool in actuarial practice for several
+made GLMs the dominant modelling tool in actuarial practice for several
 decades.
 
-Despite their advantages, \glspl{glm} impose a pre-specified linear predictor
+Despite their advantages, GLMs impose a pre-specified linear predictor
 structure that restricts the functional form of the relationship between
 covariates and the response.  Interaction effects must be specified
 manually, and nonlinear relationships can only be captured through
@@ -83,29 +83,29 @@ distributional assumptions can mitigate this concern, the fundamental
 limitation of the linear predictor structure remains.  As
 \citet{goodfellow2016deep} note, the capacity of a model class to
 approximate a target function is determined by the richness of the
-hypothesis space, and the hypothesis space of a \gls{glm} is inherently
+hypothesis space, and the hypothesis space of a GLM is inherently
 constrained by its additive structure.
 
-Between the constrained linear predictor of the \gls{glm} and the fully
-flexible hidden-layer representations of a \gls{dnn} lie
+Between the constrained linear predictor of the GLM and the fully
+flexible hidden-layer representations of a DNN lie
 tree-based ensemble methods, which approximate nonlinear relationships
-through collections of decision trees.  \Glspl{rf}
+through collections of decision trees.  RFs
 \citep{breiman2001random} aggregate predictions across independently
 grown trees, each trained on a bootstrap sample with a random feature
 subset at each split, reducing variance while capturing interactions
-that the \gls{glm} cannot represent.  Gradient-boosted trees, exemplified by
-the \gls{xgboost} implementation \citep{chen2016xgboost}, construct an
+that the GLM cannot represent.  Gradient-boosted trees, exemplified by
+the XGBoost implementation \citep{chen2016xgboost}, construct an
 additive ensemble of shallow trees sequentially, with each new tree
 fitted to the residuals of the preceding ensemble.  Both methods offer
-greater flexibility than the \gls{glm} but remain fundamentally
+greater flexibility than the GLM but remain fundamentally
 piecewise-constant approximators: unlike neural networks, they do not
 learn smooth, continuous mappings through differentiable transformations.
-Including an \gls{rf} and an \gls{xgboost} benchmark alongside the \gls{glm} and
-\gls{dnn} provides a graded comparison across model classes of increasing
-flexibility.  The core comparison remains the actuarial-standard \gls{glm}
-against the \gls{dnn}, since this dissertation is situated within an actuarial
-modelling context where the \gls{glm} is the established industry baseline and
-the \gls{dnn} represents the class of model whose behaviour the \gls{mc}
+Including an RF and an XGBoost benchmark alongside the GLM and
+DNN provides a graded comparison across model classes of increasing
+flexibility.  The core comparison remains the actuarial-standard GLM
+against the DNN, since this dissertation is situated within an actuarial
+modelling context where the GLM is the established industry baseline and
+the DNN represents the class of model whose behaviour the MC
 and Shapley analyses are designed to examine.  The tree-based benchmarks
 complement this pairing by establishing where piecewise-constant
 nonlinear methods fall on the performance spectrum.
@@ -113,10 +113,10 @@ nonlinear methods fall on the performance spectrum.
 \subsubsection{DNNs for insurance regression}
 \label{sec:dnn_intro}
 
-\Glspl{dnn} provide a flexible alternative to the \gls{glm} framework.
+DNNs provide a flexible alternative to the GLM framework.
 The universal approximation theorem
 \citep{hornik1989multilayer, cybenko1989approximation} establishes that a
-sufficiently wide \gls{dnn} with a non-polynomial activation
+sufficiently wide DNN with a non-polynomial activation
 function can approximate any continuous function on a compact set to
 arbitrary precision; the formal statement and its conditions are
 presented in Section~\ref{sec:dnn_regression}.  The compactness
@@ -135,14 +135,14 @@ adoption of neural networks in insurance applications.  The survey by
 model of \citet{kuo2019deep} demonstrate that neural networks can
 improve upon classical actuarial models across pricing and reserving
 tasks, particularly when the data contain nonlinear covariate-response
-relationships that the \gls{glm} cannot capture.  The \gls{dnn} architecture, in which each layer
+relationships that the GLM cannot capture.  The DNN architecture, in which each layer
 computes $\mathbf{h}^{(\ell)} = \sigma(\mathbf{W}^{(\ell)}
 \mathbf{h}^{(\ell-1)} + \mathbf{b}^{(\ell)})$ for an activation function
 $\sigma$, weight matrix $\mathbf{W}^{(\ell)}$ and bias vector
 $\mathbf{b}^{(\ell)}$, is a widely employed architecture for
 tabular regression problems \citep{goodfellow2016deep, richman2021ai}.
 
-The flexibility of \glspl{dnn}, however, comes at the expense of
+The flexibility of DNNs, however, comes at the expense of
 direct interpretability.  The parameters of a trained network, which may
 number in the tens of thousands, do not admit the same coefficient-level
 reading as a linear model.  A policyholder with specific attributes
@@ -161,7 +161,7 @@ feature attribution}
 \label{sec:beyond_point_prediction}
 
 Prediction accuracy alone provides an incomplete picture of model
-behaviour.  A test-set metric such as \gls{r2} or \gls{rmse} summarises average
+behaviour.  A test-set metric such as \ensuremath{R^2} or RMSE summarises average
 predictive performance but does not reveal how the predicted cost varies
 across the input space, what the distributional shape of predicted costs
 looks like under population-level input variation, or which variables are
@@ -215,7 +215,7 @@ neural-network function approximation.  Supervised regression seeks a
 function $\hat{f}: \mathbb{R}^p \to \mathbb{R}$ that minimises a loss
 functional, typically the expected squared error
 $E[(Y - \hat{f}(\mathbf{X}))^2]$, over a distribution of input-output
-pairs $(\mathbf{X}, Y)$.  The \gls{dnn} is one particular
+pairs $(\mathbf{X}, Y)$.  The DNN is one particular
 parameterisation of this function class, distinguished by its capacity to
 represent highly nonlinear mappings through compositions of affine
 transformations and elementwise activation functions.
@@ -232,12 +232,12 @@ unbiased estimate of the generalisation performance.
 \subsubsection{MC simulation in statistical inference}
 \label{sec:mc_intro}
 
-The simulation component uses parametric \gls{mc} methods, one of the
-foundational tools of computational statistics.  \gls{mc} simulation
+The simulation component uses parametric MC methods, one of the
+foundational tools of computational statistics.  MC simulation
 allows the analyst to explore the distribution of a quantity of interest
 by drawing random samples from a specified input distribution and
 propagating them through a deterministic or stochastic transformation.
-In the classical setting, \gls{mc} methods are used to study the
+In the classical setting, MC methods are used to study the
 sampling distribution of estimators, the power of test statistics and the
 coverage properties of confidence intervals.
 
@@ -253,12 +253,12 @@ distribution of $\hat{Y}$ under $F_{\mathbf{X}}$ is the object of
 inferential interest.  This construction draws on the simulation-based
 inference tradition within mathematical statistics, where the behaviour
 of estimators, test statistics and predictive quantities is routinely
-studied through \gls{mc} experiments.  A caveat is warranted: because
+studied through MC experiments.  A caveat is warranted: because
 the marginals are fitted to the same data on which the network was
 trained, and because the network achieves near-perfect fit on the
 Kaggle benchmark dataset \citep{kaggleInsuranceDataML}, the model-implied predicted-cost distribution
 necessarily recovers the empirical charge distribution almost by
-construction.  The primary role of the \gls{mc} stage in this
+construction.  The primary role of the MC stage in this
 application is therefore not to reveal unexpected distributional
 properties, but to define the high-cost conditioning regions on which
 the Shapley analysis operates.
@@ -277,7 +277,7 @@ the axioms and the equation are presented in
 Section~\ref{sec:explainability_shapley_shap}.
 
 In the machine-learning interpretability literature, this decomposition
-has been operationalised through the \gls{shap} framework
+has been operationalised through the SHAP framework
 \citep{lundberg2017unified}, which interprets each prediction as a
 cooperative game in which the ``players'' are input features and the
 ``payoff'' is the predicted value.  A gradient-based implementation is
@@ -287,11 +287,11 @@ Section~\ref{sec:shapley_attribution_simulated_profiles}.
 
 A terminological note is warranted.  Throughout this dissertation,
 ``Shapley values'' refers to the theoretical decomposition from
-cooperative game theory, while ``\gls{shap}'' refers specifically to the
+cooperative game theory, while ``SHAP'' refers specifically to the
 computational framework and software library used to approximate those
 values.  Because the theoretical properties of the Shapley value
 underpin the interpretation of all attribution results, the term
-``Shapley values'' is used as the default throughout, and ``\gls{shap}''
+``Shapley values'' is used as the default throughout, and ``SHAP''
 appears only when referring to the specific approximation algorithm or
 implementation.
 
@@ -302,7 +302,7 @@ The choice to combine these three components reflects a broader
 methodological perspective: that a fitted prediction model is a
 statistical object whose properties extend beyond its point-prediction
 accuracy.  Just as the sampling distribution of an estimator is studied
-through \gls{mc} experiments to understand its variability, the
+through MC experiments to understand its variability, the
 distribution of a prediction function's outputs under a specified input
 law can be studied to understand the range and shape of its predictions.
 And just as the influence of individual observations on an estimator can
@@ -313,7 +313,7 @@ Shapley values.
 Each of these components has a well-established theoretical basis in
 mathematical statistics.  The contribution of this dissertation lies in
 their integration within a single empirical workflow applied to health
-insurance cost prediction.  The \gls{mc} distribution defines the
+insurance cost prediction.  The MC distribution defines the
 regions of interest for the Shapley analysis, and the conditional
 Shapley analysis decomposes the model behaviour within those regions.
 This integration produces insight that none of the three components
@@ -332,19 +332,19 @@ Each stage produces outputs that serve as inputs to the next, creating an
 integrated framework in which the fitted model, the simulated input
 population and the feature attributions are jointly analysed.
 
-In the first stage, a \gls{dnn} regression model is trained on
+In the first stage, a DNN regression model is trained on
 the benchmark dataset using a systematic hyperparameter comparison.  The
 trained network defines a prediction function
 $\hat{f}: \mathbb{R}^p \to \mathbb{R}$ that maps encoded policyholder
-attributes to predicted costs.  A Gamma \gls{glm} with a
-logarithmic link, an \gls{rf} regressor and an \gls{xgboost}
+attributes to predicted costs.  A Gamma GLM with a
+logarithmic link, an RF regressor and an XGBoost
 gradient-boosted tree regressor are fitted alongside the network to
 provide benchmarks spanning three alternative model classes.  The
 output of this stage is a validated prediction function with
 documented out-of-sample performance across all four models.
 
 In the second stage, parametric distributions are fitted to each input
-variable in the training partition, and an \gls{mc} sample of
+variable in the training partition, and an MC sample of
 $B = 100\,000$ synthetic policyholder profiles is drawn from the product
 of these marginals.  Each profile is encoded and passed through the
 trained prediction function, yielding a sample of $B$ predicted costs.
@@ -404,7 +404,7 @@ From a statistical-learning perspective, the construction of a
 model-implied predicted-cost distribution under an explicit input law
 connects the neural network prediction function to the broader tradition
 of simulation-based inference (Section~\ref{sec:integration_contribution}).
-Rather than evaluating the model only at observed data points, the \gls{mc}
+Rather than evaluating the model only at observed data points, the MC
 component generates a distribution of predicted costs that reveals the
 range and shape of the model's output landscape.
 
@@ -434,17 +434,17 @@ prediction, simulation and explanation framework.
 The dissertation addresses the following research questions:
 
 \begin{enumerate}
-    \item \label{rq:1} How does a \gls{dnn} regression model compare with a
-          classical \gls{glm}, an \gls{rf} and an
-          \gls{xgboost} gradient-boosted tree in predicting health insurance
+    \item \label{rq:1} How does a DNN regression model compare with a
+          classical GLM, an RF and an
+          XGBoost gradient-boosted tree in predicting health insurance
           costs on a benchmark dataset?
 
-    \item \label{rq:2} How adequately does parametric \gls{mc} simulation of
+    \item \label{rq:2} How adequately does parametric MC simulation of
           policyholder profiles reproduce the model-implied predicted-cost
           distribution, and how effectively does it define the high-cost
           conditioning regions required for tail-focused attribution?
 
-    \item \label{rq:3} Is the product-marginal \gls{mc} input distribution a
+    \item \label{rq:3} Is the product-marginal MC input distribution a
           defensible approximation of the training-data joint distribution
           for the purpose of generating simulated profiles?
 
@@ -480,12 +480,12 @@ following objectives, each of which maps directly to one or more research
 questions:
 
 \begin{enumerate}
-    \item To fit a \gls{dnn} regression model to a health
+    \item To fit a DNN regression model to a health
           insurance benchmark dataset and to evaluate its predictive
-          performance against a classical \gls{glm}, an
-          \gls{rf} and an \gls{xgboost} gradient-boosted tree benchmark.
+          performance against a classical GLM, an
+          RF and an XGBoost gradient-boosted tree benchmark.
 
-    \item To design and implement a parametric \gls{mc} simulation
+    \item To design and implement a parametric MC simulation
           that generates synthetic policyholder profiles from fitted
           marginal distributions, propagates them through the trained
           network, and to assess how adequately the simulation
@@ -493,12 +493,12 @@ questions:
           and how effectively it defines the high-cost conditioning
           regions required for tail-focused attribution.
 
-    \item To validate the \gls{mc} input distribution against the
+    \item To validate the MC input distribution against the
           observed training data using joint-distribution diagnostics,
           bootstrap resampling, and a Shapley attribution invariance
           check.
 
-    \item To conduct a residual-augmented \gls{mc} sensitivity
+    \item To conduct a residual-augmented MC sensitivity
           analysis that examines the effect of residual perturbation on
           the predicted-cost distribution.
 
@@ -537,19 +537,19 @@ five-phase hyperparameter comparison uses validation-set performance as
 the selection criterion, while the final performance metrics are reported
 on the held-out test set that is never used for model selection.  Third,
 the comparison of training-set and test-set performance metrics for both
-the \gls{dnn} and the \gls{glm} provides evidence on the presence or absence of
+the DNN and the GLM provides evidence on the presence or absence of
 overfitting.
 
 At the simulation stage, the validation strategy addresses the central
-question of whether the independent-marginal \gls{mc} input
+question of whether the independent-marginal MC input
 distribution is a defensible approximation of the training-data joint
 distribution.  This is assessed through four complementary diagnostics:
 pairwise correlation comparisons, categorical cross-tabulation
-comparisons, \gls{pca} projection overlays, and a formal energy distance
+comparisons, PCA projection overlays, and a formal energy distance
 permutation test.  In addition, convergence diagnostics monitor the
 stability of the predicted-cost distribution summary statistics as the
 simulation size increases, confirming that $B = 100\,000$ is sufficient
-for the level of \gls{mc} precision required.  The
+for the level of MC precision required.  The
 residual-augmented sensitivity analysis adds a further robustness layer
 by examining whether the distributional conclusions change when scaled
 fitted residuals are incorporated into the predicted costs.
@@ -557,10 +557,10 @@ fitted residuals are incorporated into the predicted costs.
 At the explanation stage, the validation strategy uses a Shapley
 attribution invariance check.  This diagnostic compares the
 feature-importance rankings obtained when Shapley values are computed on
-training-data input profiles with those obtained on \gls{mc} input
+training-data input profiles with those obtained on MC input
 profiles.  Agreement between the two regimes confirms that the Shapley
 results are not sensitive to the choice of input regime and that the
-\gls{mc} input distribution produces attributions consistent with
+MC input distribution produces attributions consistent with
 those obtained from observed data.
 
 A final validation layer spans all three stages: the network is
@@ -589,7 +589,7 @@ The following delimitations define the boundaries of the study:
           \citep{kaggleInsuranceDataML}, a publicly
           available benchmark dataset containing one million policyholder
           records.  The dataset was generated by sampling eleven
-          predictor variables (age, sex, \gls{bmi}, number of children,
+          predictor variables (age, sex, BMI, number of children,
           smoking status, region, exercise frequency, occupation,
           coverage level, medical history and family medical history)
           from pre-specified distributions and computing the response
@@ -608,18 +608,18 @@ The following delimitations define the boundaries of the study:
           covariate-response relationships are more complex.
 
     \item \textbf{Focused model comparison.}  Three benchmark models (a
-          Gamma \gls{glm}, an \gls{rf} and an \gls{xgboost} gradient-boosted
+          Gamma GLM, an RF and an XGBoost gradient-boosted
           tree) are included to contextualise the predictive performance
-          of the \gls{dnn} across model classes of increasing
+          of the DNN across model classes of increasing
           flexibility.  However, the dissertation does not attempt an
           exhaustive model-selection study.  Bayesian methods, support
           vector machines, other neural-network architectures and
           stacked-ensemble approaches are not evaluated.  The comparison
-          is designed to position the \gls{dnn} within a spectrum from linear
+          is designed to position the DNN within a spectrum from linear
           to piecewise-constant to smooth nonlinear models, rather than
           to identify the globally optimal model class.
 
-    \item \textbf{Single primary network.}  The main \gls{mc} and
+    \item \textbf{Single primary network.}  The main MC and
           Shapley analyses are applied to a network trained with a fixed
           random seed, so the reported predicted-cost distribution and
           feature attributions are conditional on that fitted model.
@@ -630,7 +630,7 @@ The following delimitations define the boundaries of the study:
           attribution pipeline; an exhaustive exploration of the
           initialisation space is not attempted.
 
-    \item \textbf{Independent marginals.}  The \gls{mc} input
+    \item \textbf{Independent marginals.}  The MC input
           distribution is constructed as a product of independent fitted
           marginals; copula-based joint distributions are not considered.
           The rationale and empirical justification for this choice are
@@ -638,7 +638,7 @@ The following delimitations define the boundaries of the study:
           and~\ref{sec:simulated_input_validation_ch4}.
 
     \item \textbf{Approximate Shapley values.}  The reported
-          attributions are gradient-based \gls{shap} approximations, not
+          attributions are gradient-based SHAP approximations, not
           exact game-theoretic Shapley values.  They are conditional on
           the fitted network, the background sample, and the explainer
           settings.  Exact Shapley computation is infeasible for the
@@ -700,11 +700,11 @@ The remainder of this dissertation is organised as follows.
 
 Chapter~\ref{sec:literature_review} (Literature Review)
 reviews the theoretical and empirical foundations of the
-\gls{dnn}, \gls{mc} and Shapley framework.  The review covers statistical
-learning theory and supervised regression, \gls{dnn}
-architectures and their approximation properties, \glspl{glm} as actuarial baselines, health insurance cost prediction with
-machine learning, \gls{mc} simulation methodology, Shapley-value
-attribution theory and the \gls{shap} framework, and conditional
+DNN, MC and Shapley framework.  The review covers statistical
+learning theory and supervised regression, DNN
+architectures and their approximation properties, GLMs as actuarial baselines, health insurance cost prediction with
+machine learning, MC simulation methodology, Shapley-value
+attribution theory and the SHAP framework, and conditional
 feature-importance analysis.  The chapter concludes with a formal
 identification of the research gap that motivates the present study.
 
@@ -712,8 +712,8 @@ Chapter~\ref{chap:methods_and_data} (Methods and Data)
 describes the benchmark dataset, the data preprocessing and
 encoding procedure, the exploratory data analysis, the network
 architecture and training protocol, the five-phase hyperparameter
-comparison, the predictive and structural diagnostics, the \gls{glm} and
-tree-based benchmark specifications, the \gls{mc} simulation design
+comparison, the predictive and structural diagnostics, the GLM and
+tree-based benchmark specifications, the MC simulation design
 and input-distribution validation, the residual-augmented sensitivity
 analysis, and the Shapley-value implementation.  All methodological
 choices are documented with their statistical justification, and a
@@ -722,15 +722,15 @@ consolidated table of modelling assumptions is provided.
 Chapter~\ref{sec:results} (Results)
 presents the empirical results of the three-stage workflow.
 The chapter reports the hyperparameter comparison outcomes, the
-benchmark comparison against the \gls{glm}, \gls{rf} and \gls{xgboost}
+benchmark comparison against the GLM, RF and XGBoost
 models in both default and tuned configurations, the multi-seed
-robustness analyses of the \gls{dnn} and the benchmark models, the
-\gls{mc} predicted-cost distribution and its convergence
+robustness analyses of the DNN and the benchmark models, the
+MC predicted-cost distribution and its convergence
 diagnostics, the joint-distribution validation results, the
 residual-augmented sensitivity analysis, the global and conditional
 Shapley-value attributions, the feature-importance ranking reversal in
 the upper tail, the Shapley attribution invariance check, and the
-\gls{shap} interaction analysis.
+SHAP interaction analysis.
 
 Chapter~\ref{sec:conclusion} (Conclusion), the final chapter, summarises the key findings in relation to each
 research question, states the contributions and strengths of the study,

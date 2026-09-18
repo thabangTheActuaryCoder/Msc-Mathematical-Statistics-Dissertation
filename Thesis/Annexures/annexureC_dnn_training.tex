@@ -4,13 +4,13 @@
 \section{DNN Architecture and Training Procedure}
 \label{annexure:dnn_training}
 
-The FunnelDNN model uses a \gls{dnn} architecture with monotonically decreasing hidden layer widths: $22 \to 256 \to 128 \to 64 \to 32 \to 16 \to 1$. All layers are bias-free, and the \gls{celu} activation function is applied after each hidden layer. The output layer is linear with no activation.
+The FunnelDNN model uses a DNN architecture with monotonically decreasing hidden layer widths: $22 \to 256 \to 128 \to 64 \to 32 \to 16 \to 1$. All layers are bias-free, and the CELU activation function is applied after each hidden layer. The output layer is linear with no activation.
 
 % -------------------------------------------------------------
 \subsection{Training Procedure}
 \label{annexure:train_model}
 
-Training minimises the \gls{mse} loss on normalised data using the \gls{nadam} optimiser. Validation-based early stopping monitors the dot-product \gls{r2} on the validation set every 5 epochs, with a patience of 10 checks.
+Training minimises the MSE loss on normalised data using the NAdam optimiser. Validation-based early stopping monitors the dot-product \ensuremath{R^2} on the validation set every 5 epochs, with a patience of 10 checks.
 
 \begin{algorithm}[htbp]
 \caption{FunnelDNN training with early stopping.}
@@ -23,7 +23,7 @@ Training minimises the \gls{mse} loss on normalised data using the \gls{nadam} o
 \For{$t = 1, 2, \ldots, T_{\max}$}
     \For{each mini-batch $(\mathbf{X}_b, \mathbf{y}_b)$ of size $B$}
         \State Compute $\mathcal{L} = \mathrm{MSE}\bigl(f_{\boldsymbol{\theta}}(\mathbf{X}_b),\, \mathbf{y}_b\bigr)$
-        \State Update $\boldsymbol{\theta}$ via \gls{nadam} with learning rate $\eta$
+        \State Update $\boldsymbol{\theta}$ via NAdam with learning rate $\eta$
     \EndFor
     \If{$t \bmod V = 0$}
         \State Compute $R^2_{\mathrm{val}} = r^2_{\mathrm{dot}}\bigl(\mathbf{y}_{\mathrm{val}},\, f_{\boldsymbol{\theta}}(\mathbf{X}_{\mathrm{val}})\bigr)$
@@ -52,7 +52,7 @@ Three metrics are computed on the original Rand scale after de-normalisation:
     \item $\mathrm{MAE} = n^{-1} \sum_i |y_i - \hat{y}_i|$.
 \end{itemize}
 
-During training, the dot-product \gls{r2} (squared correlation between predicted and observed values) is used on normalised data for computational speed.
+During training, the dot-product \ensuremath{R^2} (squared correlation between predicted and observed values) is used on normalised data for computational speed.
 
 % -------------------------------------------------------------
 \subsection{Checkpoint Contents}
@@ -71,7 +71,7 @@ The final trained model is saved as \texttt{chapter3\_final\_\allowbreak{}model.
 \subsection{DNN Training Algorithm (Detailed)}
 \label{annexure:dnn_algorithm_detailed}
 
-The following table presents the complete \gls{dnn} training and model
+The following table presents the complete DNN training and model
 selection procedure as implemented in
 Section~\ref{sec:dnn_specification_training}.
 
@@ -81,7 +81,7 @@ Section~\ref{sec:dnn_specification_training}.
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{p{0.92\textwidth}}
 \toprule
-\textbf{Algorithm C.1: \Gls{dnn} training and model selection} \\
+\textbf{Algorithm C.1: DNN training and model selection} \\
 \midrule
 \textbf{Input:} model-ready training data
 $\{(\mathbf{z}_i, \widetilde{y}_i)\}_{i \in \mathcal{D}_{\mathrm{train}}}$,
@@ -116,12 +116,12 @@ training history, selected epoch $e^{*}$. \\[3pt]
    R^2_{\mathrm{val}}(e)$. \\
 5. Retain the network weights $\widehat{\theta} = \theta^{(e^{*})}$. \\
 6. De-normalise predictions and evaluate on the held-out test set using
-   \gls{r2}, \gls{rmse} and \gls{mae} on the original monetary scale. \\
+   \ensuremath{R^2}, RMSE and MAE on the original monetary scale. \\
 7. Save $\widehat{\theta}$, architecture specification, standardisation
    parameters, training history, and all evaluation outputs. \\
 \bottomrule
 \end{tabular}}
-\caption{\Gls{dnn} training and model selection algorithm.}
+\caption{DNN training and model selection algorithm.}
 \label{tab:dnn_training_algorithm_annex}
 \end{table}
 
@@ -135,7 +135,7 @@ training history, selected epoch $e^{*}$. \\[3pt]
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{p{0.92\textwidth}}
 \toprule
-\textbf{Algorithm C.2: Gamma \gls{glm} with log link} \\
+\textbf{Algorithm C.2: Gamma GLM with log link} \\
 \midrule
 \textbf{Input:} model-ready training data
 $\{(\mathbf{z}_i, y_i)\}_{i \in \mathcal{D}_{\mathrm{train}}}$,
@@ -171,11 +171,11 @@ $\widehat{\phi}$. \\[3pt]
 4. Predict on the original monetary scale:
    $\widehat{y}_i = \exp(\mathbf{z}_i^{\top}
    \widehat{\boldsymbol{\beta}})$. \\
-5. Evaluate \gls{r2}, \gls{rmse} and \gls{mae} on the training,
+5. Evaluate \ensuremath{R^2}, RMSE and MAE on the training,
    validation and test partitions. \\
 \bottomrule
 \end{tabular}}
-\caption{Gamma \gls{glm} with log link fitting algorithm.}
+\caption{Gamma GLM with log link fitting algorithm.}
 \label{tab:glm_algorithm_annex}
 \end{table}
 
@@ -189,7 +189,7 @@ $\widehat{\phi}$. \\[3pt]
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{p{0.92\textwidth}}
 \toprule
-\textbf{Algorithm C.3: \Gls{rf} regression} \\
+\textbf{Algorithm C.3: RF regression} \\
 \midrule
 \textbf{Input:} model-ready training data
 $\{(\mathbf{z}_i, y_i)\}_{i \in \mathcal{D}_{\mathrm{train}}}$,
@@ -221,11 +221,11 @@ $\{T_1, \ldots, T_B\}$. \\[3pt]
 3. For a new input $\mathbf{z}$, predict
    $\hat{f}_{\mathrm{RF}}(\mathbf{z})
    = \frac{1}{B}\sum_{b=1}^{B} T_b(\mathbf{z})$. \\
-4. Evaluate \gls{r2}, \gls{rmse} and \gls{mae} on the training,
+4. Evaluate \ensuremath{R^2}, RMSE and MAE on the training,
    validation and test partitions on the original monetary scale. \\
 \bottomrule
 \end{tabular}}
-\caption{\Gls{rf} regression training algorithm.}
+\caption{RF regression training algorithm.}
 \label{tab:rf_algorithm_annex}
 \end{table}
 
@@ -239,7 +239,7 @@ $\{T_1, \ldots, T_B\}$. \\[3pt]
 \renewcommand{\arraystretch}{1.15}
 \begin{tabular}{p{0.92\textwidth}}
 \toprule
-\textbf{Algorithm C.4: \Gls{xgboost} gradient-boosted tree regression} \\
+\textbf{Algorithm C.4: XGBoost gradient-boosted tree regression} \\
 \midrule
 \textbf{Input:} model-ready training data
 $\{(\mathbf{z}_i, y_i)\}_{i \in \mathcal{D}_{\mathrm{train}}}$,
@@ -280,11 +280,11 @@ $\hat{f}_{M^{*}}(\mathbf{z})$, selected round $M^{*}$. \\[3pt]
    $M^{*} = \arg\min_{m \in \{1,\ldots,M\}}
    \mathcal{L}_{\mathrm{val}}(m)$
    and retain the ensemble up to that round. \\
-5. Evaluate \gls{r2}, \gls{rmse} and \gls{mae} on the training,
+5. Evaluate \ensuremath{R^2}, RMSE and MAE on the training,
    validation and test partitions on the original monetary scale. \\
 \bottomrule
 \end{tabular}}
-\caption{\Gls{xgboost} gradient-boosted tree regression training algorithm.}
+\caption{XGBoost gradient-boosted tree regression training algorithm.}
 \label{tab:xgb_algorithm_annex}
 \end{table}
 
