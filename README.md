@@ -10,11 +10,11 @@ MSc dissertation submitted in partial fulfilment of the requirements for the deg
 
 This dissertation develops a three-stage statistical framework for health insurance cost prediction using a publicly available benchmark dataset of one million policyholder records. The three stages are:
 
-1. **Prediction** -- A deep neural network is trained to predict insurance charges, with a five-phase hyperparameter comparison selecting the final architecture. The DNN is benchmarked against a Gamma generalised linear model (GLM), a random forest and an XGBoost ensemble.
+1. **Prediction** -> A deep neural network is trained to predict insurance charges, with a five-phase hyperparameter comparison selecting the final architecture. The DNN is benchmarked against a Gamma generalised linear model (GLM), a random forest and an XGBoost ensemble.
 
-2. **Simulation** -- Parametric Monte Carlo simulation generates synthetic policyholder profiles from fitted marginal distributions. The trained network is evaluated at each profile, producing a model-implied predicted-cost distribution validated through joint-distribution diagnostics and residual-augmented sensitivity analysis.
+2. **Simulation** -> Parametric Monte Carlo simulation generates synthetic policyholder profiles from fitted marginal distributions. The trained network is evaluated at each profile, producing a model-implied predicted-cost distribution validated through joint-distribution diagnostics and residual-augmented sensitivity analysis.
 
-3. **Explanation** -- Shapley values decompose each predicted cost into additive feature contributions at both the global level and conditionally within high-cost regions defined by upper-tail thresholds.
+3. **Explanation** -> Shapley values decompose each predicted cost into additive feature contributions at both the global level and conditionally within high-cost regions defined by upper-tail thresholds.
 
 ## Key Results
 
