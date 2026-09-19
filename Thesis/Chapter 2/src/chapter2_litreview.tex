@@ -676,7 +676,7 @@ Let
 denote the set of input features. For an observed or simulated profile
 \(\mathbf{x}\), the Shapley framework defines a value function
 \(v_{\mathbf{x}}(S)\) for each coalition \(S\subseteq\mathcal{P}\). In a
-model-prediction setting, \(v_{\mathbf{x}}(S)\) represents the fitted prediction available when the feature values in \(S\) are fixed at their values in \(\mathbf{x}\), while the remaining features are integrated over or replaced using a background distribution. Let \(\widehat{F}_{B}\) denote the background distribution used for Shapley-value evaluation. A conditional form of the valuefunction is
+model-prediction setting, \(v_{\mathbf{x}}(S)\) represents the fitted prediction available when the feature values in \(S\) are fixed at their values in \(\mathbf{x}\), while the remaining features are integrated over or replaced using a background distribution. Let \(\widehat{F}_{B}\) denote the background distribution used for Shapley-value evaluation. A conditional form of the value function is
 
 \begin{equation}
   \label{eq:value_function}
@@ -691,11 +691,89 @@ model-prediction setting, \(v_{\mathbf{x}}(S)\) represents the fitted prediction
 \end{equation}
 \equationlistentry{Shapley value function}
 
-This notation separates the input distribution used for MC simulation,
-\(\widehat{F}_{X}\), from the background distribution used for Shapley
-evaluation, \(\widehat{F}_{B}\). These distributions may coincide, but they
-need not be identical. The empirical implementation therefore reports the
-background data and the SHAP convention used.
+Equation~\eqref{eq:value_function} is read as follows. The coalition \(S\)
+is the set of features whose values are treated as known for the profile
+being explained. The conditioning event \(\mathbf{X}_{S}=\mathbf{x}_{S}\)
+fixes those features at the values they take in \(\mathbf{x}\), and the
+expectation is taken over the features in the complement
+\(\overline{S}=\mathcal{P}\setminus S\), whose values are unknown and are
+therefore averaged out under the background distribution
+\(\widehat{F}_{B}\). The value function is consequently not a prediction
+for a single input vector but the mean prediction over all background
+profiles that agree with \(\mathbf{x}\) on \(S\). Two boundary cases fix
+the scale of the decomposition: when \(S=\mathcal{P}\) nothing remains to
+be averaged and
+\(v_{\mathbf{x}}(\mathcal{P})=\widehat{m}(\mathbf{x})\), while when
+\(S=\varnothing\) the conditioning event is vacuous and
+\(v_{\mathbf{x}}(\varnothing)=\mathbb{E}_{\widehat{F}_{B}}[\widehat{m}(\mathbf{X})]\),
+which is the baseline \(\phi_{0}\) appearing in the decomposition below.
+The difference
+\(v_{\mathbf{x}}(S\cup\{j\})-v_{\mathbf{x}}(S)\) in
+equation~\eqref{eq:shapley_exact} is then the change in that mean
+prediction caused by additionally revealing feature \(j\), which is the
+marginal contribution the Shapley average weights over coalitions.
+
+The word \emph{conditional} in equation~\eqref{eq:value_function} is a
+substantive modelling choice rather than notational convenience, because
+an alternative convention replaces the conditional expectation with a
+marginal, or interventional, one:
+
+\begin{equation}
+  \label{eq:value_function_marginal}
+      v^{\mathrm{marg}}_{\mathbf{x}}(S)
+      =
+      \mathbb{E}_{\widehat{F}_{B}}
+      \!\left[
+          \widehat{m}
+          \!\left(
+              \mathbf{x}_{S},\,\mathbf{X}_{\overline{S}}
+          \right)
+      \right].
+\end{equation}
+\equationlistentry{Marginal (interventional) Shapley value function}
+
+In equation~\eqref{eq:value_function_marginal} the features outside \(S\)
+are drawn from their background \emph{marginal} distribution irrespective
+of the values held fixed in \(S\), whereas in
+equation~\eqref{eq:value_function} they are drawn from their distribution
+\emph{conditional} on those values. The two coincide when
+\(\mathbf{X}_{\overline{S}}\) is independent of \(\mathbf{X}_{S}\) under
+\(\widehat{F}_{B}\), and diverge as the dependence among the inputs
+strengthens \citep{aas2021explaining, sundararajan2020many}. The choice
+carries an interpretive consequence. The conditional form respects the
+dependence structure of the data and never evaluates the fitted model on
+combinations of feature values that the background distribution regards
+as implausible; against this, it can assign a non-zero contribution to a
+feature the fitted model never uses, purely because that feature is
+correlated with one the model does use, so the attribution describes the
+joint distribution as much as the model
+\citep{janzing2020feature, covert2021explaining}. The marginal form keeps
+the attribution on the features the model actually reads, at the cost of
+evaluating \(\widehat{m}\) at off-manifold combinations where the fitted
+surface is an extrapolation and is not constrained by training data
+\citep{hooker2021unrestricted}.
+
+A further difference is computational. The marginal form requires only
+draws from the background marginals, which are available by resampling
+the background data, whereas the conditional form requires the
+conditional laws of \(\mathbf{X}_{\overline{S}}\) given
+\(\mathbf{X}_{S}=\mathbf{x}_{S}\) for every coalition \(S\), and these are
+generally unknown and must themselves be estimated
+\citep{aas2021explaining}. For this reason most software implementations,
+including the explainer used in this dissertation, operate under the
+marginal convention or an approximation to it, so that
+equation~\eqref{eq:value_function} states the population object of
+interest while equation~\eqref{eq:value_function_marginal} is closer to
+what is computed in practice.
+
+This notation also separates the input distribution used for MC
+simulation, \(\widehat{F}_{X}\), from the background distribution used for
+Shapley evaluation, \(\widehat{F}_{B}\). These distributions may coincide,
+but they need not be identical, and the attributions are defined only
+relative to whichever background is chosen: a different \(\widehat{F}_{B}\)
+shifts the baseline \(\phi_{0}\) and rescales every contribution. The
+empirical implementation therefore reports the background data and the
+SHAP convention used.
 
 \noindent
 The exact Shapley contribution of feature \(j\) for profile \(\mathbf{x}\) is
@@ -760,6 +838,166 @@ profile.
   number of Shapley samples, the background dataset, the random seed or
   replication strategy, and any stability checks are reported to support
   reproducibility.
+
+  \noindent
+  A gradient-based approximation provides an alternative to coalition
+  sampling. The permutation estimator of
+  equation~\eqref{eq:shapley_perm_estimator} treats \(\widehat{m}\) as a
+  black box and requires two value-function evaluations per sampled
+  permutation. When the fitted model is differentiable in its inputs, as a
+  DNN with differentiable activations is, a second route becomes
+  available that replaces coalition enumeration with the integration of
+  gradients along a path in input space. This is the class of explainer
+  used in this dissertation, and it is therefore set out here in the same
+  notation.
+
+  \noindent
+  Let \(\mathbf{x}'\) denote a baseline profile representing the absence of
+  information, drawn from the background distribution
+  \(\widehat{F}_{B}\), and consider the straight-line path from
+  \(\mathbf{x}'\) to the profile \(\mathbf{x}\) being explained,
+  parameterised by \(\alpha\in[0,1]\) as
+  \(\mathbf{x}'+\alpha(\mathbf{x}-\mathbf{x}')\). The integrated-gradients
+  attribution of feature \(j\) is the path integral of the partial
+  derivative of the fitted model with respect to that feature, scaled by
+  the distance travelled in the \(j\)th coordinate:
+  \begin{equation}
+  \label{eq:integrated_gradients}
+      \phi^{\mathrm{IG}}_{j}
+      \!\left(
+          \mathbf{x};\,\mathbf{x}'
+      \right)
+      =
+      \left(
+          x_{j}-x'_{j}
+      \right)
+      \int_{0}^{1}
+      \frac{\partial\,\widehat{m}
+      \!\left(
+          \mathbf{x}'+\alpha(\mathbf{x}-\mathbf{x}')
+      \right)}
+      {\partial x_{j}}
+      \,\mathrm{d}\alpha .
+  \end{equation}
+  \equationlistentry{Integrated-gradients attribution of feature $j$}
+
+  \noindent
+  The two factors in equation~\eqref{eq:integrated_gradients} carry
+  distinct meanings. The partial derivative
+  \(\partial\widehat{m}/\partial x_{j}\) measures the local sensitivity of
+  the fitted prediction to an infinitesimal change in feature \(j\), which
+  is exactly the quantity backpropagation already computes, and the
+  displacement \((x_{j}-x'_{j})\) measures how far feature \(j\) has moved
+  from its baseline value. A feature receives a large attribution only
+  when the model is sensitive to it \emph{and} it differs appreciably from
+  the baseline; a feature that is influential but sits at its baseline
+  value, or one that differs from the baseline in a flat region of the
+  prediction surface, receives little. Integrating over \(\alpha\) rather
+  than evaluating the gradient at \(\mathbf{x}\) alone is what makes the
+  attribution complete: by the gradient theorem the contributions sum to
+  the full prediction difference,
+  \begin{equation}
+  \label{eq:ig_completeness}
+      \sum_{j=1}^{p}
+      \phi^{\mathrm{IG}}_{j}
+      \!\left(
+          \mathbf{x};\,\mathbf{x}'
+      \right)
+      =
+      \widehat{m}(\mathbf{x})
+      -
+      \widehat{m}(\mathbf{x}'),
+  \end{equation}
+  \equationlistentry{Completeness of integrated gradients}
+  which is the path-integral counterpart of the efficiency axiom
+  satisfied by equation~\eqref{eq:shapley_decomp}
+  \citep{sundararajan2017axiomatic}. A single gradient evaluated at
+  \(\mathbf{x}\) would satisfy no such identity, and would be zero
+  wherever the activation function saturates, even for a feature the model
+  relies on heavily.
+
+  \noindent
+  Equation~\eqref{eq:integrated_gradients} is defined relative to one
+  baseline \(\mathbf{x}'\), which reintroduces the background-dependence
+  discussed above. Averaging the attribution over baselines drawn from
+  \(\widehat{F}_{B}\), and over the path position
+  \(\alpha\sim\mathrm{Uniform}(0,1)\), yields the expected-gradients form
+  \begin{equation}
+  \label{eq:expected_gradients}
+      \phi^{\mathrm{EG}}_{j}(\mathbf{x})
+      =
+      \mathbb{E}_{\mathbf{x}'\sim\widehat{F}_{B},\;
+                  \alpha\sim\mathrm{Uniform}(0,1)}
+      \!\left[
+          \left(
+              x_{j}-x'_{j}
+          \right)
+          \frac{\partial\,\widehat{m}
+          \!\left(
+              \mathbf{x}'+\alpha(\mathbf{x}-\mathbf{x}')
+          \right)}
+          {\partial x_{j}}
+      \right],
+  \end{equation}
+  \equationlistentry{Expected-gradients attribution of feature $j$}
+  which restates the path integral as a single expectation over the
+  background distribution and so admits a direct MC estimator
+  \citep{erion2021improving}. Drawing \(K\) independent pairs
+  \(\left(\mathbf{x}'^{(k)},\alpha^{(k)}\right)\) gives
+  \begin{equation}
+  \label{eq:expected_gradients_estimator}
+      \widehat{\phi}^{\mathrm{EG}}_{j,K}(\mathbf{x})
+      =
+      \frac{1}{K}
+      \sum_{k=1}^{K}
+      \left(
+          x_{j}-x'^{(k)}_{j}
+      \right)
+      \frac{\partial\,\widehat{m}
+      \!\left(
+          \mathbf{x}'^{(k)}+\alpha^{(k)}(\mathbf{x}-\mathbf{x}'^{(k)})
+      \right)}
+      {\partial x_{j}} .
+  \end{equation}
+  \equationlistentry{MC estimator of the expected-gradients attribution}
+  Taking the expectation over baselines replaces
+  \(\widehat{m}(\mathbf{x}')\) in equation~\eqref{eq:ig_completeness} with
+  \(\mathbb{E}_{\widehat{F}_{B}}[\widehat{m}(\mathbf{X})]\), so the
+  attributions sum to
+  \(\widehat{m}(\mathbf{x})-\mathbb{E}_{\widehat{F}_{B}}[\widehat{m}(\mathbf{X})]\),
+  recovering the baseline \(\phi_{0}=v_{\mathbf{x}}(\varnothing)\) of
+  equation~\eqref{eq:shapley_decomp} and making the gradient-based
+  attributions directly comparable with the coalitional ones on the same
+  scale.
+
+  \noindent
+  The computational gain is the reason for the construction: the cost of
+  equation~\eqref{eq:expected_gradients_estimator} is \(K\) gradient
+  evaluations, each obtained in one backward pass, in place of the
+  \(2^{p}\) value-function evaluations required by
+  equation~\eqref{eq:shapley_exact}, and \(K\) does not grow with \(p\).
+  The gain is not free. Equation~\eqref{eq:expected_gradients} is an
+  Aumann-Shapley path value rather than the discrete Shapley value of
+  equation~\eqref{eq:shapley_exact}; the two agree when \(\widehat{m}\) is
+  linear along the path, and differ in general, so the gradient-based
+  quantities are approximations whose accuracy is not guaranteed by the
+  axioms that motivate them \citep{sundararajan2020many}. The linear
+  interpolation also passes through intermediate points
+  \(\mathbf{x}'+\alpha(\mathbf{x}-\mathbf{x}')\) that need not be valid
+  profiles, since a fractional value of a binary dummy indicator has no
+  interpretation as a policyholder attribute, which places the method
+  within the marginal convention of
+  equation~\eqref{eq:value_function_marginal} and inherits the
+  off-manifold caveat attached to it \citep{hooker2021unrestricted}.
+  Finally, equation~\eqref{eq:expected_gradients_estimator} is itself a MC
+  average, so its sampling variability is governed by \(K\) and the
+  dispersion of the background sample. The practical consequence is that
+  the reported attributions are conditional on the fitted network, the
+  background sample and the number of draws, and the completeness identity
+  should be verified numerically on the fitted model rather than assumed,
+  since it holds exactly for
+  equation~\eqref{eq:integrated_gradients} but only up to MC error for
+  equation~\eqref{eq:expected_gradients_estimator}.
 
   % --------------------------------------------------------
   % 2.2.4 High-cost profiles
