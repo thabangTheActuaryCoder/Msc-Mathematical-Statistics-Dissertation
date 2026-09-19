@@ -76,7 +76,13 @@ levels are well represented; none require merging.
 \centering
 \small
 \renewcommand{\arraystretch}{1.15}
-\begin{tabular}{p{0.22\textwidth}p{0.17\textwidth}p{0.31\textwidth}p{0.20\textwidth}}
+\newcommand{\nohyph}{\raggedright\arraybackslash
+  \hyphenpenalty=10000 \exhyphenpenalty=10000}
+\begin{tabular}{%
+  >{\nohyph}p{0.22\textwidth}%
+  >{\nohyph}p{0.17\textwidth}%
+  >{\nohyph}p{0.31\textwidth}%
+  >{\nohyph}p{0.20\textwidth}}
 \toprule
 \textbf{Variable} & \textbf{Role and type} & \textbf{Description} & \textbf{Model-ready representation} \\
 \midrule
