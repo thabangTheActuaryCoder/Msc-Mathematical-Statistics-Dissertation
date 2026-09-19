@@ -356,43 +356,170 @@ Each stage produces outputs that serve as inputs to the next, creating an
 integrated framework in which the fitted model, the simulated input
 population and the feature attributions are jointly analysed.
 
-In the first stage, a DNN regression model is trained on
-the benchmark dataset using a systematic hyperparameter comparison.  The
+\subsubsection{Research design}
+\label{sec:research_design}
+
+The study follows a quantitative, non-experimental research design
+applied to secondary data.  No treatment is assigned, no intervention is
+observed and no counterfactual is constructed, so every quantity reported
+is a property of a fitted statistical model rather than of the
+data-generating process itself; the interpretive consequences of this
+choice are stated in Section~\ref{sec:scope_delimitations}.  The object
+of study is the fitted prediction function, and the design is therefore
+computational: conclusions are drawn from out-of-sample performance on a
+held-out partition, from MC propagation of an explicit input law
+through the fitted function, and from an axiomatic attribution of the
+resulting predictions to input variables.
+
+The empirical base is the Kaggle Insurance Data for Machine Learning
+benchmark dataset \citep{kaggleInsuranceDataML}, comprising
+$n = 1\,000\,000$ policyholder records with eleven predictors and the
+continuous monetary response \texttt{charges}.  Reference-category dummy
+encoding expands the categorical predictors to a model-ready input
+dimension of $p = 22$.  The unit of analysis is the individual
+policyholder record at the prediction stage and the synthetic
+policyholder profile at the simulation and explanation stages.  The
+dataset is partitioned into training, validation and test subsets in an
+approximate $52/24/24$ split, with the training partition fixed at
+$2^{19} = 524\,288$ records for batch alignment.  Every preprocessing
+quantity, encoding map, standardisation constant, fitted marginal and
+Shapley background sample is estimated on the training partition alone
+and applied without refitting to the remaining partitions, so that the
+validation and test data remain uncontaminated throughout all three
+stages.  The full specification is given in
+Chapter~\ref{chap:methods_and_data}; the present section states only the
+methodological logic that connects the stages.
+
+\subsubsection{The three stages}
+\label{sec:three_stages}
+
+In the first stage, a feedforward DNN
+\citep{goodfellow2016deep} is trained on the encoded training partition
+by minimising mean squared error, using backpropagation with an adaptive
+first-order optimiser.  Because the fitted surface depends materially on
+the training configuration, and because tuning is what determines whether
+a network is competitive on tabular data \citep{kadra2021welltuned}, the
+configuration is selected by a five-phase sequential comparison in which
+hidden activation, learning rate, batch size, optimiser and momentum
+parameters are compared one factor at a time, with the best choice
+carried forward and all other factors held fixed.  Selection is made on
+validation-set error and the retained configuration is scored once on the
+held-out test set, so that the reported generalisation estimate is not
+contaminated by the selection process \citep{hastie2009elements}.  The
 trained network defines a prediction function
 $\hat{f}: \mathbb{R}^p \to \mathbb{R}$ that maps encoded policyholder
-attributes to predicted costs.  A Gamma GLM with a
-logarithmic link, an RF regressor and an XGBoost
-gradient-boosted tree regressor are fitted alongside the network to
-provide benchmarks spanning three alternative model classes.  The
-output of this stage is a validated prediction function with
-documented out-of-sample performance across all four models.
+attributes to predicted costs.
 
-In the second stage, parametric distributions are fitted to each input
-variable in the training partition, and an MC sample of
-$B = 100\,000$ synthetic policyholder profiles is drawn from the product
-of these marginals.  Each profile is encoded and passed through the
-trained prediction function, yielding a sample of $B$ predicted costs.
-This sample constitutes a model-implied predicted-cost distribution
-whose properties, including mean, variance, skewness and tail behaviour,
-are analysed through summary statistics, density estimation and
-convergence diagnostics.  Joint-distribution validation and
-residual-augmented sensitivity analysis confirm the adequacy of the input
-distribution and the robustness of the results.
+Three benchmark models are fitted on the same partitions to establish
+whether the added flexibility of the network is warranted: a Gamma GLM
+with a logarithmic link
+\citep{nelder1972generalized, mccullagh1989generalized}, the standard
+actuarial model for positive, right-skewed claim severities
+\citep{denuit2007actuarial, wuthrich2023statistical}; an RF regressor
+\citep{breiman2001random}; and an XGBoost gradient-boosted tree regressor
+\citep{chen2016xgboost}.  The tree ensembles are the appropriate
+comparators because they remain strong baselines on tabular problems
+\citep{grinsztajn2022why, shwartzziv2022tabular}.  Before the network is
+carried into the simulation stage it must pass a battery of predictive
+and structural diagnostics, comprising error metrics on all three
+partitions, actual-versus-predicted calibration, residual diagnostics,
+principal-component structure and correlation checks; this gate is what
+licenses the downstream use of $\hat{f}$ as the object of study.  The
+output of this stage is a validated prediction function with documented
+out-of-sample performance across all four models.
 
-In the third stage, gradient-based Shapley values are computed for each
-of the $B$ simulated profiles.  These values decompose each predicted
-cost into additive contributions from the $p$ input variables.  The
-Shapley values are summarised at the global level (across all profiles)
-and conditionally within high-cost regions defined by upper-tail
-thresholds at the 90th, 95th and 99th percentiles.  The conditional
-analysis reveals how the feature-importance ranking changes as the
-focus shifts from average to extreme predicted costs.
+In the second stage, a parametric marginal distribution is fitted to each
+raw input variable on the training partition, with the family chosen from
+the exploratory diagnostics so that the fitted support respects the
+observed support of the variable: bounded numerical variables receive
+support-respecting continuous families, binary variables are generated as
+Bernoulli draws, and multi-level categorical variables are generated from
+the observed training proportions.  An MC sample of $B = 100\,000$
+synthetic policyholder profiles is then drawn from the product of these
+marginals \citep{rubinstein2016simulation, robert2004monte}, encoded
+under the same fixed preprocessing map as the training data, and passed
+through $\hat{f}$, yielding a sample of $B$ predicted costs.  Writing
+$\mathbf{X} \sim F_{\mathbf{X}}$ for the input law and
+$\hat{Y} = \hat{f}(\mathbf{X})$, the empirical distribution of the
+$B$ draws is a consistent estimator of the law of $\hat{Y}$ under
+$F_{\mathbf{X}}$, and this model-implied distribution, not the data
+distribution, is the estimand of the stage.
+
+Its mean, variance, skewness and tail behaviour are analysed through
+summary statistics, density estimation and convergence diagnostics.  The
+simulation size is not assumed adequate but established: the simulation
+is repeated over a pilot ladder of increasing $B$, and the MC
+standard error for mean-type summaries is monitored against the
+$\mathcal{O}(B^{-1/2})$ rate
+\citep{caflisch1998monte, glasserman2004monte, owen2013monte}, while
+quantile stability, which that formula does not govern, is assessed
+descriptively across the ladder.  The product-of-marginals construction
+deliberately imposes independence, and sampling off the data manifold is
+a known source of distortion in model-based analysis
+\citep{aas2021explaining, hooker2021unrestricted}.  This assumption is
+therefore treated as a claim to be tested rather than granted: it is
+examined against the training joint distribution through the
+diagnostics set out in Section~\ref{sec:validation_strategy}, and a
+residual-augmented sensitivity analysis
+\citep{saltelli2002making}, in which scaled draws from the fitted
+residual distribution are added to the simulated predictions, tests
+whether the distributional conclusions survive the reintroduction of the
+variability the deterministic prediction function discards.
+
+In the third stage, Shapley values
+\citep{shapley1953value, lundberg2017unified} are computed for each of
+the $B$ simulated profiles, decomposing each predicted cost into additive
+contributions from the input variables.  Exact evaluation requires the
+prediction function at all $2^p$ feature subsets, which is infeasible at
+$p = 22$, so a gradient-based explainer is used that exploits the
+differentiability of the fitted network against a background sample drawn
+from the training partition \citep{castro2009polynomial}.  The
+attributions are consequently approximate and conditional on that
+background sample and on the explainer algorithm, and their precise
+meaning depends on the chosen reference distribution
+\citep{sundararajan2020many, covert2021explaining}; they are interpreted
+throughout as model-specific attributions rather than exact
+cooperative-game solutions.  Contributions computed on the $p = 22$
+encoded columns are aggregated back to the raw-variable level, so that
+the dummy indicators of a single categorical variable are reported as one
+attribution.
+
+The attributions are summarised in two ways.  The global summary is the
+mean absolute contribution of each variable across all $B$ profiles
+\citep{lundberg2020local}.  The conditional summary restricts the same
+average to the high-cost set $\mathcal{H}_{\tau}$ of profiles whose
+predicted cost exceeds the $\tau$-quantile of the simulated
+predicted-cost distribution, with $\tau = 0.95$ as the primary threshold
+and $\tau \in \{0.90,\ 0.99\}$ retained to test whether the pattern is an
+artefact of the cutoff \citep{mcneil2015quantitative}.  Because the
+conditioning set at $\tau = 0.99$ contains only $0.01B$ profiles, a
+percentile bootstrap over the conditional attributions quantifies the
+resulting estimation uncertainty, so that any reported change in ranking
+is separated from sampling noise.  Comparing the global and conditional
+summaries reveals how the feature-importance ranking changes as the focus
+shifts from average to extreme predicted costs.
 
 This three-stage structure ensures that the dissertation answers not only
 ``How well does the model predict?'' but also ``What does the model's
 output distribution look like under population-level input variation?''
 and ``Which variables matter most, and does their relative importance
 change in the tail?''
+
+The three stages are sequential rather than parallel, and the dependence
+is one-directional: the simulation stage is meaningful only if the
+prediction function has passed its diagnostic gate, and the attribution
+stage is meaningful only if the simulated input law has survived its
+validation diagnostics, since the high-cost conditioning regions are
+defined on the simulated predicted-cost distribution.  A failure at an
+earlier stage therefore invalidates the stages that follow, which is why
+each stage is gated by explicit acceptance checks before its output is
+carried forward.  Research Question~\ref{rq:1} is answered at the
+prediction stage, Research Questions~\ref{rq:2} to~\ref{rq:4} at the
+simulation stage, and Research Questions~\ref{rq:5}
+and~\ref{rq:6} at the explanation stage, with the validation and
+robustness strategy of Section~\ref{sec:validation_strategy} cutting
+across all three.  Chapter~\ref{chap:methods_and_data} gives the full
+specification of every step summarised here.
 
 % ---------------------------------------------------------
 % 1.4 SIGNIFICANCE OF THE STUDY
