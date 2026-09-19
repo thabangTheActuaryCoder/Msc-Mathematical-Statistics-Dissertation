@@ -1145,7 +1145,7 @@ the weighted sum of squared residuals in the resulting child nodes:
 where $\mathcal{S} \subset \{1,\dots,p\}$ with $|\mathcal{S}| = m$ is the
 randomly selected predictor subset, and $\bar{y}_{L}$ and $\bar{y}_{R}$
 denote the sample means in the left and right child nodes respectively.
-Trees are grown until each terminal node contains at most 5 observations.
+Trees are grown until each terminal node contains at least 5 observations.
 
 The variance reduction mechanism of the RF can be understood
 through the decomposition of the variance of the ensemble average.  If
