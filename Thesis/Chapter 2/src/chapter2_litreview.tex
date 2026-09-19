@@ -2010,12 +2010,7 @@ underfitting or unsuitable training settings.
 
 \noindent
 LOOCV is not adopted as the primary validation strategy. It would require
-refitting the neural network once for each observation. This is computationally
-inefficient for a DNN, since each fit involves iterative nonconvex
-optimisation rather than a closed-form estimation step. In addition, the
-training sets used in LOOCV differ by only one observation, so the
-resulting fitted models are highly overlapping and the error estimates may be
-strongly correlated \citep{james2021introduction,hastie2009elements}.
+refitting the neural network once for each observation.
 
 \noindent
 Although \(K\)-fold cross-validation is often useful when a separate validation
