@@ -165,19 +165,26 @@ behaviour.  A test-set metric such as \ensuremath{R^2} or RMSE summarises averag
 predictive performance but does not reveal how the predicted cost varies
 across the input space, what the distributional shape of predicted costs
 looks like under population-level input variation, or which variables are
-most important in specific regions of the output distribution.  Answering
+most important in specific regions of the output distribution
+\citep{molnar2022interpretable, duncan2016testing}.  Answering
 these questions requires supplementary analyses that go beyond the
-standard train-test evaluation paradigm.
+standard train-test evaluation paradigm, such as the propagation of an
+explicit input law through the fitted model by Monte Carlo simulation
+\citep{glasserman2004monte, saltelli2002making}.
 
 The challenge is compounded by the heterogeneity of policyholder
 populations.  An insurance portfolio typically contains a large number of
 low-cost policyholders and a smaller number of high-cost policyholders
-whose claims dominate the aggregate loss.  From a risk-management
+whose claims dominate the aggregate loss
+\citep{embrechts1997modelling, denuit2007actuarial, bertsimas2008algorithmic}.
+From a risk-management
 perspective, understanding the drivers of predicted costs in this upper
-tail is at least as important as understanding the average prediction.
+tail is at least as important as understanding the average prediction
+\citep{mcneil2015quantitative, coles2001introduction}.
 Global feature-importance summaries, which aggregate attributions across
 all predictions, may obscure the factors that are most relevant in the
-high-cost region.  A conditional analysis that focuses specifically on
+high-cost region \citep{lundberg2020local, ribeiro2016should, covert2021explaining}.
+A conditional analysis that focuses specifically on
 the upper tail of the predicted-cost distribution is therefore needed
 to complement the global view.
 
@@ -215,19 +222,36 @@ neural-network function approximation.  Supervised regression seeks a
 function $\hat{f}: \mathbb{R}^p \to \mathbb{R}$ that minimises a loss
 functional, typically the expected squared error
 $E[(Y - \hat{f}(\mathbf{X}))^2]$, over a distribution of input-output
-pairs $(\mathbf{X}, Y)$.  The DNN is one particular
+pairs $(\mathbf{X}, Y)$, whose minimiser over all measurable functions is
+the conditional mean $E[Y \mid \mathbf{X}]$
+\citep{hastie2009elements, vapnik1998statistical}.  The DNN is one particular
 parameterisation of this function class, distinguished by its capacity to
 represent highly nonlinear mappings through compositions of affine
-transformations and elementwise activation functions.
+transformations and elementwise activation functions.  The universal
+approximation theorems establish that a feedforward network with a single
+hidden layer and a suitable nonpolynomial activation can approximate any
+continuous function on a compact domain to arbitrary accuracy
+\citep{cybenko1989approximation, hornik1989multilayer, leshno1993multilayer},
+although these results are existence statements and are silent on the
+network width, the training algorithm and the sample size required to
+attain a given accuracy in practice \citep{goodfellow2016deep}.
 
 The bias-variance decomposition provides the theoretical framework for
 understanding the trade-off between model complexity and generalisation
-performance.  A model that is too simple (high bias) will underfit the
-data, while a model that is too complex (high variance) will overfit.
+performance \citep{hastie2009elements, james2021introduction}.  A model
+that is too simple (high bias) will underfit the
+data, while a model that is too complex (high variance) will overfit
+\citep{abu2012learning, bishop2006pattern}.  This classical account is
+an incomplete description of overparameterised neural networks, which can
+interpolate the training data and still generalise
+\citep{zhang2021understanding}, so the trade-off is treated here as a
+practical guide to model selection rather than as an exact
+characterisation of network behaviour.
 The five-phase hyperparameter comparison employed in this dissertation is
 designed to navigate this trade-off by selecting the configuration that
 minimises validation-set error, while the held-out test set provides an
-unbiased estimate of the generalisation performance.
+unbiased estimate of the generalisation performance
+\citep{hastie2009elements, kadra2021welltuned}.
 
 \subsubsection{MC simulation in statistical inference}
 \label{sec:mc_intro}
