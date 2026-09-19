@@ -5,67 +5,11 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-% ---------------------------------------------------------
-% 5.1 INTRODUCTION
-% ---------------------------------------------------------
-
-\subsection{Introduction}
-\label{sec:summary_of_findings}
-
-This final chapter draws the dissertation to a close.  It consolidates
-what the empirical analysis established and considers what the findings
-mean beyond the immediate setting in which they were produced.  The
-conceptual motivation for the study (treating a fitted prediction
-model as a statistical object whose properties merit systematic
-investigation in its own right) was developed in
-Section~\ref{sec:positioning} and underpins the structure of this
-chapter.
-
-In brief, the dissertation asked whether a DNN could improve upon
-the classical Gamma GLM for health insurance cost prediction, and
-whether the resulting predictions could be analysed beyond
-point-prediction accuracy through MC simulation and Shapley-value
-attribution.  Chapter~\ref{sec:literature_review} established the
-theoretical and empirical foundations of each component and stated the
-research gap (Section~\ref{sec:research_gap}), and
-Chapter~\ref{chap:methods_and_data} translated the conceptual framework
-into an empirical workflow applied to the Kaggle Insurance Data for
-Machine Learning benchmark dataset \citep{kaggleInsuranceDataML}.  The
-results in Chapter~\ref{sec:results} established the strong predictive
-performance of the DNN relative to its benchmarks, validated the
-MC predicted-cost distribution, and produced the study's most
-distinctive finding: the reversal of the global feature-importance
-ranking at the $\tau_{99}$ threshold, shown to be robust to the
-stochastic training process across five independent seeds
-(Sections~\ref{sec:multiseed_dnn} and~\ref{sec:cross_seed_shap}).
-
-The remainder of the chapter is organised as follows.
-Section~\ref{sec:addressing_rqs} answers each of the six research
-questions in light of the empirical results.
-Sections~\ref{sec:contributions} and~\ref{sec:strengths} state the
-contributions and strengths of the study, and
-Section~\ref{sec:limitations_conclusion} discusses its limitations.
-Sections~\ref{sec:implications}
-and~\ref{sec:implications_statistical} examine the implications for
-actuarial practice and for statistical methodology respectively,
-Section~\ref{sec:comparison_constrained_nn} compares the framework with
-constrained neural-network approaches, and
-Section~\ref{sec:future_research} sets out recommendations for future
-research before the concluding remark in
-Section~\ref{sec:concluding_remark}.
-
-% ---------------------------------------------------------
-% 5.2 ADDRESSING THE RESEARCH QUESTIONS
-% ---------------------------------------------------------
-
-\subsection{Addressing the Research Questions}
-\label{sec:addressing_rqs}
-
 The six research questions posed in Section~\ref{sec:research_questions}
 span the predictive, simulation and explanation stages of the framework.
 Each question is now addressed in light of the empirical results.
 
-\subsubsection{Research Question~\ref{rq:1}}
+\subsection{Research Question~\ref{rq:1}}
 How does a DNN regression model compare with a
 classical GLM, an RF and an XGBoost
 gradient-boosted tree in predicting health insurance costs on a benchmark
@@ -79,8 +23,8 @@ performance gap is attributable to the log-link misspecification
 discussed in Section~\ref{sec:four_model_comparison_ch4}.  The
 tree-based benchmarks narrow the gap substantially: after tuning, the
 RF reaches $R^2 = 0.9924$ and XGBoost reaches
-$R^2 = 0.9956$, leaving the DNN with a marginal advantage of no
-practical consequence (Section~\ref{sec:tuned_benchmarks},
+$R^2 = 0.9956$, which is not distinguishable from the DNN's
+$0.9957$ at the reported precision (Section~\ref{sec:tuned_benchmarks},
 Table~\ref{tab:six_model_comparison_ch4}).  All models show
 near-identical training and test performance, ruling out overfitting,
 and multi-seed replication confirmed that the DNN's test \ensuremath{R^2}
@@ -90,7 +34,7 @@ Table~\ref{tab:multiseed_test_performance_ch4}).  The hyperparameter
 selection underlying the final DNN configuration is documented in
 full in \ref{annexure:hyperparameters}.
 
-\subsubsection{Research Question~\ref{rq:2}}
+\subsection{Research Question~\ref{rq:2}}
 How adequately does parametric MC simulation of policyholder
 profiles reproduce the model-implied predicted-cost distribution, and
 how effectively does it define the high-cost conditioning regions
@@ -111,7 +55,7 @@ diagnostics confirming adequate simulation size
 invariant to the network's random initialisation
 (Section~\ref{sec:cross_seed_mc_ch4}).
 
-\subsubsection{Research Question~\ref{rq:3}}
+\subsection{Research Question~\ref{rq:3}}
 Is the product-marginal MC input distribution a
 defensible approximation of the training-data joint distribution for the
 purpose of generating simulated profiles?
@@ -126,7 +70,7 @@ independence assumption nonetheless broadens the simulated input space
 and can generate implausible covariate combinations, a limitation
 discussed in Section~\ref{sec:limitations_conclusion}.
 
-\subsubsection{Research Question~\ref{rq:4}}
+\subsection{Research Question~\ref{rq:4}}
 How sensitive is the predicted-cost distribution to residual
 perturbation from the fitted model?
 
@@ -140,7 +84,7 @@ does not alter the distributional conclusions, a finding consistent
 across all five training seeds
 (Section~\ref{sec:cross_seed_residual_ch4}).
 
-\subsubsection{Research Question~\ref{rq:5}}
+\subsection{Research Question~\ref{rq:5}}
 Which input variables receive the largest Shapley-value
 attributions globally, and how does the feature-importance ranking change
 conditionally within high-cost regions of the predicted-cost distribution?
@@ -167,7 +111,7 @@ $1.0000$.  The Shapley attribution correlation analysis
 pairwise Shapley-value correlations fall below $|r| = 0.033$, a pattern
 consistent with an essentially additive learned mapping.
 
-\subsubsection{Research Question~\ref{rq:6}}
+\subsection{Research Question~\ref{rq:6}}
 What explains any differences between the global and conditional
 feature-importance rankings in the upper tail?
 
@@ -341,8 +285,8 @@ initialisation space, but the convergent replications provide strong
 evidence that the findings are not artefacts of a single random
 initialisation.
 
-The tuned XGBoost benchmark achieves $R^2 = 0.9956$, matching the DNN
-($R^2 = 0.9957$) to within one unit in the fourth decimal place.  This
+The tuned XGBoost benchmark achieves $R^2 = 0.9956$, which is not
+distinguishable from the DNN's $R^2 = 0.9957$.  This
 parity implies that the DNN's selection over XGBoost for the subsequent
 analyses is motivated by the availability of gradient-based SHAP rather
 than by a meaningful predictive advantage.  On datasets where
