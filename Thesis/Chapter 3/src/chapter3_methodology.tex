@@ -53,7 +53,14 @@ The raw dataset, taken from Kaggle under the title
 Insurance Data for Machine Learning
 \citep{kaggleInsuranceDataML}, contains $n = 1\,000\,000$ observations and
 $12$ original columns.  Eleven of these are predictors; the remaining
-column, \texttt{charges}, is the continuous monetary outcome.
+column, \texttt{charges}, is the continuous monetary outcome.  The terms
+\emph{cost} and \emph{charge} are used interchangeably throughout the
+dissertation to denote this same modelled quantity, and a
+\emph{predicted cost} is always the fitted value of \texttt{charges}
+returned by a model.  \emph{Premium}, the price actually quoted to a
+policyholder, is a distinct quantity that incorporates expense and profit
+loadings and is not modelled here; where the word appears it refers to the
+literature being reviewed rather than to the response of this study.
 Reference-category dummy encoding expands the categorical predictors,
 yielding a final model-ready input dimension of $p = 22$.
 
@@ -801,7 +808,7 @@ theoretically.  The total number of trainable parameters is
 \end{align}
 \equationlistentry{DNN total trainable parameter count}
 
-\subsubsection{Forward and Backward Propagation}
+\subsubsection{Forward and backward propagation}
 \label{sec:propagation_mechanics}
 
 The operation of the contracting funnel specified in figure
@@ -1089,7 +1096,7 @@ presented in Algorithm~\ref{tab:glm_algorithm_annex}
 No hyperparameter tuning is applied to the GLM; its role as a benchmark
 was motivated in Section~\ref{sec:statistical_learning_supervised_regression}.
 
-\subsubsection{Tree-Based Benchmarks}
+\subsubsection{Tree-based benchmarks}
 \label{sec:tree_benchmarks_methods}
 
 Two tree-based ensemble methods are included alongside the GLM to
@@ -1100,8 +1107,8 @@ DNN and GLM.
 
 % ----- RF -----
 
-\subsubsection{RF Benchmark}
-A RF regressor \citep{breiman2001random} is fitted with 500 trees,
+\subsubsection{RF benchmark}
+An RF regressor \citep{breiman2001random} is fitted with 500 trees,
 maximum depth unrestricted, minimum samples per leaf of 5, and
 \texttt{random\_state=42}.  RF aggregates predictions across
 decorrelated decision trees, reducing variance through bootstrap
@@ -1197,7 +1204,7 @@ Implementation & \texttt{scikit-learn} \texttt{Random\allowbreak{}Forest\allowbr
 
 % ----- XGBoost -----
 
-\subsubsection{XGBoost Benchmark}
+\subsubsection{XGBoost benchmark}
 A gradient-boosted tree regressor is fitted using the XGBoost
 implementation \citep{chen2016xgboost} with 1\,000 boosting rounds, a
 learning rate of 0.05, maximum depth of 8, and early stopping on the

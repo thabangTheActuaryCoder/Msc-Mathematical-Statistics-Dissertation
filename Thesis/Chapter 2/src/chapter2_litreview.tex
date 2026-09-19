@@ -506,7 +506,7 @@ conditional Shapley summaries.
 % --------------------------------------------------------
 % 2.2.1 Predictive Modelling
 % --------------------------------------------------------
-\subsubsection{Predictive Modelling}
+\subsubsection{Predictive modelling}
 \label{predictive_modelling}
 
 Let
@@ -559,7 +559,7 @@ sampling mechanism or preprocessing procedure.
 % --------------------------------------------------------
 % 2.2.2 MC Simulation
 % --------------------------------------------------------
-\subsubsection{MC Simulation}
+\subsubsection{MC simulation}
 \label{montecarlo_propagation}
 
 \noindent
@@ -577,9 +577,8 @@ denote the training partition of the preprocessed benchmark data and define
 \equationlistentry{Training attribute vectors}
 as the corresponding set of training attribute vectors. To simulate over the
 input space, a probability distribution must be specified for generating
-synthetic policyholder profiles. This distribution is denoted
-\(\widehat{F}_{X}\) and is estimated from
-\(\mathcal{X}_{\mathrm{train}}\) and is constructed as a product of independent
+synthetic policyholder profiles. This distribution, denoted \(\widehat{F}_{X}\), is estimated from
+\(\mathcal{X}_{\mathrm{train}}\) and constructed as a product of independent
 fitted marginals,
 \begin{equation}
 \label{eq:input_law}
@@ -1341,7 +1340,7 @@ through DNN regression for the fitted prediction component.
         fill=blue!8, text width=13em,
         [{\textbf{Regression}\\Continuous response},
           fill=blue!8, text width=13em,
-          [{\textbf{DNN regression}\\Health-insurance cost prediction},
+          [{\textbf{DNN regression}\\Health insurance cost prediction},
             fill=orange!15,
             draw=orange!60!black,
             text width=13em,
@@ -1361,7 +1360,7 @@ through DNN regression for the fitted prediction component.
     ]
   \end{forest}
   }
-  \caption{Health-insurance cost prediction within the machine-learning taxonomy.}
+  \caption{Health insurance cost prediction within the machine-learning taxonomy.}
   \label{fig:ml_family_tree}
 \end{figure}
 
@@ -1562,7 +1561,7 @@ input activations \(\mathbf{a}^{(0)}_i\) to the output activation
 % --------------------------------------------------------
 % 2.4.1 Activation Functions
 % --------------------------------------------------------
-\subsubsection{Activation Functions}
+\subsubsection{Activation functions}
 \label{sec:activation_functions}
 
 \noindent
@@ -1658,7 +1657,7 @@ their theoretical definitions alone.
 % --------------------------------------------------------
 % 2.4.2 Loss and Optimisation
 % --------------------------------------------------------
-\subsubsection{Loss and Optimisation}
+\subsubsection{Loss and optimisation}
 \label{sec:loss_optimisation}
 
 \noindent
@@ -1961,7 +1960,10 @@ The dataset is partitioned as
     \mathcal{D}_{\mathrm{test}},
 \end{equation}
 \equationlistentry{Training, validation and test partition}
-where the three components correspond to a \(60/20/20\) split. An epoch is one
+where the three components are disjoint and exhaust \(\mathcal{D}\).  The
+proportions allocated to each component are a design choice rather than a
+fixed convention; the split used in this dissertation is stated in
+Section~\ref{sec:feature_encoding_input_standardisation}. An epoch is one
 complete pass through the training data. For a fitted parameter vector
 \(\widehat{\theta}^{(e)}\) after epoch \(e\), the training and validation losses
 are
@@ -2033,7 +2035,7 @@ only once for final model assessment.
 % 2.4.3 Generalisation, Validation Analysis and
 %       Bias-Variance Trade-off
 % --------------------------------------------------------
-\subsubsection{Generalisation, Validation Analysis and Bias-Variance Trade-off}
+\subsubsection{Generalisation, validation analysis and bias-variance trade-off}
 \label{sec:generalisation_validation_bias_variance}
 
 \noindent
@@ -2307,7 +2309,7 @@ The supervised-regression formulation gives the
 statistical form of the empirical problem: the observed response \(y_i\) is a
 continuous monetary outcome, and the fitted function
 \(\widehat{m}(\mathbf{x})\) maps policyholder attributes to a predicted cost.
-The health-insurance setting gives this regression problem its actuarial
+The health insurance setting gives this regression problem its actuarial
 meaning. A predicted monetary outcome is not merely an abstract response
 variable; it is connected to premium rating, claim-cost estimation and risk
 segmentation. Classical actuarial pricing often relies on transparent
@@ -2384,7 +2386,7 @@ MC and Shapley workflow because it provides a differentiable
 prediction surface compatible with gradient-based SHAP explainers and
 with continuous forward-pass evaluation over large simulated input samples;
 the specific gradient-based explainer employed is described in
-Chapter~\ref{chap:methods_and_data}.  A RF
+Chapter~\ref{chap:methods_and_data}.  An RF
 and an XGBoost regressor are fitted as benchmarks to contextualise the
 DNN's predictive performance within this spectrum of model classes.
 
@@ -2393,7 +2395,7 @@ Earlier work on algorithmic health cost prediction by
 \citet{bertsimas2008algorithmic} demonstrated the potential of machine-learning
 methods to outperform traditional actuarial approaches, while
 \citet{duncan2016testing} tested alternative regression frameworks for
-predictive modelling of health care costs in the North American context.
+predictive modelling of healthcare costs in the North American context.
 These studies confirm that health insurance cost prediction is a well-studied
 regression problem where model flexibility can yield meaningful improvements
 over simpler specifications.
@@ -2402,10 +2404,10 @@ over simpler specifications.
 The available Kaggle insurance data \citep{kaggleInsuranceDataML} do not provide separate claim-frequency and
 claim-severity processes. A separate actuarial claims model is therefore not
 fitted. Instead, the observed monetary response is treated as an aggregate
-health-insurance charge or premium proxy, and cost prediction is formulated as a
+health insurance charge or premium proxy, and cost prediction is formulated as a
 supervised regression problem. This gives a narrower empirical objective: to
 study how a fitted nonlinear prediction surface behaves on a benchmark
-health-insurance dataset, without claiming to reproduce the complete pricing
+health insurance dataset, without claiming to reproduce the complete pricing
 tariff or underwriting rules of a specific insurer.
 
 \noindent
@@ -3370,7 +3372,7 @@ estimate a distributional quantity such as a quantile or expected shortfall. The
 use of MC simulation to generate a synthetic input space and propagate
 it through a fitted prediction function, so that the model-implied
 predicted-cost distribution can be examined, is less standard in the
-health-insurance cost-prediction literature.
+health insurance cost-prediction literature.
 
 \noindent
 Shapley-based explanations have become widespread in applied machine learning
@@ -3385,7 +3387,7 @@ discuss conditioning Shapley attribution on simulated prediction regions.
 
 \noindent
 At the prediction stage, several studies fit DNNs or comparable
-machine-learning models to health-insurance cost data and evaluate predictive
+machine-learning models to health insurance cost data and evaluate predictive
 performance using standard regression metrics
 \citep{samiuddin2023health, dreweboss2022deep, kaushik2022machine}. These
 studies demonstrate that neural networks and related estimators can approximate

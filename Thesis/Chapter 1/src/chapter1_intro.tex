@@ -347,7 +347,7 @@ could provide in isolation.
 % 1.3 CONCEPTUAL FRAMEWORK
 % ---------------------------------------------------------
 
-\subsection{Conceptual framework}
+\subsection{Conceptual Framework}
 \label{sec:conceptual_framework}
 
 The analytical workflow of this dissertation is organised around three
@@ -556,8 +556,15 @@ model-implied predicted-cost distribution under an explicit input law
 connects the neural network prediction function to the broader tradition
 of simulation-based inference (Section~\ref{sec:integration_contribution}).
 Rather than evaluating the model only at observed data points, the MC
-component generates a distribution of predicted costs that reveals the
-range and shape of the model's output landscape.
+component generates a distribution of predicted costs that maps the range
+and shape of the model's output landscape.  As noted in
+Section~\ref{sec:mc_intro}, this distribution is not claimed to uncover
+distributional information absent from the data: because the marginals are
+fitted to the training data and the network attains a near-perfect fit,
+the simulated predicted-cost distribution largely recovers the empirical
+charge distribution by construction.  The contribution of the stage is
+that it defines, on an explicit and reproducible input law, the high-cost
+conditioning regions on which the attribution analysis operates.
 
 Finally, from an explainability perspective, the study demonstrates that
 Shapley-value attribution, often presented as a single global summary,
@@ -586,9 +593,9 @@ The dissertation addresses the following research questions:
 
 \begin{enumerate}
     \item \label{rq:1} How does a DNN regression model compare with a
-          classical GLM, an RF and an
-          XGBoost gradient-boosted tree in predicting health insurance
-          costs on a benchmark dataset?
+          classical GLM, an RF regressor and an
+          XGBoost gradient-boosted-tree regressor in predicting health
+          insurance costs on a benchmark dataset?
 
     \item \label{rq:2} How adequately does parametric MC simulation of
           policyholder profiles reproduce the model-implied predicted-cost
@@ -634,7 +641,7 @@ questions:
     \item To fit a DNN regression model to a health
           insurance benchmark dataset and to evaluate its predictive
           performance against a classical GLM, an
-          RF and an XGBoost gradient-boosted tree benchmark.
+          RF regressor and an XGBoost gradient-boosted-tree regressor.
 
     \item To design and implement a parametric MC simulation
           that generates synthetic policyholder profiles from fitted
@@ -759,8 +766,8 @@ The following delimitations define the boundaries of the study:
           covariate-response relationships are more complex.
 
     \item \textbf{Focused model comparison.}  Three benchmark models (a
-          Gamma GLM, an RF and an XGBoost gradient-boosted
-          tree) are included to contextualise the predictive performance
+          Gamma GLM, an RF regressor and an XGBoost
+          gradient-boosted-tree regressor) are included to contextualise the predictive performance
           of the DNN across model classes of increasing
           flexibility.  However, the dissertation does not attempt an
           exhaustive model-selection study.  Bayesian methods, support
