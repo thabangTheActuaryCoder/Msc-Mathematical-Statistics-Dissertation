@@ -1210,7 +1210,9 @@ ensemble prediction after $M$ boosting rounds is
 \begin{equation}
     \hat{f}_{M}(\mathbf{z})
     =
-    \sum_{m=0}^{M}
+    h_0(\mathbf{z})
+    +
+    \sum_{m=1}^{M}
     \eta \, h_m(\mathbf{z}),
     \label{eq:xgb_additive_model}
 \end{equation}
@@ -1218,7 +1220,10 @@ ensemble prediction after $M$ boosting rounds is
 where $h_0(\mathbf{z}) = \bar{y}$ is the initial constant prediction
 (the training-set mean), $h_m$ is the regression tree fitted at round $m$,
 and $\eta \in (0,1]$ is the learning rate (shrinkage parameter) that
-scales each tree's contribution.
+scales each tree's contribution.  The shrinkage applies only to the
+trees fitted at rounds $m \ge 1$; the initial constant enters
+unshrunk, so that the ensemble begins at the training-set mean and each
+subsequent tree adds a damped correction to it.
 
 At each boosting round $m$, XGBoost fits a new tree $h_m$ to
 minimise a regularised objective.  For the squared-error loss used in
