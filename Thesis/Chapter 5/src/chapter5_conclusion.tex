@@ -589,6 +589,18 @@ following directions.
           values, temporal trends, policy-level effects and non-trivial
           dependence structures among covariates.
 
+    \item Because the present analysis rests on a single benchmark
+          dataset, the robustness of the framework to data quality has not
+          been established.  Future work could test this directly by
+          injecting controlled levels of noise into the predictors and the
+          response, or by simulating datasets from known generating
+          processes of varying signal-to-noise ratio, and then tracking how
+          the predictive ranking of the four model classes and the
+          upper-tail Shapley ordering degrade as the noise level rises.
+          Such a study would establish the conditions under which the
+          conditional attribution findings remain stable, which a single
+          clean, algorithmically constructed dataset cannot show.
+
     \item Coupling the MC simulation with Bayesian posterior
           predictive distributions or conformal prediction intervals would
           add formal uncertainty quantification to the predicted-cost

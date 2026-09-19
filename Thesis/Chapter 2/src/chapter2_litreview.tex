@@ -588,8 +588,10 @@ fitted marginals,
     \prod_{j=1}^{p} \widehat{F}_{X_j},
 \end{equation}
 \equationlistentry{Input distribution as product of fitted marginals}
-where each \(\widehat{F}_{X_j}\) is a parametric distribution fitted to the
-observed values of the \(j\)-th attribute in \(\mathcal{X}_{\mathrm{train}}\).
+where \(p\) denotes the number of input attributes, that is the dimension of
+the attribute vector \(\mathbf{x}\), and each \(\widehat{F}_{X_j}\) is a
+parametric distribution fitted to the observed values of the \(j\)-th
+attribute in \(\mathcal{X}_{\mathrm{train}}\).
 The independence assumption in equation~\eqref{eq:input_law} is a deliberate
 modelling choice: the purpose of the simulation is to explore how the fitted
 network responds across a broad range of covariate combinations, including

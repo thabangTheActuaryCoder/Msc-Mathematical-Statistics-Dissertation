@@ -1768,41 +1768,35 @@ they constitute a proof of model correctness.
 
 \begin{figure}[H]
 \centering
-\begin{subfigure}[b]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{Thesis/Chapter 3/Figures/fig_sml_heatmap_train_actual.png}
-    \caption{Training set, actual charges.}
-    \label{fig:heatmap_train_actual_ch3}
-\end{subfigure}
-\hfill
-\begin{subfigure}[b]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{Thesis/Chapter 3/Figures/fig_sml_heatmap_train_predicted.png}
-    \caption{Training set, predicted charges.}
-    \label{fig:heatmap_train_predicted_ch3}
-\end{subfigure}
+\includegraphics[width=0.85\textwidth]{Thesis/Chapter 3/Figures/fig_sml_heatmap_train_actual.png}
+\caption{Input-target correlation heatmap: training set, actual charges.}
+\label{fig:heatmap_train_actual_ch3}
+\end{figure}
 
-\vspace{0.4cm}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Thesis/Chapter 3/Figures/fig_sml_heatmap_train_predicted.png}
+\caption{Input-target correlation heatmap: training set, predicted charges.}
+\label{fig:heatmap_train_predicted_ch3}
+\end{figure}
 
-\begin{subfigure}[b]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{Thesis/Chapter 3/Figures/fig_sml_heatmap_test_actual.png}
-    \caption{Test set, actual charges.}
-    \label{fig:heatmap_test_actual_ch3}
-\end{subfigure}
-\hfill
-\begin{subfigure}[b]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{Thesis/Chapter 3/Figures/fig_sml_heatmap_test_predicted.png}
-    \caption{Test set, predicted charges.}
-    \label{fig:heatmap_test_predicted_ch3}
-\end{subfigure}
-\caption{Input-target correlation heatmaps for actual and predicted charges.}
-\label{fig:heatmap_diagnostics_ch3}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Thesis/Chapter 3/Figures/fig_sml_heatmap_test_actual.png}
+\caption{Input-target correlation heatmap: test set, actual charges.}
+\label{fig:heatmap_test_actual_ch3}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Thesis/Chapter 3/Figures/fig_sml_heatmap_test_predicted.png}
+\caption{Input-target correlation heatmap: test set, predicted charges.}
+\label{fig:heatmap_test_predicted_ch3}
 \end{figure}
 
 \noindent
-Figure~\ref{fig:heatmap_diagnostics_ch3} presents the four correlation
+Figures~\ref{fig:heatmap_train_actual_ch3}
+to~\ref{fig:heatmap_test_predicted_ch3} present the four correlation
 heatmaps. The inter-feature correlations are predominantly near zero (teal
 shading), with the expected negative correlations visible within dummy
 groups belonging to the same raw categorical variable (e.g.\ the
@@ -2147,12 +2141,13 @@ binary indicators is a limited measure of association for nominal
 attributes, so this diagnostic is complemented by the Cram\'{e}r's $V$
 comparison below, which measures categorical association directly.
 
-\begin{figure}[H]
+\begin{sidewaysfigure}
 \centering
-\includegraphics[width=0.90\textwidth]{Thesis/Chapter 3/Figures/fig_mc_joint_correlation_comparison.png}
+\includegraphics[width=0.90\textheight]{Thesis/Chapter 3/Figures/fig_mc_joint_correlation_comparison.png}
 \caption{Correlation structure comparison: training data versus parametric MC sample.}
 \label{fig:correlation_difference_heatmap_ch3}
-\end{figure}
+\end{sidewaysfigure}
+\clearpage
 
 The second diagnostic addresses the categorical predictors.  For
 multi-level categorical predictors the strength of pairwise association is
@@ -2186,12 +2181,13 @@ dominated by the \texttt{coverage\_\allowbreak{}level} variable yet together
 account for only about $13\%$ of total variance, so no single direction
 dominates the 22-dimensional input space.
 
-\begin{figure}[H]
+\begin{sidewaysfigure}
 \centering
-\includegraphics[width=0.95\textwidth]{Thesis/Chapter 3/Figures/fig_mc_joint_pca_comparison.png}
+\includegraphics[width=0.90\textheight]{Thesis/Chapter 3/Figures/fig_mc_joint_pca_comparison.png}
 \caption{PCA projection of joint input structure: training, MC sample and overlay.}
 \label{fig:pca_joint_overlay_ch3}
-\end{figure}
+\end{sidewaysfigure}
+\clearpage
 
 \noindent
 The MC sample populates the same region of principal component
